@@ -17,8 +17,7 @@ Liste de tous les éléments provisoires du site. Cochez-les au fur et à mesure
 ## [À REMPLACER] : textes provisoires
 
 - [x] ~~Mot de la fondatrice~~ : intégré (`src/data/site.ts` → `founderMessage`).
-- [ ] **Notre histoire** (page À propos) : `src/pages/a-propos.astro`, encadré « [À REMPLACER] Notre histoire »
-      (année de création, contexte, premières étapes).
+- [x] ~~Notre histoire~~ : intégrée (`src/data/site.ts` → `history`).
 
 ## Photos (visuels provisoires)
 

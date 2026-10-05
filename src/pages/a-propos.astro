@@ -31,12 +31,15 @@ import { url } from '../utils/url';
             chercher des solutions : chacun de ces pas compte. Notre rôle est de les rendre possibles.
           </p>
         </div>
-        <div class="placeholder-note reveal mt-8">
-          <p class="font-semibold">[À REMPLACER] Notre histoire</p>
-          <p class="mt-2 text-sm leading-relaxed">
-            Racontez ici la naissance de la fondation : l’année de création, ce qui a poussé {site.founder} à la fonder, les
-            premières personnes engagées et les premières étapes franchies.
-          </p>
+        <div class="reveal mt-10 border-l-2 border-secondary pl-6">
+          <h3 class="text-xl font-semibold">Notre histoire</h3>
+          <div class="prose-hatua mt-4 leading-relaxed">
+            {
+              site.history.map((p, i) => (
+                <p class:list={[i === site.history.length - 1 && 'font-display text-lg font-semibold text-secondary']}>{p}</p>
+              ))
+            }
+          </div>
         </div>
       </div>
       <figure class="reveal mx-auto w-full max-w-md lg:max-w-none">

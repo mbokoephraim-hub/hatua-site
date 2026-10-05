@@ -8,6 +8,15 @@ export const site = {
   status: 'Organisation à but non lucratif',
   founder: 'Sublime Koyi',
 
+  // Notre histoire (page À propos). La dernière phrase est mise en avant.
+  history: [
+    'HATUA Foundation a été créée en 2026, à partir d’une conviction simple : chaque jeune peut avancer lorsqu’elle reçoit les bons repères, les bonnes opportunités et l’accompagnement nécessaire.',
+    'La vision s’est construite au fil d’expériences auprès des enfants, des jeunes et des communautés, dans l’enseignement, les activités éducatives et les initiatives de terrain.',
+    'De ces expériences est née l’envie de créer un cadre qui ne se limite pas à transmettre, mais qui aide aussi à comprendre, à choisir, à développer ses capacités et à agir.',
+    'Aujourd’hui, HATUA Foundation développe des initiatives autour de l’éducation, de la jeunesse, des compétences, de l’autonomisation et du changement au sein des communautés.',
+    'Parce que chaque transformation commence par un pas.',
+  ],
+
   // Mot de la fondatrice (page À propos)
   founderMessage: [
     'Je crois en une éducation qui ne se limite pas à transmettre des connaissances, mais qui aide chacun à comprendre qui il est, à faire des choix éclairés et à construire son avenir avec confiance.',
