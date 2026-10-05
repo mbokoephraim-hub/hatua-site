@@ -11,6 +11,8 @@ interface Props {
 const { lang, page, class: className = '' } = Astro.props;
 const other = otherLang(lang);
 const codes: Lang[] = ['fr', 'en'];
+// Identifiant unique : le sélecteur apparaît deux fois (en-tête et menu mobile)
+const uid = Math.random().toString(36).slice(2, 8);
 ---
 
 <nav aria-label={t('lang.label', lang)} class={className}>
@@ -19,7 +21,28 @@ const codes: Lang[] = ['fr', 'en'];
       codes.map((code) =>
         code === lang ? (
           <li>
-            <span class="block rounded-full bg-primary px-2.5 py-1 text-white" aria-current="true">
+            <span class="flex items-center gap-1.5 rounded-full bg-primary py-1 pr-2.5 pl-1 text-white" aria-current="true">
+              <span class="inline-block h-[18px] w-[18px] shrink-0 overflow-hidden rounded-full ring-1 ring-black/10" aria-hidden="true">
+                {code === 'fr' ? (
+                  <svg viewBox="0 0 3 2" preserveAspectRatio="xMidYMid slice" class="h-full w-full">
+                    <rect width="1" height="2" fill="#002654" />
+                    <rect x="1" width="1" height="2" fill="#fff" />
+                    <rect x="2" width="1" height="2" fill="#ce1126" />
+                  </svg>
+                ) : (
+                  <svg viewBox="0 0 60 30" preserveAspectRatio="xMidYMid slice" class="h-full w-full">
+                    <clipPath id={`uk-s-${uid}`}><path d="M0,0 v30 h60 v-30 z" /></clipPath>
+                    <clipPath id={`uk-t-${uid}`}><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z" /></clipPath>
+                    <g clip-path={`url(#uk-s-${uid})`}>
+                      <path d="M0,0 v30 h60 v-30 z" fill="#012169" />
+                      <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6" />
+                      <path d="M0,0 L60,30 M60,0 L0,30" clip-path={`url(#uk-t-${uid})`} stroke="#C8102E" stroke-width="4" />
+                      <path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10" />
+                      <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6" />
+                    </g>
+                  </svg>
+                )}
+              </span>
               <span aria-hidden="true">{code.toUpperCase()}</span>
               <span class="sr-only">{languages[code]}</span>
             </span>
@@ -31,9 +54,30 @@ const codes: Lang[] = ['fr', 'en'];
               hreflang={other}
               lang={other}
               title={t('lang.switch', lang)}
-              class="block rounded-full px-2.5 py-1 text-ink/70 transition-colors hover:bg-primary-50 hover:text-primary"
+              class="flex items-center gap-1.5 rounded-full py-1 pr-2.5 pl-1 text-ink/70 transition-colors hover:bg-primary-50 hover:text-primary"
               data-lang-link
             >
+              <span class="inline-block h-[18px] w-[18px] shrink-0 overflow-hidden rounded-full ring-1 ring-black/10" aria-hidden="true">
+                {code === 'fr' ? (
+                  <svg viewBox="0 0 3 2" preserveAspectRatio="xMidYMid slice" class="h-full w-full">
+                    <rect width="1" height="2" fill="#002654" />
+                    <rect x="1" width="1" height="2" fill="#fff" />
+                    <rect x="2" width="1" height="2" fill="#ce1126" />
+                  </svg>
+                ) : (
+                  <svg viewBox="0 0 60 30" preserveAspectRatio="xMidYMid slice" class="h-full w-full">
+                    <clipPath id={`uk-s-${uid}`}><path d="M0,0 v30 h60 v-30 z" /></clipPath>
+                    <clipPath id={`uk-t-${uid}`}><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z" /></clipPath>
+                    <g clip-path={`url(#uk-s-${uid})`}>
+                      <path d="M0,0 v30 h60 v-30 z" fill="#012169" />
+                      <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6" />
+                      <path d="M0,0 L60,30 M60,0 L0,30" clip-path={`url(#uk-t-${uid})`} stroke="#C8102E" stroke-width="4" />
+                      <path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10" />
+                      <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6" />
+                    </g>
+                  </svg>
+                )}
+              </span>
               <span aria-hidden="true">{code.toUpperCase()}</span>
               <span class="sr-only">{t('lang.switch', lang)}</span>
             </a>
