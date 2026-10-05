@@ -80,6 +80,20 @@ Dans **`src/styles/global.css`**, bloc `@theme` en haut du fichier. Les couleurs
 | `--color-cream` | ivoire | `#fbf4ee` | fond du site |
 | `--color-ink` / `--color-muted` | (neutres) | `#2b2220` / `#6b5a55` | texte |
 
+**Ambiances de section** : chaque section peut prendre une couleur de la charte en ajoutant une classe sur la balise `<section>` :
+
+| Classe | Fond | Titres / texte |
+|---|---|---|
+| `tone-ivoire` | ivoire | terre-rouge / brun foncé |
+| `tone-blanc` | blanc | terre-rouge / brun foncé |
+| `tone-miel` | miel | terre-rouge / brun foncé |
+| `tone-baobab` | baobab | ivoire, surtitres miel |
+| `tone-terre` | terre-rouge | ivoire, surtitres miel |
+
+Titres, textes, liens et boutons s'adaptent automatiquement (contrastes AA vérifiés) ; les cartes blanches (`.card`) gardent leurs couleurs claires.
+Pour les en-têtes de pages intérieures : `<PageHeader tone="miel" | "baobab" | "terre" | "ivoire" …>`.
+Pour un texte qui doit suivre l'ambiance, utilisez `text-heading`, `text-ink`, `text-muted`, `text-eyebrow` ou `text-link`.
+
 **Polices de la charte** : **Sora** (titres) et **Onest** (texte), sous licence libre SIL OFL.
 Elles sont hébergées sur le site (`public/fonts/`, format WOFF2 réduit aux caractères latins et français), sans appel à Google Fonts.
 Les fichiers d'origine sont dans `brand/fonts/`. Pour changer de police : déclarez-la avec `@font-face` en haut de

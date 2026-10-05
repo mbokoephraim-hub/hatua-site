@@ -45,12 +45,107 @@
   /* Neutres */
   --color-cream: #fbf4ee; /* ivoire */
   --color-sand: #f3e9df;
-  --color-ink: #2b2220;
-  --color-muted: #6b5a55;
 
   /* Typographie */
   --font-display: "Sora", ui-sans-serif, system-ui, sans-serif; /* titres */
   --font-sans: "Onest", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; /* texte */
+}
+
+/*
+ * Couleurs « contextuelles » : elles changent selon l'ambiance de la section (voir .tone-* plus bas).
+ * text-ink / text-muted / text-heading / text-eyebrow / text-link s'adaptent donc automatiquement.
+ */
+@theme inline {
+  --color-ink: var(--tone-ink);
+  --color-muted: var(--tone-muted);
+  --color-heading: var(--tone-heading);
+  --color-eyebrow: var(--tone-eyebrow);
+  --color-link: var(--tone-link);
+}
+
+/*
+ * ============================================================
+ *  AMBIANCES DE SECTION : une par couleur de la charte.
+ *  Ajoutez la classe sur une <section> : tone-ivoire, tone-blanc, tone-miel, tone-baobab, tone-terre.
+ *  Les cartes (.card, .tone-light) restent toujours claires.
+ * ============================================================
+ */
+:root,
+.tone-ivoire,
+.tone-blanc,
+.tone-light,
+.card {
+  --tone-ink: #2b2220;
+  --tone-muted: #6b5a55;
+  --tone-heading: var(--color-secondary);
+  --tone-eyebrow: var(--color-secondary);
+  --tone-link: var(--color-secondary);
+  --tone-line: var(--color-sand);
+  --tone-focus: var(--color-secondary);
+  /* Boutons : principal (terre-rouge), vert (baobab), contour */
+  --btn1-bg: var(--color-secondary);
+  --btn1-fg: #fff;
+  --btn1-hover: var(--color-secondary-dark);
+  --btn2-bg: var(--color-primary);
+  --btn2-fg: #fff;
+  --btn2-hover: var(--color-primary-dark);
+  --btn-line: var(--color-primary);
+  --btn-line-hover-fg: #fff;
+}
+.tone-ivoire { background-color: var(--color-cream); color: var(--tone-ink); }
+.tone-blanc,
+.tone-light { background-color: #fff; color: var(--tone-ink); }
+
+.tone-miel {
+  background-color: var(--color-accent);
+  color: var(--tone-ink);
+  --tone-ink: #2b2220;
+  --tone-muted: #5b463f;
+  --tone-heading: var(--color-secondary);
+  --tone-eyebrow: var(--color-primary);
+  --tone-link: var(--color-secondary);
+  --tone-line: rgb(92 26 22 / 0.18);
+  --tone-focus: var(--color-secondary);
+}
+
+.tone-baobab {
+  background-color: var(--color-primary);
+  color: var(--tone-ink);
+  --tone-ink: #fbf4ee;
+  --tone-muted: #d5ddd7;
+  --tone-heading: #fbf4ee;
+  --tone-eyebrow: var(--color-accent);
+  --tone-link: var(--color-accent);
+  --tone-line: rgb(255 255 255 / 0.15);
+  --tone-focus: var(--color-accent);
+  --btn1-bg: var(--color-accent);
+  --btn1-fg: var(--color-primary-dark);
+  --btn1-hover: #f8e2bf;
+  --btn2-bg: var(--color-cream);
+  --btn2-fg: var(--color-primary-dark);
+  --btn2-hover: #fff;
+  --btn-line: var(--color-cream);
+  --btn-line-hover-fg: var(--color-primary-dark);
+}
+
+.tone-terre {
+  background-color: var(--color-secondary);
+  color: var(--tone-ink);
+  --tone-ink: #fbf4ee;
+  --tone-muted: #e6cfc8;
+  --tone-heading: #fbf4ee;
+  --tone-eyebrow: var(--color-accent);
+  --tone-link: var(--color-accent);
+  --tone-line: rgb(255 255 255 / 0.15);
+  --tone-focus: var(--color-accent);
+  --btn1-bg: var(--color-accent);
+  --btn1-fg: var(--color-secondary);
+  --btn1-hover: #f8e2bf;
+  --btn2-bg: var(--color-cream);
+  --btn2-fg: var(--color-secondary);
+  --btn2-hover: #fff;
+  --btn-line: var(--color-cream);
+  --btn-line-hover-fg: var(--color-secondary);
 }
 
 @layer base {
@@ -63,7 +158,7 @@
     text-rendering: optimizeLegibility;
   }
   h1, h2, h3, h4 {
-    @apply font-display text-secondary;
+    @apply font-display text-heading;
     text-wrap: balance;
     letter-spacing: -0.01em;
   }
@@ -71,11 +166,11 @@
     text-wrap: pretty;
   }
   :focus-visible {
-    outline: 3px solid var(--color-secondary);
+    outline: 3px solid var(--tone-focus);
     outline-offset: 3px;
     border-radius: 4px;
   }
-  /* Sur fond foncé, contour miel pour rester visible */
+  /* Sur les aplats foncés hors ambiance, contour miel pour rester visible */
   .bg-primary :focus-visible,
   .bg-primary-dark :focus-visible,
   .bg-secondary :focus-visible {
@@ -83,7 +178,7 @@
   }
   ::selection {
     background: var(--color-accent-soft);
-    color: var(--color-ink);
+    color: #2b2220;
   }
 }
 
@@ -98,14 +193,23 @@
   .btn {
     @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 font-display text-[0.95rem] font-semibold transition duration-200;
   }
+  /* Les couleurs des boutons s'adaptent à l'ambiance de la section (variables --btn*) */
   .btn-primary {
-    @apply bg-secondary text-white shadow-sm hover:bg-secondary-dark hover:shadow-md;
+    @apply shadow-sm hover:shadow-md;
+    background-color: var(--btn1-bg);
+    color: var(--btn1-fg);
+    &:hover { background-color: var(--btn1-hover); }
   }
   .btn-green {
-    @apply bg-primary text-white shadow-sm hover:bg-primary-dark hover:shadow-md;
+    @apply shadow-sm hover:shadow-md;
+    background-color: var(--btn2-bg);
+    color: var(--btn2-fg);
+    &:hover { background-color: var(--btn2-hover); }
   }
   .btn-outline {
-    @apply border-2 border-primary text-primary hover:bg-primary hover:text-white;
+    border: 2px solid var(--btn-line);
+    color: var(--btn-line);
+    &:hover { background-color: var(--btn-line); color: var(--btn-line-hover-fg); }
   }
   .btn-light {
     @apply bg-white text-primary-dark hover:bg-cream;
@@ -115,6 +219,7 @@
   }
 
   .card {
+    color: var(--tone-ink);
     @apply rounded-2xl border border-sand bg-white p-6 shadow-[0_1px_2px_rgb(31_41_51/0.04)] transition duration-300;
   }
   .card-hover {
@@ -122,7 +227,7 @@
   }
 
   .eyebrow {
-    @apply inline-flex items-center gap-3 font-display text-sm font-semibold uppercase tracking-[0.14em] text-secondary;
+    @apply inline-flex items-center gap-3 font-display text-sm font-semibold uppercase tracking-[0.14em] text-eyebrow;
   }
 
   .prose-hatua p + p {

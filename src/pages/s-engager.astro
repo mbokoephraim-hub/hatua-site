@@ -13,7 +13,7 @@ const { volunteer, partners, donate } = engage;
 ---
 
 <BaseLayout title="S’engager" description={`Bénévolat, partenariat, don : découvrez comment soutenir ${site.name}.`}>
-  <PageHeader eyebrow="S’engager" title="Et si le prochain pas, c’était le vôtre ?" intro={engage.intro}>
+  <PageHeader tone="terre" eyebrow="S’engager" title="Et si le prochain pas, c’était le vôtre ?" intro={engage.intro}>
     <nav aria-label="Façons de s’engager" class="mt-8 flex flex-wrap gap-3">
       <a href="#benevolat" class="btn btn-green">Bénévolat</a>
       <a href="#partenariats" class="btn btn-outline">Partenariats</a>
@@ -22,7 +22,7 @@ const { volunteer, partners, donate } = engage;
   </PageHeader>
 
   <!-- Bénévolat -->
-  <section id="benevolat" class="section scroll-mt-20" aria-labelledby="benevolat-titre">
+  <section id="benevolat" class="section tone-ivoire scroll-mt-20" aria-labelledby="benevolat-titre">
     <div class="container-site grid gap-12 lg:grid-cols-2 lg:gap-16">
       <div>
         <SectionTitle number="01" eyebrow="Bénévolat" title={volunteer.title} intro={volunteer.text} id="benevolat-titre" />
@@ -69,7 +69,7 @@ const { volunteer, partners, donate } = engage;
   </section>
 
   <!-- Partenariats -->
-  <section id="partenariats" class="section scroll-mt-20 bg-white" aria-labelledby="partenariats-titre">
+  <section id="partenariats" class="section tone-baobab scroll-mt-20" aria-labelledby="partenariats-titre">
     <div class="container-site">
       <SectionTitle number="02" eyebrow="Partenariats" title={partners.title} intro={partners.text} id="partenariats-titre" />
       <ul class="mt-10 grid gap-5 md:grid-cols-3">
@@ -92,24 +92,24 @@ const { volunteer, partners, donate } = engage;
   </section>
 
   <!-- Don -->
-  <section id="don" class="section scroll-mt-20" aria-labelledby="don-titre">
+  <section id="don" class="section tone-ivoire scroll-mt-20" aria-labelledby="don-titre">
     <div class="container-site">
-      <div class="reveal relative overflow-hidden rounded-[2rem] bg-secondary px-6 py-12 text-white sm:px-12 sm:py-16">
-        <svg class="pointer-events-none absolute right-0 bottom-0 h-full w-auto text-white/10" viewBox="0 0 400 300" aria-hidden="true">
+      <div class="tone-miel reveal relative overflow-hidden rounded-[2rem] px-6 py-12 sm:px-12 sm:py-16">
+        <svg class="pointer-events-none absolute right-0 bottom-0 h-full w-auto text-secondary/10" viewBox="0 0 400 300" aria-hidden="true">
           <path fill="currentColor" d="M0 300v-60h100v-60h100v-60h100V60h100v240z" />
         </svg>
         <div class="relative max-w-2xl">
-          <p class="eyebrow !text-white">
+          <p class="eyebrow">
             <span class="step-line" aria-hidden="true"><span></span><span></span><span></span></span>
             03 · Don
           </p>
-          <h2 id="don-titre" class="mt-4 text-3xl font-bold !text-white sm:text-4xl">{donate.title}</h2>
-          <p class="mt-4 text-lg leading-relaxed text-white">{donate.text}</p>
+          <h2 id="don-titre" class="mt-4 text-3xl font-bold sm:text-4xl">{donate.title}</h2>
+          <p class="mt-4 text-lg leading-relaxed">{donate.text}</p>
           <div class="mt-8 flex flex-wrap gap-3">
-            <a href={mailto(donate.subject, donate.body)} class="btn btn-light">
+            <a href={mailto(donate.subject, donate.body)} class="btn btn-primary">
               <Icon name="mail" size={18} /> {t('cta.contactSupport')}
             </a>
-            <a href={site.contact.whatsappHref} target="_blank" rel="noopener noreferrer" class="btn btn-outline-light">
+            <a href={site.contact.whatsappHref} target="_blank" rel="noopener noreferrer" class="btn btn-outline">
               <Icon name="whatsapp" size={18} /> WhatsApp
             </a>
           </div>

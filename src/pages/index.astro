@@ -18,7 +18,7 @@ const featured = projects[0];
 
 <BaseLayout>
   <!-- HERO -->
-  <section class="relative overflow-hidden">
+  <section class="tone-ivoire relative overflow-hidden">
     <div class="pointer-events-none absolute -top-40 -right-40 h-[32rem] w-[32rem] rounded-full bg-primary-50 blur-3xl" aria-hidden="true"></div>
     <div class="container-site relative grid items-center gap-12 py-14 sm:py-20 lg:grid-cols-[1.1fr_1fr] lg:py-24">
       <div>
@@ -42,14 +42,14 @@ const featured = projects[0];
   </section>
 
   <!-- ÉTAPE APRÈS ÉTAPE -->
-  <section class="section bg-white" aria-labelledby="conviction">
+  <section class="section tone-terre" aria-labelledby="conviction">
     <div class="container-site grid gap-12 lg:grid-cols-[1fr_1.2fr] lg:gap-20">
       <SectionTitle number="01" eyebrow="Notre conviction" title="Étape après étape" id="conviction">
         <p class="mt-5 text-muted">
-          <em class="font-display font-semibold text-primary not-italic">« {site.nameMeaning.word} »</em> signifie
+          <em class="font-display font-semibold text-eyebrow not-italic">« {site.nameMeaning.word} »</em> signifie
           « {site.nameMeaning.meaning} » en {site.nameMeaning.language}. Un nom qui dit tout de notre façon d’agir.
         </p>
-        <a href={url('/a-propos')} class="mt-6 inline-flex items-center gap-1.5 font-semibold text-secondary hover:underline">
+        <a href={url('/a-propos')} class="mt-6 inline-flex items-center gap-1.5 font-semibold text-link hover:underline">
           Qui sommes-nous <Icon name="arrow-right" size={18} />
         </a>
       </SectionTitle>
@@ -58,7 +58,7 @@ const featured = projects[0];
         {
           site.vision.map((p, i) => (
             <li class={`reveal reveal-delay-${i + 1} flex gap-5`}>
-              <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-accent font-display text-sm font-bold text-secondary">
+              <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-eyebrow/60 font-display text-sm font-bold text-eyebrow">
                 {String(i + 1).padStart(2, '0')}
               </span>
               <p class="pt-1.5 text-lg leading-relaxed text-ink">{p}</p>
@@ -70,7 +70,7 @@ const featured = projects[0];
   </section>
 
   <!-- PÔLES -->
-  <section class="section" aria-labelledby="poles-titre">
+  <section class="section tone-ivoire" aria-labelledby="poles-titre">
     <div class="container-site">
       <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <SectionTitle
@@ -101,7 +101,7 @@ const featured = projects[0];
   <!-- PROJET PHARE -->
   {
     featured && (
-      <section class="section bg-white" aria-labelledby="projet-phare">
+      <section class="section tone-miel" aria-labelledby="projet-phare">
         <div class="container-site">
           <SectionTitle number="03" eyebrow="Projet phare" title="Notre premier pas : ÉCHOS" id="projet-phare" />
           <div class="mt-10">
@@ -116,7 +116,7 @@ const featured = projects[0];
   <EngageBanner />
 
   <!-- CONTACT -->
-  <section class="section" aria-labelledby="contact-apercu">
+  <section class="section tone-ivoire" aria-labelledby="contact-apercu">
     <div class="container-site grid items-center gap-10 lg:grid-cols-2">
       <SectionTitle
         number="04"

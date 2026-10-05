@@ -9,6 +9,12 @@ interface Props {
 }
 const { pole, index } = Astro.props;
 const num = String(index + 1).padStart(2, '0');
+// Alternance des couleurs de la charte : baobab, miel, terre-rouge
+const tiles = [
+  'bg-primary-50 text-primary group-hover:bg-primary group-hover:text-white',
+  'bg-accent/70 text-secondary group-hover:bg-accent group-hover:text-secondary',
+  'bg-secondary-50 text-secondary group-hover:bg-secondary group-hover:text-white',
+];
 ---
 
 <a
@@ -16,7 +22,7 @@ const num = String(index + 1).padStart(2, '0');
   class="card card-hover group reveal relative flex h-full flex-col overflow-hidden"
 >
   <span class="absolute top-4 right-5 font-display text-4xl font-bold text-sand transition-colors group-hover:text-secondary-50 before:content-[attr(data-num)]" data-num={num} aria-hidden="true"></span>
-  <span class="relative inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary-50 text-primary transition-colors group-hover:bg-primary group-hover:text-white">
+  <span class={`relative inline-flex h-12 w-12 items-center justify-center rounded-xl transition-colors ${tiles[index % tiles.length]}`}>
     <Icon name={pole.icon} />
   </span>
   <h3 class="relative mt-5 text-xl font-semibold">{pole.title}</h3>

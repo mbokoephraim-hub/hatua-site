@@ -4,12 +4,14 @@ interface Props {
   eyebrow: string;
   title: string;
   intro?: string;
+  /** Ambiance de couleur (charte) : miel, baobab, terre ou ivoire */
+  tone?: 'miel' | 'baobab' | 'terre' | 'ivoire';
 }
-const { eyebrow, title, intro } = Astro.props;
+const { eyebrow, title, intro, tone = 'miel' } = Astro.props;
 ---
 
-<section class="relative overflow-hidden border-b border-sand bg-sand/50">
-  <svg class="pointer-events-none absolute right-0 bottom-0 h-full max-h-64 w-auto text-primary/[0.06]" viewBox="0 0 400 260" aria-hidden="true">
+<section class={`tone-${tone} relative overflow-hidden`}>
+  <svg class="pointer-events-none absolute right-0 bottom-0 h-full max-h-64 w-auto text-heading opacity-10" viewBox="0 0 400 260" aria-hidden="true">
     <path fill="currentColor" d="M0 260v-50h100v-60h100V90h100V30h100v230z" />
   </svg>
   <div class="container-site relative py-14 sm:py-20">

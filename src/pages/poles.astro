@@ -10,6 +10,7 @@ import { url } from '../utils/url';
 
 <BaseLayout title="Nos pôles" description={`Les sept pôles d’action de ${site.name} : éducation, jeunesse, femmes, communautés, compétences, leadership, recherche et impact.`}>
   <PageHeader
+    tone="baobab"
     eyebrow="Nos pôles"
     title="Sept pôles, une même direction"
     intro={`${site.domainsSentence} Nos actions s’organisent autour de sept pôles complémentaires.`}
@@ -19,7 +20,7 @@ import { url } from '../utils/url';
         {
           poles.map((p, i) => (
             <li>
-              <a href={`#${p.id}`} class="inline-flex items-center gap-2 rounded-full border border-sand bg-white px-4 py-2 text-sm font-medium hover:border-primary hover:text-primary">
+              <a href={`#${p.id}`} class="tone-light inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition hover:bg-accent">
                 <span class="font-display text-xs font-bold text-secondary">{String(i + 1).padStart(2, '0')}</span>
                 {p.title}
               </a>
@@ -30,17 +31,19 @@ import { url } from '../utils/url';
     </nav>
   </PageHeader>
 
-  <div class="container-site py-10 sm:py-16">
+  <div>
     {
       poles.map((pole, i) => {
         const related = projects.filter((pr) => pr.pole === pole.id);
+        // Alternance des couleurs de la charte pour l'icône : baobab, terre-rouge, miel
+        const tile = ['bg-primary text-white', 'bg-secondary text-accent', 'bg-accent text-secondary'][i % 3];
         return (
-          <section id={pole.id} aria-labelledby={`${pole.id}-titre`} class="reveal scroll-mt-24 border-b border-sand py-12 last:border-0 sm:py-16">
-            <div class="grid gap-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:gap-16">
+          <section id={pole.id} aria-labelledby={`${pole.id}-titre`} class:list={['scroll-mt-20 py-14 sm:py-20', i % 2 ? 'tone-blanc' : 'tone-ivoire']}>
+            <div class="container-site reveal grid gap-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:gap-16">
               <div>
                 <div class="flex items-center gap-4">
                   <span class="font-display text-5xl font-bold text-accent/60 before:content-[attr(data-num)] sm:text-6xl" data-num={String(i + 1).padStart(2, '0')} aria-hidden="true"></span>
-                  <span class="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-white">
+                  <span class={`inline-flex h-14 w-14 items-center justify-center rounded-2xl ${tile}`}>
                     <Icon name={pole.icon} size={28} />
                   </span>
                 </div>
@@ -57,7 +60,7 @@ import { url } from '../utils/url';
                   </div>
                 )}
               </div>
-              <div class="rounded-3xl bg-white p-7 shadow-sm ring-1 ring-sand sm:p-9">
+              <div class:list={['rounded-3xl p-7 sm:p-9', i % 2 ? 'tone-miel' : 'tone-light shadow-sm ring-1 ring-sand']}>
                 <h3 class="text-lg font-semibold">Axes de travail envisagés</h3>
                 <p class="mt-1 text-sm text-muted">Pistes d’action que ce pôle pourrait développer, étape par étape.</p>
                 <ul class="mt-5 space-y-3.5">
@@ -78,7 +81,7 @@ import { url } from '../utils/url';
     }
   </div>
 
-  <section class="section bg-white">
+  <section class="section tone-terre">
     <div class="container-site reveal text-center">
       <h2 class="text-3xl font-bold">Un pôle vous parle ?</h2>
       <p class="mx-auto mt-3 max-w-xl text-lg text-muted">Rejoignez-nous comme bénévole ou partenaire pour faire avancer ces projets.</p>

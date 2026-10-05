@@ -17,7 +17,7 @@ import { url } from '../utils/url';
   />
 
   <!-- Histoire et sens du nom -->
-  <section class="section" aria-labelledby="histoire">
+  <section class="section tone-ivoire" aria-labelledby="histoire">
     <div class="container-site grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
       <div>
         <SectionTitle number="01" eyebrow="Notre nom" title="Hatua : le pas, l’étape" id="histoire" />
@@ -56,17 +56,17 @@ import { url } from '../utils/url';
   </section>
 
   <!-- Mission & vision -->
-  <section class="section bg-white" aria-labelledby="mission">
+  <section class="section tone-blanc" aria-labelledby="mission">
     <div class="container-site grid gap-6 lg:grid-cols-2">
-      <article class="reveal relative overflow-hidden rounded-3xl bg-primary p-8 text-white sm:p-10">
+      <article class="tone-baobab reveal relative overflow-hidden rounded-3xl p-8 sm:p-10">
         <span class="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-accent text-primary-dark"><Icon name="target" /></span>
-        <h2 id="mission" class="mt-6 text-3xl font-bold !text-white">Notre mission</h2>
-        <p class="mt-4 text-lg leading-relaxed text-white/90">{site.mission}</p>
+        <h2 id="mission" class="mt-6 text-3xl font-bold">Notre mission</h2>
+        <p class="mt-4 text-lg leading-relaxed">{site.mission}</p>
       </article>
-      <article class="reveal reveal-delay-1 relative overflow-hidden rounded-3xl border border-sand bg-cream p-8 sm:p-10">
-        <span class="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-secondary text-white"><Icon name="compass" /></span>
+      <article class="tone-miel reveal reveal-delay-1 relative overflow-hidden rounded-3xl p-8 sm:p-10">
+        <span class="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-secondary text-accent"><Icon name="compass" /></span>
         <h2 class="mt-6 text-3xl font-bold">Notre vision</h2>
-        <div class="prose-hatua mt-4 text-lg leading-relaxed text-ink">
+        <div class="prose-hatua mt-4 text-lg leading-relaxed">
           {site.vision.map((p) => <p>{p}</p>)}
         </div>
       </article>
@@ -74,7 +74,7 @@ import { url } from '../utils/url';
   </section>
 
   <!-- Valeurs -->
-  <section class="section" aria-labelledby="valeurs">
+  <section class="section tone-baobab" aria-labelledby="valeurs">
     <div class="container-site">
       <SectionTitle
         number="02"
@@ -98,7 +98,7 @@ import { url } from '../utils/url';
   </section>
 
   <!-- Mot de la fondatrice -->
-  <section class="section bg-white" aria-labelledby="fondatrice">
+  <section class="section tone-blanc" aria-labelledby="fondatrice">
     <div class="container-site">
       <div class="reveal mx-auto max-w-3xl">
         <SectionTitle number="03" eyebrow="Le mot de la fondatrice" title={site.founder} id="fondatrice" />
@@ -119,7 +119,7 @@ import { url } from '../utils/url';
     </div>
   </section>
 
-  <section class="section pt-0 bg-white">
+  <section class="section tone-blanc pt-0">
     <div class="container-site flex flex-wrap justify-center gap-3">
       <a href={url('/poles')} class="btn btn-green">Découvrir nos pôles <Icon name="arrow-right" size={18} /></a>
       <a href={url('/s-engager')} class="btn btn-outline">S’engager avec nous</a>
