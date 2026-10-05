@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import Icon from '../components/Icon.astro';
+import { getContent } from '../data';
+import { getLang, path } from '../i18n';
+import { useT } from '../i18n/ui';
+
+const lang = getLang(Astro.currentLocale);
+const tr = useT(lang);
+const { projects, site } = getContent(lang);
+
+const T = {
+  fr: {
+    title: 'Projets',
+    description: `Les projets de ${site.name}, à commencer par ÉCHOS : « Qui influence mes choix ? ».`,
+    headerTitle: 'Nos projets',
+    headerIntro: 'Chaque projet est une étape concrète vers notre mission. Voici où nous en sommes aujourd’hui.',
+    list: 'Liste des projets',
+    moreTitle: 'D’autres projets sont en préparation',
+    moreText: 'Vous avez une idée ou souhaitez porter un projet avec nous ? Parlons-en.',
+  },
+  en: {
+    title: 'Projects',
+    description: `The projects of ${site.name}, starting with ÉCHOS: “Who influences my choices?”.`,
+    headerTitle: 'Our projects',
+    headerIntro: 'Each project is a concrete step towards our mission. Here is where we stand today.',
+    list: 'Project list',
+    moreTitle: 'More projects are in the works',
+    moreText: 'Do you have an idea or would you like to lead a project with us? Let’s talk.',
+  },
+}[lang];
+---
+
+<BaseLayout title={T.title} description={T.description} page={{ key: 'projects' }}>
+  <PageHeader
+    tone="terre"
+    eyebrow={T.title}
+    title={T.headerTitle}
+    intro={T.headerIntro}
+  />
+
+  <section class="section tone-ivoire" aria-label={T.list}>
+    <div class="container-site">
+      <h2 class="sr-only">{T.list}</h2>
+      <ul class="space-y-8">
+        {projects.map((project) => <li><ProjectCard project={project} /></li>)}
+      </ul>
+
+      <div class="reveal mt-12 rounded-3xl border-2 border-dashed border-sand p-8 text-center sm:p-10">
+        <p class="font-display text-xl font-semibold text-primary-dark">{T.moreTitle}</p>
+        <p class="mx-auto mt-2 max-w-xl text-muted">{T.moreText}</p>
+        <a href={path('contact', lang)} class="btn btn-outline mt-6">{tr('cta.contact')} <Icon name="arrow-right" size={18} /></a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

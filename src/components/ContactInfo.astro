@@ -1,11 +1,16 @@
 ---
 import Icon from './Icon.astro';
-import { site } from '../data/site';
-import { t } from '../i18n/ui';
+import { getContent } from '../data';
+import { getLang } from '../i18n';
+import { useT } from '../i18n/ui';
+
+const lang = getLang(Astro.currentLocale);
+const t = useT(lang);
+const { site } = getContent(lang);
 
 const items = [
-  { icon: 'mail', label: 'E-mail', value: site.contact.email, href: `mailto:${site.contact.email}`, action: t('contact.email') },
-  { icon: 'phone', label: 'Téléphone', value: site.contact.phoneDisplay, href: site.contact.phoneHref, action: t('contact.call') },
+  { icon: 'mail', label: t('contact.emailLabel'), value: site.contact.email, href: `mailto:${site.contact.email}`, action: t('contact.email') },
+  { icon: 'phone', label: t('contact.phoneLabel'), value: site.contact.phoneDisplay, href: site.contact.phoneHref, action: t('contact.call') },
   { icon: 'whatsapp', label: 'WhatsApp', value: site.contact.phoneDisplay, href: site.contact.whatsappHref, action: t('contact.whatsapp'), external: true },
 ];
 ---

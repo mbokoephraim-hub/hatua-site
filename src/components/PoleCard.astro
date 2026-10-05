@@ -1,13 +1,15 @@
 ---
 import Icon from './Icon.astro';
 import type { Pole } from '../data/poles';
-import { url } from '../utils/url';
+import { getLang, path } from '../i18n';
+import { t } from '../i18n/ui';
 
 interface Props {
   pole: Pole;
   index: number;
 }
 const { pole, index } = Astro.props;
+const lang = getLang(Astro.currentLocale);
 const num = String(index + 1).padStart(2, '0');
 // Alternance des couleurs de la charte : baobab, miel, terre-rouge
 const tiles = [
@@ -18,7 +20,7 @@ const tiles = [
 ---
 
 <a
-  href={url(`/poles#${pole.id}`)}
+  href={path('poles', lang, pole.id)}
   class="card card-hover group reveal relative flex h-full flex-col overflow-hidden"
 >
   <span class="absolute top-4 right-5 font-display text-4xl font-bold text-sand transition-colors group-hover:text-secondary-50 before:content-[attr(data-num)]" data-num={num} aria-hidden="true"></span>
@@ -28,7 +30,7 @@ const tiles = [
   <h3 class="relative mt-5 text-xl font-semibold">{pole.title}</h3>
   <p class="relative mt-2 flex-1 leading-relaxed text-muted">{pole.summary}</p>
   <span class="relative mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-secondary">
-    Découvrir le pôle
+    {t('pole.discover', lang)}
     <Icon name="arrow-right" size={16} class="transition-transform group-hover:translate-x-1" />
   </span>
 </a>

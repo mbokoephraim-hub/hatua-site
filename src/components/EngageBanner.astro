@@ -1,12 +1,33 @@
 ---
 import Icon from './Icon.astro';
-import { url } from '../utils/url';
+import { getLang, path } from '../i18n';
 
-const items = [
-  { icon: 'user-plus', title: 'Devenir bénévole', text: 'Donnez de votre temps et de vos compétences.', href: '/s-engager#benevolat' },
-  { icon: 'handshake', title: 'Devenir partenaire', text: 'Écoles, entreprises, institutions : agissons ensemble.', href: '/s-engager#partenariats' },
-  { icon: 'gift', title: 'Faire un don', text: 'Soutenez nos projets et leur déploiement.', href: '/s-engager#don' },
-];
+const lang = getLang(Astro.currentLocale);
+const T = {
+  fr: {
+    eyebrow: 'Engagez-vous',
+    title: 'Votre pas peut changer le parcours d’un jeune.',
+    intro: 'Il existe plusieurs façons de rejoindre l’aventure. Choisissez celle qui vous ressemble.',
+    more: 'En savoir plus',
+    items: [
+      { icon: 'user-plus', title: 'Devenir bénévole', text: 'Donnez de votre temps et de vos compétences.', hash: 'benevolat' },
+      { icon: 'handshake', title: 'Devenir partenaire', text: 'Écoles, entreprises, institutions : agissons ensemble.', hash: 'partenariats' },
+      { icon: 'gift', title: 'Faire un don', text: 'Soutenez nos projets et leur déploiement.', hash: 'don' },
+    ],
+  },
+  en: {
+    eyebrow: 'Get involved',
+    title: 'Your step can change a young person’s path.',
+    intro: 'There are several ways to join us. Choose the one that suits you.',
+    more: 'Learn more',
+    items: [
+      { icon: 'user-plus', title: 'Become a volunteer', text: 'Give your time and your skills.', hash: 'benevolat' },
+      { icon: 'handshake', title: 'Become a partner', text: 'Schools, companies, institutions: let’s act together.', hash: 'partenariats' },
+      { icon: 'gift', title: 'Make a donation', text: 'Support our projects and their roll-out.', hash: 'don' },
+    ],
+  },
+}[lang];
+const items = T.items.map((i) => ({ ...i, href: path('engage', lang, i.hash) }));
 ---
 
 <section class="tone-baobab relative overflow-hidden" aria-labelledby="engagez-vous">
@@ -17,11 +38,11 @@ const items = [
     <div class="reveal max-w-2xl">
       <p class="eyebrow">
         <span class="step-line" aria-hidden="true"><span></span><span></span><span></span></span>
-        Engagez-vous
+        {T.eyebrow}
       </p>
-      <h2 id="engagez-vous" class="mt-4 text-3xl font-bold sm:text-4xl">Votre pas peut changer le parcours d’un jeune.</h2>
+      <h2 id="engagez-vous" class="mt-4 text-3xl font-bold sm:text-4xl">{T.title}</h2>
       <p class="mt-4 text-lg leading-relaxed text-muted">
-        Il existe plusieurs façons de rejoindre l’aventure. Choisissez celle qui vous ressemble.
+        {T.intro}
       </p>
     </div>
     <ul class="mt-12 grid gap-5 md:grid-cols-3">
@@ -29,7 +50,7 @@ const items = [
         items.map((item, i) => (
           <li class={`reveal reveal-delay-${i + 1}`}>
             <a
-              href={url(item.href)}
+              href={item.href}
               class="group flex h-full flex-col rounded-2xl border border-white/15 bg-white/[0.06] p-6 transition hover:-translate-y-1 hover:border-accent-soft/60 hover:bg-white/[0.1]"
             >
               <span class="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-accent text-primary-dark">
@@ -38,7 +59,7 @@ const items = [
               <h3 class="mt-5 text-xl font-semibold !text-white">{item.title}</h3>
               <p class="mt-2 flex-1 text-white/80">{item.text}</p>
               <span class="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-accent-soft">
-                En savoir plus <Icon name="arrow-right" size={16} class="transition-transform group-hover:translate-x-1" />
+                {T.more} <Icon name="arrow-right" size={16} class="transition-transform group-hover:translate-x-1" />
               </span>
             </a>
           </li>

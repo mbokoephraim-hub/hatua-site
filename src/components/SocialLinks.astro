@@ -1,18 +1,21 @@
 ---
 import Icon from './Icon.astro';
 import { site, socialLinks } from '../data/site';
+import { getLang } from '../i18n';
+import { t } from '../i18n/ui';
 
 interface Props {
   variant?: 'light' | 'dark';
   withContact?: boolean;
 }
 const { variant = 'dark', withContact = true } = Astro.props;
+const lang = getLang(Astro.currentLocale);
 
 const links = [
   ...(withContact
     ? [
         { id: 'whatsapp', label: 'WhatsApp', href: site.contact.whatsappHref },
-        { id: 'mail', label: 'E-mail', href: `mailto:${site.contact.email}` },
+        { id: 'mail', label: t('contact.emailLabel', lang), href: `mailto:${site.contact.email}` },
       ]
     : []),
   ...socialLinks,

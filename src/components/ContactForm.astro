@@ -5,20 +5,17 @@
  */
 import Icon from './Icon.astro';
 import { site } from '../data/site';
+import { getLang } from '../i18n';
+import { useT } from '../i18n/ui';
+
+const lang = getLang(Astro.currentLocale);
+const tr = useT(lang);
 
 const { formspreeId } = site.form;
 const configured = Boolean(formspreeId);
 const action = configured ? `https://formspree.io/f/${formspreeId}` : undefined;
 
-const subjects = [
-  'Demande d’information',
-  'Bénévolat',
-  'Partenariat',
-  'Soutien / don',
-  'Projet ÉCHOS',
-  'Presse / média',
-  'Autre',
-];
+const subjects = tr('contactForm.subjects').split('|');
 
 const field =
   'mt-2 block w-full rounded-xl border border-sand bg-white px-4 py-3 text-ink shadow-sm transition placeholder:text-muted/70 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none';
@@ -29,14 +26,16 @@ const field =
   method="POST"
   action={action}
   data-contact-form
+  data-msg-success={tr('contactForm.success')}
+  data-msg-error={tr('form.error', { email: site.contact.email })}
   class="card !p-6 sm:!p-8"
   novalidate
 >
-  <input type="hidden" name="_subject" value="Nouveau message depuis le site Hatua Foundation" />
+  <input type="hidden" name="_subject" value={tr('contactForm.mailSubject')} />
 
   <!-- Champ piège anti-spam : invisible pour les humains -->
   <p class="hidden" aria-hidden="true">
-    <label>Ne pas remplir : <input name="_gotcha" tabindex="-1" autocomplete="off" /></label>
+    <label>{tr('form.honeypot')} <input name="_gotcha" tabindex="-1" autocomplete="off" /></label>
   </p>
 
   {
@@ -50,33 +49,33 @@ const field =
 
   <div class="grid gap-5 sm:grid-cols-2">
     <div>
-      <label for="cf-name" class="font-medium">Nom <span class="text-secondary" aria-hidden="true">*</span></label>
+      <label for="cf-name" class="font-medium">{tr('contactForm.name')} <span class="text-secondary" aria-hidden="true">*</span></label>
       <input id="cf-name" name="nom" type="text" autocomplete="name" required class={field} />
     </div>
     <div>
-      <label for="cf-email" class="font-medium">E-mail <span class="text-secondary" aria-hidden="true">*</span></label>
+      <label for="cf-email" class="font-medium">{tr('contactForm.email')} <span class="text-secondary" aria-hidden="true">*</span></label>
       <input id="cf-email" name="email" type="email" autocomplete="email" required class={field} />
     </div>
   </div>
 
   <div class="mt-5">
-    <label for="cf-subject" class="font-medium">Objet <span class="text-secondary" aria-hidden="true">*</span></label>
+    <label for="cf-subject" class="font-medium">{tr('contactForm.subject')} <span class="text-secondary" aria-hidden="true">*</span></label>
     <select id="cf-subject" name="objet" required class={field}>
-      <option value="">Choisissez un objet</option>
+      <option value="">{tr('contactForm.chooseSubject')}</option>
       {subjects.map((s) => <option value={s}>{s}</option>)}
     </select>
   </div>
 
   <div class="mt-5">
-    <label for="cf-message" class="font-medium">Message <span class="text-secondary" aria-hidden="true">*</span></label>
+    <label for="cf-message" class="font-medium">{tr('contactForm.message')} <span class="text-secondary" aria-hidden="true">*</span></label>
     <textarea id="cf-message" name="message" rows="6" required class={field}></textarea>
   </div>
 
-  <p class="mt-4 text-sm text-muted"><span class="text-secondary" aria-hidden="true">*</span> Champs obligatoires</p>
+  <p class="mt-4 text-sm text-muted"><span class="text-secondary" aria-hidden="true">*</span> {tr('form.required')}</p>
 
   <div class="mt-6 flex flex-wrap items-center gap-4">
     <button type="submit" class="btn btn-primary disabled:cursor-not-allowed disabled:opacity-60" disabled={!configured}>
-      Envoyer le message <Icon name="send" size={18} />
+      {tr('contactForm.send')} <Icon name="send" size={18} />
     </button>
   </div>
 
@@ -112,9 +111,9 @@ const field =
       });
       if (!res.ok) throw new Error(String(res.status));
       form.reset();
-      show('Merci ! Votre message a bien été envoyé. Nous vous répondrons dès que possible.', true);
+      show(form.dataset.msgSuccess ?? '', true);
     } catch {
-      show('Désolé, l’envoi a échoué. Réessayez plus tard ou écrivez-nous directement par e-mail.', false);
+      show(form.dataset.msgError ?? '', false);
     } finally {
       if (button) button.disabled = false;
     }

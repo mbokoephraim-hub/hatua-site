@@ -1,10 +1,8 @@
 /**
- * Libellés de l'interface (boutons, aides à l'accessibilité…).
- * Pour ajouter l'anglais : dupliquez le bloc `fr` en `en`, traduisez-le,
- * puis ajoutez 'en' dans `i18n.locales` (astro.config.mjs).
+ * Libellés de l'interface (menus, boutons, formulaires…) en français et en anglais.
+ * Les contenus (textes des pages) sont dans src/data (français) et src/data/en (anglais).
  */
-export const languages = { fr: 'Français' } as const;
-export const defaultLang = 'fr';
+import type { Lang } from './index';
 
 export const ui = {
   fr: {
@@ -12,24 +10,112 @@ export const ui = {
     'nav.label': 'Navigation principale',
     'nav.open': 'Ouvrir le menu',
     'nav.close': 'Fermer le menu',
+    'nav.home': 'Accueil',
+    'nav.about': 'À propos',
+    'nav.poles': 'Nos pôles',
+    'nav.projects': 'Projets',
+    'nav.engage': 'S’engager',
+    'nav.contact': 'Contact',
+    'lang.switch': 'English version',
+    'lang.label': 'Choix de la langue',
+    'home.aria': 'retour à l’accueil',
     'cta.discover': 'Découvrir nos actions',
     'cta.support': 'Nous soutenir',
-    'cta.contactSupport': 'Nous contacter pour soutenir',
     'cta.learnMore': 'En savoir plus',
     'cta.contact': 'Nous contacter',
     'footer.quickLinks': 'Liens rapides',
     'footer.contact': 'Coordonnées',
     'footer.follow': 'Suivez-nous',
     'footer.rights': 'Tous droits réservés.',
-    'contact.whatsapp': 'Écrire sur WhatsApp',
-    'contact.call': 'Appeler',
     'contact.email': 'Envoyer un e-mail',
+    'contact.call': 'Appeler',
+    'contact.whatsapp': 'Écrire sur WhatsApp',
+    'contact.emailLabel': 'E-mail',
+    'contact.phoneLabel': 'Téléphone',
+    'pole.discover': 'Découvrir le pôle',
+    'project.discover': 'Découvrir le projet',
+    'form.required': 'Champs obligatoires',
+    'form.choose': 'Choisissez…',
+    'form.groupError': 'Veuillez cocher au moins une option.',
+    'form.honeypot': 'Ne pas remplir :',
+    'form.open': 'Remplir le formulaire',
+    'form.close': 'Masquer le formulaire',
+    'form.consent': 'J’accepte que Hatua Foundation utilise ces informations pour me recontacter au sujet de ma demande.',
+    'form.fileTooBig': 'Le fichier « {name} » dépasse {max} Mo. Choisissez un fichier plus léger.',
+    'form.fileNotSent': 'Votre fichier n’a toutefois pas pu être transmis : merci de l’envoyer à {email}.',
+    'form.fileNotSentField': 'Non transmise (fichier refusé par le service d’envoi) : demander le document par e-mail',
+    'form.error': 'Désolé, l’envoi a échoué. Réessayez plus tard ou écrivez-nous à {email}.',
+    'form.newTab': '(s’ouvre dans un nouvel onglet)',
+    'contactForm.name': 'Nom',
+    'contactForm.email': 'E-mail',
+    'contactForm.subject': 'Objet',
+    'contactForm.chooseSubject': 'Choisissez un objet',
+    'contactForm.message': 'Message',
+    'contactForm.send': 'Envoyer le message',
+    'contactForm.mailSubject': 'Nouveau message depuis le site Hatua Foundation',
+    'contactForm.success': 'Merci ! Votre message a bien été envoyé. Nous vous répondrons dès que possible.',
+    'contactForm.subjects': 'Demande d’information|Bénévolat|Partenariat|Soutien / don|Projet ÉCHOS|Presse / média|Autre',
+  },
+  en: {
+    'skip.link': 'Skip to main content',
+    'nav.label': 'Main navigation',
+    'nav.open': 'Open menu',
+    'nav.close': 'Close menu',
+    'nav.home': 'Home',
+    'nav.about': 'About',
+    'nav.poles': 'Focus areas',
+    'nav.projects': 'Projects',
+    'nav.engage': 'Get involved',
+    'nav.contact': 'Contact',
+    'lang.switch': 'Version française',
+    'lang.label': 'Language',
+    'home.aria': 'back to home page',
+    'cta.discover': 'Discover our work',
+    'cta.support': 'Support us',
+    'cta.learnMore': 'Learn more',
+    'cta.contact': 'Contact us',
+    'footer.quickLinks': 'Quick links',
+    'footer.contact': 'Contact details',
+    'footer.follow': 'Follow us',
+    'footer.rights': 'All rights reserved.',
+    'contact.email': 'Send an email',
+    'contact.call': 'Call',
+    'contact.whatsapp': 'Message us on WhatsApp',
+    'contact.emailLabel': 'Email',
+    'contact.phoneLabel': 'Phone',
+    'pole.discover': 'Explore this area',
+    'project.discover': 'Discover the project',
+    'form.required': 'Required fields',
+    'form.choose': 'Select…',
+    'form.groupError': 'Please tick at least one option.',
+    'form.honeypot': 'Do not fill in:',
+    'form.open': 'Fill in the form',
+    'form.close': 'Hide the form',
+    'form.consent': 'I agree that Hatua Foundation may use this information to contact me about my request.',
+    'form.fileTooBig': 'The file “{name}” is larger than {max} MB. Please choose a smaller file.',
+    'form.fileNotSent': 'However, your file could not be sent: please email it to {email}.',
+    'form.fileNotSentField': 'Not sent (file rejected by the sending service): ask for the document by email',
+    'form.error': 'Sorry, sending failed. Please try again later or email us at {email}.',
+    'form.newTab': '(opens in a new tab)',
+    'contactForm.name': 'Name',
+    'contactForm.email': 'Email',
+    'contactForm.subject': 'Subject',
+    'contactForm.chooseSubject': 'Select a subject',
+    'contactForm.message': 'Message',
+    'contactForm.send': 'Send message',
+    'contactForm.mailSubject': '[EN] New message from the Hatua Foundation website',
+    'contactForm.success': 'Thank you! Your message has been sent. We will get back to you as soon as possible.',
+    'contactForm.subjects': 'Information request|Volunteering|Partnership|Support / donation|ÉCHOS project|Press / media|Other',
   },
 } as const;
 
-export type Lang = keyof typeof ui;
-export type UiKey = keyof (typeof ui)[typeof defaultLang];
+export type UiKey = keyof (typeof ui)['fr'];
 
-export function t(key: UiKey, lang: Lang = defaultLang): string {
-  return ui[lang][key] ?? ui[defaultLang][key];
+export function t(key: UiKey, lang: Lang = 'fr', vars: Record<string, string | number> = {}): string {
+  let s: string = ui[lang][key] ?? ui.fr[key];
+  for (const [k, v] of Object.entries(vars)) s = s.replace(`{${k}}`, String(v));
+  return s;
 }
+
+/** Raccourci : const tr = useT(lang); tr('nav.home') */
+export const useT = (lang: Lang) => (key: UiKey, vars?: Record<string, string | number>) => t(key, lang, vars);

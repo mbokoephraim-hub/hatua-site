@@ -1,0 +1,60 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import ContactForm from '../components/ContactForm.astro';
+import ContactInfo from '../components/ContactInfo.astro';
+import SocialLinks from '../components/SocialLinks.astro';
+import { getContent, socialLinks } from '../data';
+import { getLang } from '../i18n';
+
+const lang = getLang(Astro.currentLocale);
+const { site } = getContent(lang);
+const T = {
+  fr: {
+    description: `Contactez ${site.name} par e-mail, téléphone ou WhatsApp.`,
+    headerTitle: 'Écrivons la suite ensemble',
+    headerIntro: 'Une question, une proposition de partenariat, une envie de vous engager ? Écrivez-nous, nous vous répondrons dès que possible.',
+    send: 'Envoyer un message',
+    details: 'Nos coordonnées',
+    social: 'Réseaux sociaux',
+  },
+  en: {
+    description: `Contact ${site.name} by email, phone or WhatsApp.`,
+    headerTitle: 'Let’s write what comes next together',
+    headerIntro: 'A question, a partnership proposal, a wish to get involved? Write to us and we will reply as soon as possible.',
+    send: 'Send a message',
+    details: 'Our contact details',
+    social: 'Social media',
+  },
+}[lang];
+---
+
+<BaseLayout title="Contact" description={T.description} page={{ key: 'contact' }}>
+  <PageHeader
+    tone="baobab"
+    eyebrow="Contact"
+    title={T.headerTitle}
+    intro={T.headerIntro}
+  />
+
+  <section class="section tone-ivoire">
+    <div class="container-site grid gap-10 lg:grid-cols-[1.4fr_1fr] lg:gap-14">
+      <div class="reveal">
+        <h2 class="text-2xl font-bold">{T.send}</h2>
+        <div class="mt-6"><ContactForm /></div>
+      </div>
+      <aside class="reveal reveal-delay-1" aria-labelledby="coordonnees">
+        <h2 id="coordonnees" class="text-2xl font-bold">{T.details}</h2>
+        <div class="mt-6"><ContactInfo /></div>
+        {
+          socialLinks.length > 0 && (
+            <div class="mt-8">
+              <h3 class="font-display font-semibold text-primary-dark">{T.social}</h3>
+              <div class="mt-3"><SocialLinks withContact={false} /></div>
+            </div>
+          )
+        }
+      </aside>
+    </div>
+  </section>
+</BaseLayout>

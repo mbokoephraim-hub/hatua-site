@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Icon from '../components/Icon.astro';
-import { url } from '../utils/url';
+import { path } from '../i18n';
 ---
 
 <BaseLayout title="Page introuvable" noindex>
@@ -19,8 +19,17 @@ import { url } from '../utils/url';
         La page que vous cherchez n’existe pas ou a été déplacée. Pas d’inquiétude : on reprend le chemin ensemble.
       </p>
       <div class="mt-8 flex flex-wrap justify-center gap-3">
-        <a href={url('/')} class="btn btn-green"><Icon name="arrow-left" size={18} /> Retour à l’accueil</a>
-        <a href={url('/contact')} class="btn btn-outline">Nous contacter</a>
+        <a href={path('home', 'fr')} class="btn btn-green"><Icon name="arrow-left" size={18} /> Retour à l’accueil</a>
+        <a href={path('contact', 'fr')} class="btn btn-outline">Nous contacter</a>
+      </div>
+
+      <!-- Version anglaise : une seule page 404 sert tout le site -->
+      <div lang="en" class="mt-12 border-t border-sand pt-8">
+        <p class="font-display text-lg font-semibold text-secondary">This step leads nowhere…</p>
+        <p class="mt-2 text-muted">The page you are looking for does not exist or has been moved.</p>
+        <a href={path('home', 'en')} class="mt-4 inline-flex items-center gap-1.5 font-semibold text-link hover:underline">
+          <Icon name="arrow-left" size={16} /> Back to the English home page
+        </a>
       </div>
     </div>
   </section>

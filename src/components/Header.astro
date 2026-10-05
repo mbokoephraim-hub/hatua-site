@@ -1,35 +1,49 @@
 ---
 import Icon from './Icon.astro';
+import LangSwitch from './LangSwitch.astro';
 import { mainNav } from '../data/navigation';
 import { site } from '../data/site';
-import { t } from '../i18n/ui';
-import { url, isActive } from '../utils/url';
+import { getLang, path as routePath, type PageRef } from '../i18n';
+import { useT } from '../i18n/ui';
+import { url } from '../utils/url';
 
-const path = Astro.url.pathname;
+interface Props {
+  page: PageRef;
+}
+const { page } = Astro.props;
+const lang = getLang(Astro.currentLocale);
+const tr = useT(lang);
+const current = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isActive = (href: string, isHome: boolean) => {
+  const target = href.replace(/\/$/, '') || '/';
+  return isHome ? current === target : current === target || current.startsWith(`${target}/`);
+};
+const nav = mainNav.map((item) => ({ ...item, href: routePath(item.key, lang), isHome: item.key === 'home' }));
+const supportHref = routePath('engage', lang, 'don');
 ---
 
 <header class="sticky top-0 z-50 border-b border-sand/80 bg-cream/90 backdrop-blur supports-[backdrop-filter]:bg-cream/80">
   <div class="container-site flex h-[4.5rem] items-center justify-between gap-6">
-    <a href={url('/')} class="shrink-0" aria-label={`${site.name}, retour à l’accueil`}>
+    <a href={routePath('home', lang)} class="shrink-0" aria-label={`${site.name}, ${tr('home.aria')}`}>
       <img src={url('/logo.png')} alt="" width="538" height="128" class="h-11 w-auto sm:h-12" />
     </a>
 
-    <nav aria-label={t('nav.label')} class="hidden lg:block">
+    <nav aria-label={tr('nav.label')} class="hidden lg:block">
       <ul class="flex items-center gap-1">
         {
-          mainNav.slice(1).map((item) => {
-            const active = isActive(path, item.href);
+          nav.slice(1).map((item) => {
+            const active = isActive(item.href, item.isHome);
             return (
               <li>
                 <a
-                  href={url(item.href)}
+                  href={item.href}
                   aria-current={active ? 'page' : undefined}
                   class:list={[
                     'relative rounded-full px-3.5 py-2 text-[0.95rem] font-medium transition-colors hover:text-primary',
                     active ? 'text-primary' : 'text-ink/80',
                   ]}
                 >
-                  {item.label}
+                  {tr(item.label)}
                   {active && <span class="absolute inset-x-3.5 -bottom-0.5 h-0.5 rounded-full bg-secondary" />}
                 </a>
               </li>
@@ -40,7 +54,8 @@ const path = Astro.url.pathname;
     </nav>
 
     <div class="flex items-center gap-2">
-      <a href={url('/s-engager#don')} class="btn btn-primary hidden !px-5 !py-2.5 sm:inline-flex">{t('cta.support')}</a>
+      <LangSwitch lang={lang} page={page} class="hidden sm:block" />
+      <a href={supportHref} class="btn btn-primary hidden !px-5 !py-2.5 sm:inline-flex">{tr('cta.support')}</a>
       <button
         type="button"
         class="inline-flex h-11 w-11 items-center justify-center rounded-full text-primary hover:bg-primary-50 lg:hidden"
@@ -48,29 +63,29 @@ const path = Astro.url.pathname;
         aria-expanded="false"
         data-menu-toggle
       >
-        <span class="sr-only" data-menu-label>{t('nav.open')}</span>
+        <span class="sr-only" data-menu-label data-open={tr('nav.open')} data-close={tr('nav.close')}>{tr('nav.open')}</span>
         <Icon name="menu" class="icon-open" />
         <Icon name="x" class="icon-close hidden" />
       </button>
     </div>
   </div>
 
-  <nav id="menu-mobile" aria-label={t('nav.label')} class="hidden border-t border-sand bg-cream lg:hidden" data-menu>
+  <nav id="menu-mobile" aria-label={tr('nav.label')} class="hidden border-t border-sand bg-cream lg:hidden" data-menu>
     <ul class="container-site flex flex-col py-3">
       {
-        mainNav.map((item) => {
-          const active = isActive(path, item.href);
+        nav.map((item) => {
+          const active = isActive(item.href, item.isHome);
           return (
             <li>
               <a
-                href={url(item.href)}
+                href={item.href}
                 aria-current={active ? 'page' : undefined}
                 class:list={[
                   'flex items-center justify-between rounded-xl px-3 py-3.5 font-display text-lg font-medium',
                   active ? 'bg-primary-50 text-primary' : 'text-ink hover:bg-sand/60',
                 ]}
               >
-                {item.label}
+                {tr(item.label)}
                 <Icon name="arrow-right" size={18} class="opacity-50" />
               </a>
             </li>
@@ -78,14 +93,17 @@ const path = Astro.url.pathname;
         })
       }
       <li class="mt-3 px-3 pb-2">
-        <a href={url('/s-engager#don')} class="btn btn-primary w-full">{t('cta.support')}</a>
+        <a href={supportHref} class="btn btn-primary w-full">{tr('cta.support')}</a>
+      </li>
+      <li class="flex items-center justify-between px-3 pt-2 pb-3 sm:hidden">
+        <span class="text-sm font-medium text-muted">{tr('lang.label')}</span>
+        <LangSwitch lang={lang} page={page} />
       </li>
     </ul>
   </nav>
 </header>
 
 <script>
-  import { t } from '../i18n/ui';
   const btn = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
   const menu = document.querySelector<HTMLElement>('[data-menu]');
   const label = document.querySelector<HTMLElement>('[data-menu-label]');
@@ -95,7 +113,7 @@ const path = Astro.url.pathname;
       menu.classList.toggle('hidden', !open);
       btn.querySelector('.icon-open')?.classList.toggle('hidden', open);
       btn.querySelector('.icon-close')?.classList.toggle('hidden', !open);
-      if (label) label.textContent = open ? t('nav.close') : t('nav.open');
+      if (label) label.textContent = (open ? label.dataset.close : label.dataset.open) ?? '';
     };
     btn.addEventListener('click', () => setOpen(btn.getAttribute('aria-expanded') !== 'true'));
     document.addEventListener('keydown', (e) => {

@@ -1,0 +1,172 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import SectionTitle from '../components/SectionTitle.astro';
+import Icon from '../components/Icon.astro';
+import { getContent } from '../data';
+import { getLang, path, quote } from '../i18n';
+import { url } from '../utils/url';
+
+const lang = getLang(Astro.currentLocale);
+const { site, values, images } = getContent(lang);
+
+const T = {
+  fr: {
+    title: 'À propos',
+    description: `Découvrez ${site.name} : le sens de son nom, sa mission, sa vision et ses valeurs.`,
+    headerTitle: 'Avancer, un pas après l’autre',
+    headerIntro: `${site.name} est une ${site.status.toLowerCase()} basée à ${site.location.city}, fondée par ${site.founder}.`,
+    nameEyebrow: 'Notre nom',
+    nameTitle: 'Hatua : le pas, l’étape',
+    name1a: `En ${site.nameMeaning.language},`,
+    name1b: `veut dire ${quote(site.nameMeaning.meaning, lang)}. Ce mot résume notre manière de voir le changement : il ne se décrète pas, il se construit.`,
+    name2: 'Un jeune qui ose poser une question, une femme qui suit sa première formation, une communauté qui se réunit pour chercher des solutions : chacun de ces pas compte. Notre rôle est de les rendre possibles.',
+    history: 'Notre histoire',
+    caption: `${site.founder}, fondatrice de ${site.name}`,
+    mission: 'Notre mission',
+    vision: 'Notre vision',
+    valuesEyebrow: 'Nos valeurs',
+    valuesTitle: 'Ce qui guide chacun de nos pas',
+    valuesIntro: 'Cinq repères pour agir avec justesse, aux côtés des jeunes et des communautés.',
+    founderEyebrow: 'Le mot de la fondatrice',
+    founderRole: `Fondatrice de ${site.name}`,
+    ctaPoles: 'Découvrir nos pôles',
+    ctaEngage: 'S’engager avec nous',
+  },
+  en: {
+    title: 'About',
+    description: `Discover ${site.name}: the meaning of its name, its mission, its vision and its values.`,
+    headerTitle: 'Moving forward, one step at a time',
+    headerIntro: `${site.name} is a ${site.status.toLowerCase()} based in ${site.location.city}, founded by ${site.founder}.`,
+    nameEyebrow: 'Our name',
+    nameTitle: 'Hatua: the step',
+    name1a: `In ${site.nameMeaning.language},`,
+    name1b: `means ${quote(site.nameMeaning.meaning, lang)}. This word sums up how we see change: it cannot be decreed, it has to be built.`,
+    name2: 'A young person who dares to ask a question, a woman attending her first training, a community coming together to find solutions: each of these steps counts. Our role is to make them possible.',
+    history: 'Our story',
+    caption: `${site.founder}, founder of ${site.name}`,
+    mission: 'Our mission',
+    vision: 'Our vision',
+    valuesEyebrow: 'Our values',
+    valuesTitle: 'What guides each of our steps',
+    valuesIntro: 'Five guiding principles for acting rightly, alongside young people and communities.',
+    founderEyebrow: 'A word from the founder',
+    founderRole: `Founder of ${site.name}`,
+    ctaPoles: 'Explore our focus areas',
+    ctaEngage: 'Get involved with us',
+  },
+}[lang];
+---
+
+<BaseLayout title={T.title} description={T.description} page={{ key: 'about' }}>
+  <PageHeader eyebrow={T.title} title={T.headerTitle} intro={T.headerIntro} />
+
+  <!-- Histoire et sens du nom -->
+  <section class="section tone-ivoire" aria-labelledby="histoire">
+    <div class="container-site grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+      <div>
+        <SectionTitle number="01" eyebrow={T.nameEyebrow} title={T.nameTitle} id="histoire" />
+        <div class="reveal prose-hatua mt-6 text-lg leading-relaxed text-ink">
+          <p>
+            {T.name1a} <strong class="text-primary">{site.nameMeaning.word.toLowerCase()}</strong> {T.name1b}
+          </p>
+          <p>{T.name2}</p>
+        </div>
+        <div class="reveal mt-10 border-l-2 border-secondary pl-6">
+          <h3 class="text-xl font-semibold">{T.history}</h3>
+          <div class="prose-hatua mt-4 leading-relaxed">
+            {
+              site.history.map((p, i) => (
+                <p class:list={[i === site.history.length - 1 && 'font-display text-lg font-semibold text-secondary']}>{p}</p>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+      <figure class="reveal mx-auto w-full max-w-md lg:max-w-none">
+        <img
+          src={url(images.about.src)}
+          srcset={`${url(images.about.srcSmall)} 640w, ${url(images.about.src)} 1200w`}
+          sizes="(min-width: 1024px) 40vw, (min-width: 448px) 448px, 100vw"
+          alt={images.about.alt}
+          width={images.about.width}
+          height={images.about.height}
+          loading="lazy"
+          class="aspect-[4/5] w-full rounded-3xl object-cover object-top shadow-lg"
+        />
+        <figcaption class="mt-3 text-center text-sm text-muted">{T.caption}</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- Mission & vision -->
+  <section class="section tone-blanc" aria-labelledby="mission">
+    <div class="container-site grid gap-6 lg:grid-cols-2">
+      <article class="tone-baobab reveal relative overflow-hidden rounded-3xl p-8 sm:p-10">
+        <span class="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-accent text-primary-dark"><Icon name="target" /></span>
+        <h2 id="mission" class="mt-6 text-3xl font-bold">{T.mission}</h2>
+        <p class="mt-4 text-lg leading-relaxed">{site.mission}</p>
+      </article>
+      <article class="tone-miel reveal reveal-delay-1 relative overflow-hidden rounded-3xl p-8 sm:p-10">
+        <span class="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-secondary text-accent"><Icon name="compass" /></span>
+        <h2 class="mt-6 text-3xl font-bold">{T.vision}</h2>
+        <div class="prose-hatua mt-4 text-lg leading-relaxed">
+          {site.vision.map((p) => <p>{p}</p>)}
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Valeurs -->
+  <section class="section tone-baobab" aria-labelledby="valeurs">
+    <div class="container-site">
+      <SectionTitle
+        number="02"
+        eyebrow={T.valuesEyebrow}
+        title={T.valuesTitle}
+        intro={T.valuesIntro}
+        id="valeurs"
+      />
+      <ol class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+        {
+          values.map((v, i) => (
+            <li class={`card reveal reveal-delay-${(i % 3) + 1} relative`}>
+              <span class="font-display text-sm font-bold text-secondary">{String(i + 1).padStart(2, '0')}</span>
+              <h3 class="mt-2 text-xl font-semibold">{v.title}</h3>
+              <p class="mt-2 leading-relaxed text-muted">{v.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- Mot de la fondatrice -->
+  <section class="section tone-blanc" aria-labelledby="fondatrice">
+    <div class="container-site">
+      <div class="reveal mx-auto max-w-3xl">
+        <SectionTitle number="03" eyebrow={T.founderEyebrow} title={site.founder} id="fondatrice" />
+        <figure class="relative mt-8 overflow-hidden rounded-3xl bg-cream p-8 ring-1 ring-sand sm:p-12">
+          <span class="pointer-events-none absolute top-4 left-6 font-display text-[6rem] leading-[0.8] text-accent select-none" aria-hidden="true">“</span>
+          <blockquote class="relative mt-10 space-y-5 font-display text-lg leading-relaxed text-ink sm:text-xl">
+            {site.founderMessage.map((p, i) => <p class:list={[i === site.founderMessage.length - 1 && 'font-semibold text-secondary']}>{p}</p>)}
+          </blockquote>
+          <figcaption class="relative mt-8 flex items-center gap-4">
+            <img src={url(images.founderAvatar)} alt="" width="96" height="96" loading="lazy" class="h-14 w-14 rounded-full object-cover ring-2 ring-accent" />
+            <span>
+              <span class="block font-display font-semibold text-secondary">{site.founder}</span>
+              <span class="block text-sm text-muted">{T.founderRole}</span>
+            </span>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section tone-blanc pt-0">
+    <div class="container-site flex flex-wrap justify-center gap-3">
+      <a href={path('poles', lang)} class="btn btn-green">{T.ctaPoles} <Icon name="arrow-right" size={18} /></a>
+      <a href={path('engage', lang)} class="btn btn-outline">{T.ctaEngage}</a>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,11 +1,14 @@
-/** Menu principal et liens rapides du pied de page. */
-export const mainNav = [
-  { label: 'Accueil', href: '/' },
-  { label: 'À propos', href: '/a-propos' },
-  { label: 'Nos pôles', href: '/poles' },
-  { label: 'Projets', href: '/projets' },
-  { label: 'S’engager', href: '/s-engager' },
-  { label: 'Contact', href: '/contact' },
+/** Pages du menu principal et du pied de page (les libellés sont dans src/i18n/ui.ts, les adresses dans src/i18n/index.ts). */
+import type { RouteKey } from '../i18n';
+import type { UiKey } from '../i18n/ui';
+
+export const mainNav: { key: RouteKey; label: UiKey }[] = [
+  { key: 'home', label: 'nav.home' },
+  { key: 'about', label: 'nav.about' },
+  { key: 'poles', label: 'nav.poles' },
+  { key: 'projects', label: 'nav.projects' },
+  { key: 'engage', label: 'nav.engage' },
+  { key: 'contact', label: 'nav.contact' },
 ];
 
 export const footerNav = mainNav;

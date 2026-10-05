@@ -50,11 +50,12 @@ hatua-site/
     │   ├── projects.ts       # projets (ÉCHOS…)
     │   ├── engage.ts         # page « S'engager »
     │   └── images.ts         # chemins et textes alternatifs des photos
-    ├── i18n/ui.ts            # libellés d'interface (boutons…), prêt pour l'anglais
+    ├── i18n/                 # langues : adresses FR/EN (index.ts) et libellés d'interface (ui.ts)
+    ├── views/                # mise en page de chaque page, commune au français et à l'anglais
     ├── styles/global.css     # ← COULEURS ET POLICES
     ├── layouts/BaseLayout.astro   # <head>, SEO, en-tête, pied de page
     ├── components/           # blocs réutilisables (Header, Footer, cartes, frise…)
-    └── pages/                # une page = un fichier (index, a-propos, poles, projets/…)
+    └── pages/                # adresses françaises ; pages/en/ = adresses anglaises
 ```
 
 ---
@@ -120,10 +121,24 @@ Voir **`public/images/README.md`**.
 ### Ajouter une page
 Créez un fichier dans `src/pages/` (ex. `actualites.astro`, en copiant une page existante), ajoutez-le au menu dans `src/data/navigation.ts` et à la liste `staticPages` de `src/pages/sitemap.xml.ts`.
 
-### Ajouter l'anglais (plus tard)
-1. Dans `astro.config.mjs`, ajoutez `'en'` à `i18n.locales`.
-2. Dans `src/i18n/ui.ts`, dupliquez le bloc `fr` en `en` et traduisez-le.
-3. Créez des versions anglaises des données (ex. `src/data/en/…`) et les pages dans `src/pages/en/`.
+### Site bilingue (français / anglais)
+Le site existe en **français** (à la racine : `/a-propos/`…) et en **anglais** (sous `/en/` : `/en/about/`…).
+Un sélecteur **FR | EN** dans l'en-tête (et en bas du menu mobile) mène à la **même page** dans l'autre langue.
+
+| Quoi modifier | Français | Anglais |
+|---|---|---|
+| Textes généraux, mission, histoire, mot de la fondatrice | `src/data/site.ts` | `src/data/en/site.ts` |
+| Pôles, valeurs, projets, page S'engager | `src/data/poles.ts`, `values.ts`, `projects.ts`, `engage.ts` | mêmes noms dans `src/data/en/` |
+| Formulaires S'engager | `src/data/forms.ts` | `src/data/en/forms.ts` (objets d'e-mail préfixés « [EN] ») |
+| Page de la fondatrice | `src/data/fondatrice.ts` | `src/data/en/fondatrice.ts` |
+| Menus, boutons, messages des formulaires | `src/i18n/ui.ts` (bloc `fr`) | `src/i18n/ui.ts` (bloc `en`) |
+| Titres et phrases propres à une page | objet `T` en haut du fichier de la page dans `src/views/` (blocs `fr` et `en`) | idem |
+| Adresses des pages dans chaque langue | `src/i18n/index.ts` (`routes`) | idem |
+
+La mise en page de chaque page n'existe qu'**une seule fois** (`src/views/`) : une modification de design s'applique aux deux langues.
+Les fichiers de `src/pages/` (français) et `src/pages/en/` (anglais) se contentent d'appeler ces vues.
+
+**Référencement** : chaque page indique à Google sa version dans l'autre langue (balises `hreflang`), et le sitemap liste les deux versions.
 
 ---
 

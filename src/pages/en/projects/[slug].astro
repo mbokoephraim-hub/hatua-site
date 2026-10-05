@@ -1,7 +1,7 @@
 ---
 import type { GetStaticPaths } from 'astro';
-import Project from '../../views/Project.astro';
-import { projects } from '../../data/projects';
+import Project from '../../../views/Project.astro';
+import { projects } from '../../../data/en/projects';
 
 export const getStaticPaths = (() => projects.map((p) => ({ params: { slug: p.slug } }))) satisfies GetStaticPaths;
 ---

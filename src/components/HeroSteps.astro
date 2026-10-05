@@ -1,6 +1,8 @@
 ---
 /** Visuel du hero : les quatre verbes de la mission, en marches qui montent. */
-import { site } from '../data/site';
+import { getContent } from '../data';
+import { getLang } from '../i18n';
+const { site } = getContent(getLang(Astro.currentLocale));
 const heights = ['h-[38%]', 'h-[56%]', 'h-[74%]', 'h-[92%]'];
 const tones = [
   'bg-primary-50 text-primary-dark',

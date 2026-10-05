@@ -2,9 +2,14 @@
 import Icon from './Icon.astro';
 import SocialLinks from './SocialLinks.astro';
 import { footerNav } from '../data/navigation';
-import { site } from '../data/site';
-import { t } from '../i18n/ui';
+import { getContent } from '../data';
+import { getLang, path as routePath } from '../i18n';
+import { useT } from '../i18n/ui';
 import { url } from '../utils/url';
+
+const lang = getLang(Astro.currentLocale);
+const tr = useT(lang);
+const { site } = getContent(lang);
 ---
 
 <footer class="relative overflow-hidden bg-primary-dark text-white/85">
@@ -15,7 +20,7 @@ import { url } from '../utils/url';
 
   <div class="container-site relative grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1.2fr]">
     <div class="max-w-sm">
-      <a href={url('/')} aria-label={`${site.name}, accueil`}>
+      <a href={routePath('home', lang)} aria-label={`${site.name}, ${tr('home.aria')}`}>
         <img src={url('/logo-light.png')} alt="" width="538" height="128" class="h-12 w-auto" loading="lazy" />
       </a>
       <p class="mt-5 leading-relaxed">{site.shortMission}</p>
@@ -23,13 +28,13 @@ import { url } from '../utils/url';
     </div>
 
     <div>
-      <h2 class="font-display text-base font-semibold text-white">{t('footer.quickLinks')}</h2>
+      <h2 class="font-display text-base font-semibold text-white">{tr('footer.quickLinks')}</h2>
       <ul class="mt-4 space-y-2.5">
         {
           footerNav.map((item) => (
             <li>
-              <a href={url(item.href)} class="hover:text-accent-soft hover:underline">
-                {item.label}
+              <a href={routePath(item.key, lang)} class="hover:text-accent-soft hover:underline">
+                {tr(item.label)}
               </a>
             </li>
           ))
@@ -38,7 +43,7 @@ import { url } from '../utils/url';
     </div>
 
     <div>
-      <h2 class="font-display text-base font-semibold text-white">{t('footer.contact')}</h2>
+      <h2 class="font-display text-base font-semibold text-white">{tr('footer.contact')}</h2>
       <ul class="mt-4 space-y-3">
         <li class="flex items-start gap-3">
           <Icon name="mail" size={20} class="mt-0.5 shrink-0 text-accent-soft" />
@@ -53,14 +58,14 @@ import { url } from '../utils/url';
           <span>{site.location.city}, {site.location.countryShort}</span>
         </li>
       </ul>
-      <h2 class="mt-7 font-display text-base font-semibold text-white">{t('footer.follow')}</h2>
+      <h2 class="mt-7 font-display text-base font-semibold text-white">{tr('footer.follow')}</h2>
       <div class="mt-3"><SocialLinks variant="light" /></div>
     </div>
   </div>
 
   <div class="relative border-t border-white/10">
     <div class="container-site flex flex-col gap-2 py-6 text-sm text-white/70 sm:flex-row sm:items-center sm:justify-between">
-      <p>© {site.copyrightYear} {site.name}. {t('footer.rights')}</p>
+      <p>© {site.copyrightYear} {site.name}. {tr('footer.rights')}</p>
       <p>{site.status} · {site.location.city}, {site.location.countryShort}</p>
     </div>
   </div>

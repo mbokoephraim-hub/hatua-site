@@ -12,14 +12,14 @@ export default defineConfig({
   site: SITE_URL,
   base: BASE_PATH,
   trailingSlash: 'ignore', // les liens internes sont générés avec la barre finale (src/utils/url.ts),
-  // Structure multilingue prête : ajoutez 'en' dans `locales` le moment venu.
+  // Site bilingue : français à la racine, anglais sous /en/ (adresses : src/i18n/index.ts).
   // Ancienne adresse de la page de la fondatrice (redirection de secours si .htaccess n'est pas appliqué)
   redirects: {
     '/fondatrice': '/sublimekoyi/',
   },
   i18n: {
     defaultLocale: 'fr',
-    locales: ['fr'],
+    locales: ['fr', 'en'],
     routing: { prefixDefaultLocale: false },
   },
   vite: {

@@ -1,14 +1,17 @@
 ---
 import Icon from './Icon.astro';
 import type { Project } from '../data/projects';
-import { poles } from '../data/poles';
+import { getContent } from '../data';
+import { getLang, projectPath, quote } from '../i18n';
+import { t } from '../i18n/ui';
 import { url } from '../utils/url';
 
 interface Props {
   project: Project;
 }
 const { project } = Astro.props;
-const pole = poles.find((p) => p.id === project.pole);
+const lang = getLang(Astro.currentLocale);
+const pole = getContent(lang).poles.find((p) => p.id === project.pole);
 ---
 
 <article class="card reveal group grid overflow-hidden !p-0 md:grid-cols-2">
@@ -30,13 +33,13 @@ const pole = poles.find((p) => p.id === project.pole);
       <span class="rounded-full bg-secondary-50 px-3 py-1 text-secondary-dark">{project.status}</span>
     </div>
     <h3 class="mt-4 text-3xl font-bold">{project.title}</h3>
-    <p class="mt-1 font-display text-lg font-medium text-secondary">« {project.tagline} »</p>
+    <p class="mt-1 font-display text-lg font-medium text-secondary">{quote(project.tagline, lang)}</p>
     <p class="mt-4 flex-1 leading-relaxed text-muted">{project.summary}</p>
     <p class="mt-4 flex items-center gap-2 text-sm text-muted">
       <Icon name="map-pin" size={16} class="text-primary" />{project.location}
     </p>
-    <a href={url(`/projets/${project.slug}`)} class="btn btn-green mt-6 self-start">
-      Découvrir le projet <span class="sr-only">{project.title}</span>
+    <a href={projectPath(project.slug, lang)} class="btn btn-green mt-6 self-start">
+      {t('project.discover', lang)} <span class="sr-only">{project.title}</span>
       <Icon name="arrow-right" size={18} />
     </a>
   </div>

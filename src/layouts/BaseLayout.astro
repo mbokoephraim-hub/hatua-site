@@ -2,8 +2,8 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { site, socialLinks } from '../data/site';
-import { images } from '../data/images';
+import { getContent, socialLinks } from '../data';
+import { getLang, pagePath, type PageRef } from '../i18n';
 import { t } from '../i18n/ui';
 import { url } from '../utils/url';
 
@@ -20,7 +20,12 @@ interface Props {
   noindex?: boolean;
   /** Données structurées JSON-LD supplémentaires propres à la page */
   structuredData?: Record<string, unknown>;
+  /** Page courante : sert au sélecteur de langue et aux balises hreflang */
+  page?: PageRef;
 }
+
+const lang = getLang(Astro.currentLocale);
+const { site, images } = getContent(lang);
 
 const {
   title,
@@ -28,16 +33,22 @@ const {
   image = images.og,
   imageWidth = 1200,
   imageHeight = 630,
-  imageAlt = `${site.name} : ${site.slogan}`,
+  imageAlt = `${site.name} — ${site.slogan}`,
   type = 'website',
   noindex = false,
   structuredData,
+  page = { key: 'none' } as PageRef,
 } = Astro.props;
 
-const fullTitle = Astro.props.fullTitle ?? (title ? `${title} | ${site.name}` : `${site.name} : ${site.slogan}`);
+// Versions linguistiques de la page (pour Google) : uniquement si la page existe dans les deux langues
+const alternates =
+  page.key === 'none' ? [] : (['fr', 'en'] as const).map((l) => ({ lang: l, href: new URL(pagePath(page, l), Astro.site).href }));
+
+const colon = lang === 'fr' ? ' : ' : ': ';
+const fullTitle = Astro.props.fullTitle ?? (title ? `${title} | ${site.name}` : `${site.name}${colon}${site.slogan}`);
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL(url(image), Astro.site);
-const homeUrl = new URL(url('/'), Astro.site).href;
+const homeUrl = new URL(pagePath({ key: 'home' }, lang), Astro.site).href;
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -63,13 +74,15 @@ const jsonLd = {
 ---
 
 <!doctype html>
-<html lang="fr">
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    {alternates.map((a) => <link rel="alternate" hreflang={a.lang} href={a.href} />)}
+    {alternates.length > 0 && <link rel="alternate" hreflang="x-default" href={alternates[0].href} />}
     {noindex && <meta name="robots" content="noindex" />}
     <meta name="theme-color" content="#2e4b3c" />
 
@@ -81,7 +94,8 @@ const jsonLd = {
     <!-- Open Graph / réseaux sociaux -->
     <meta property="og:type" content={type} />
     <meta property="og:site_name" content={site.name} />
-    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:locale" content={lang === 'fr' ? 'fr_FR' : 'en_US'} />
+    <meta property="og:locale:alternate" content={lang === 'fr' ? 'en_US' : 'fr_FR'} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
@@ -107,9 +121,9 @@ const jsonLd = {
       href="#contenu"
       class="sr-only z-[100] rounded-full bg-primary px-5 py-3 font-semibold text-white focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
     >
-      {t('skip.link')}
+      {t('skip.link', lang)}
     </a>
-    <Header />
+    <Header page={page} />
     <main id="contenu" class="flex-1" tabindex="-1">
       <slot />
     </main>
