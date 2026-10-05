@@ -83,13 +83,9 @@ const jsonLd = {
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
 
-    <!-- Polices (Google Fonts) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap"
-    />
+    <!-- Polices hébergées sur le site (déclarées dans src/styles/global.css) -->
+    <link rel="preload" href={url('/fonts/Sora-Variable.woff2')} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={url('/fonts/Onest-Variable.woff2')} as="font" type="font/woff2" crossorigin />
 
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     <script is:inline>document.documentElement.classList.add('js');</script>

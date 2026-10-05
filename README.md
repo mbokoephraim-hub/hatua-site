@@ -37,8 +37,9 @@ hatua-site/
 │   ├── favicon.ico / favicon-32.png / apple-touch-icon.png / icon-192.png / icon-512.png
 │   ├── og-image.png          # image de partage sur les réseaux sociaux
 │   ├── .htaccess             # HTTPS, page 404, cache (serveur Hostinger)
+│   ├── fonts/                # polices Sora et Onest (WOFF2)
 │   └── images/               # photos (voir images/README.md)
-├── brand/logos/              # logos officiels d'origine (non publiés)
+├── brand/                    # charte d'origine, non publiée : logos/ et fonts/
 ├── scripts/generate-images.mjs   # génère logos web, favicons et og-image.png depuis brand/
 └── src/
     ├── data/                 # ← TOUS LES TEXTES ET CONTENUS
@@ -79,7 +80,10 @@ Dans **`src/styles/global.css`**, bloc `@theme` en haut du fichier. Les couleurs
 | `--color-cream` | ivoire | `#fbf4ee` | fond du site |
 | `--color-ink` / `--color-muted` | (neutres) | `#2b2220` / `#6b5a55` | texte |
 
-Pour changer les polices : modifiez `--font-display` / `--font-sans` **et** le lien Google Fonts dans `src/layouts/BaseLayout.astro`.
+**Polices de la charte** : **Sora** (titres) et **Onest** (texte), sous licence libre SIL OFL.
+Elles sont hébergées sur le site (`public/fonts/`, format WOFF2 réduit aux caractères latins et français), sans appel à Google Fonts.
+Les fichiers d'origine sont dans `brand/fonts/`. Pour changer de police : déclarez-la avec `@font-face` en haut de
+`src/styles/global.css`, modifiez `--font-display` / `--font-sans`, et adaptez les `<link rel="preload">` de `src/layouts/BaseLayout.astro`.
 
 ### Logo et favicon
 Les fichiers officiels sont rangés dans **`brand/logos/`** (toutes les déclinaisons : horizontal, vertical, emblème ; terre-rouge, miel, noir, blanc).

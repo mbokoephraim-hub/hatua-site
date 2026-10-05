@@ -12,7 +12,7 @@ Liste de tous les éléments provisoires du site. Cochez-les au fur et à mesure
 ## Identité visuelle
 
 - [x] ~~Logo officiel, favicon, couleurs de la charte~~ : intégrés (`brand/logos/`, `src/styles/global.css`).
-- [ ] **Polices** : si la charte prévoit des polices précises, les indiquer pour remplacer Poppins (titres) / Inter (texte).
+- [x] ~~Polices~~ : Sora (titres) et Onest (texte), hébergées sur le site.
 
 ## [À REMPLACER] : textes provisoires
 

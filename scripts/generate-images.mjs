@@ -11,11 +11,15 @@
  * Usage : node scripts/generate-images.mjs
  * À relancer après un changement de logo ou de slogan.
  */
-import sharp from 'sharp';
 import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
+
+// Rend la police Sora (brand/fonts) disponible pour le texte de l'image de partage.
+// Doit être défini AVANT le chargement de sharp.
+process.env.FONTCONFIG_FILE = `${root}scripts/fonts.conf`;
+const { default: sharp } = await import('sharp');
 const logos = `${root}brand/logos/Sans_fond`;
 const out = (f) => `${root}public/${f}`;
 
@@ -84,7 +88,7 @@ const logoTop = Math.round((H - logoH) / 2) - 50;
 const text = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">
   <rect x="${W / 2 - 40}" y="${logoTop + logoH + 52}" width="80" height="3" rx="1.5" fill="${MIEL}" opacity="0.6"/>
   <text x="${W / 2}" y="${logoTop + logoH + 112}" text-anchor="middle" fill="#fbf4ee"
-    font-family="Poppins, Montserrat, Arial, 'DejaVu Sans', sans-serif" font-size="40" font-weight="600" letter-spacing="1">${SLOGAN}</text>
+    font-family="Sora, Arial, sans-serif" font-size="40" font-weight="600" letter-spacing="0.5">${SLOGAN}</text>
 </svg>`);
 await sharp({ create: { width: W, height: H, channels: 4, background: BAOBAB } })
   .composite([

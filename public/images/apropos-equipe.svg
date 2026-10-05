@@ -9,7 +9,7 @@
   </g>
   <path d="M60 640 H300 V540 H600 V440 H900 V340 H1140" fill="none" stroke="#5C1A16" stroke-opacity="0.45" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2 18"/>
   <circle cx="1140" cy="340" r="14" fill="#5C1A16"/>
-  <g font-family="Poppins, Montserrat, 'Segoe UI', Arial, sans-serif" text-anchor="middle">
+  <g font-family="Sora, 'Segoe UI', Arial, sans-serif" text-anchor="middle">
     <text x="600" y="200" font-size="44" font-weight="700" fill="#5C1A16">Photo à venir</text>
     <text x="600" y="256" font-size="28" font-weight="500" fill="#6B5A55">L’équipe de Hatua Foundation</text>
   </g>
