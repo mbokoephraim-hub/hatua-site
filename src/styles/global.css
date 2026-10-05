@@ -8,26 +8,29 @@
  * ============================================================
  */
 @theme {
-  /* Vert profond : croissance, avenir */
-  --color-primary: #14532d;
-  --color-primary-dark: #0e3d21;
-  --color-primary-light: #1f7a46;
-  --color-primary-50: #e7f2ea;
+  /* Charte officielle (couleurs du logo) :
+     terre-rouge #5c1a16 · miel #f3d3a0 · baobab #2e4b3c · ivoire #fbf4ee */
 
-  /* Ocre / orange chaud : énergie, jeunesse, terre */
-  --color-secondary: #c2410c;
-  --color-secondary-dark: #9a3412;
-  --color-secondary-50: #fdf0e6;
+  /* Baobab : vert profond (grands aplats, boutons secondaires) */
+  --color-primary: #2e4b3c;
+  --color-primary-dark: #223a2e;
+  --color-primary-light: #3d6150;
+  --color-primary-50: #e8efe9;
 
-  /* Ocre clair : décoratif uniquement (contraste insuffisant pour du texte sur fond clair) */
-  --color-accent: #e59a3b;
-  --color-accent-soft: #f6c27a;
+  /* Terre-rouge : couleur du logo (titres, boutons principaux) */
+  --color-secondary: #5c1a16;
+  --color-secondary-dark: #43120f;
+  --color-secondary-50: #f6e9e3;
+
+  /* Miel : accents et texte sur fond foncé (contraste insuffisant pour du texte sur fond clair) */
+  --color-accent: #f3d3a0;
+  --color-accent-soft: #f3d3a0;
 
   /* Neutres */
-  --color-cream: #faf7f2;
-  --color-sand: #f1eadf;
-  --color-ink: #1f2933;
-  --color-muted: #52606d;
+  --color-cream: #fbf4ee; /* ivoire */
+  --color-sand: #f3e9df;
+  --color-ink: #2b2220;
+  --color-muted: #6b5a55;
 
   /* Typographie */
   --font-display: "Poppins", "Montserrat", ui-sans-serif, system-ui, sans-serif;
@@ -44,7 +47,7 @@
     text-rendering: optimizeLegibility;
   }
   h1, h2, h3, h4 {
-    @apply font-display text-primary-dark;
+    @apply font-display text-secondary;
     text-wrap: balance;
     letter-spacing: -0.01em;
   }
@@ -55,6 +58,12 @@
     outline: 3px solid var(--color-secondary);
     outline-offset: 3px;
     border-radius: 4px;
+  }
+  /* Sur fond foncé, contour miel pour rester visible */
+  .bg-primary :focus-visible,
+  .bg-primary-dark :focus-visible,
+  .bg-secondary :focus-visible {
+    outline-color: var(--color-accent);
   }
   ::selection {
     background: var(--color-accent-soft);
@@ -109,22 +118,23 @@
     @apply rounded-xl border-2 border-dashed border-accent bg-secondary-50 p-5 text-ink;
   }
 
-  /* Motif « marches » : petite ligne de progression sous les titres */
+  /* Motif « marches » : les trois marches du logo, devant les surtitres */
   .step-line {
     display: inline-flex;
-    align-items: flex-end;
-    gap: 4px;
-    height: 14px;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
   }
+  /* Rappel des trois marches du logo */
   .step-line span {
     display: block;
-    width: 14px;
+    height: 3px;
     border-radius: 2px;
-    background: var(--color-accent);
+    background: currentColor;
   }
-  .step-line span:nth-child(1) { height: 5px; opacity: 0.55; }
-  .step-line span:nth-child(2) { height: 9px; opacity: 0.8; }
-  .step-line span:nth-child(3) { height: 14px; background: var(--color-secondary); }
+  .step-line span:nth-child(1) { width: 8px; opacity: 0.55; }
+  .step-line span:nth-child(2) { width: 13px; opacity: 0.8; }
+  .step-line span:nth-child(3) { width: 18px; }
 }
 
 /* Apparition douce au défilement (uniquement si JS actif et mouvement autorisé) */

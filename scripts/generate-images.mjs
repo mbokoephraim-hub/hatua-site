@@ -1,49 +1,97 @@
 /**
- * Génère les images PNG (favicon, apple-touch-icon, image de partage og-image.png)
- * à partir de public/favicon.svg et d'un gabarit HTML.
- * Usage : node scripts/generate-images.mjs   (nécessite Playwright + Chromium installés)
- * À relancer après un changement de logo, de couleurs ou de slogan.
+ * Génère les images du site à partir des logos officiels (dossier brand/logos) :
+ *   public/logo.png             logo horizontal terre-rouge (en-tête, fond clair)
+ *   public/logo-light.png       logo horizontal miel (pied de page, fond foncé)
+ *   public/favicon.ico          favicon (16, 32 et 48 px)
+ *   public/favicon-32.png       favicon PNG
+ *   public/apple-touch-icon.png icône iPhone / iPad (180 px)
+ *   public/icon-192.png, icon-512.png  icônes Android / données structurées
+ *   public/og-image.png         image de partage sur les réseaux sociaux (1200 × 630)
+ *
+ * Usage : node scripts/generate-images.mjs
+ * À relancer après un changement de logo ou de slogan.
  */
-import { chromium } from 'playwright';
-import { readFileSync } from 'node:fs';
+import sharp from 'sharp';
+import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
-const favicon = readFileSync(`${root}public/favicon.svg`, 'utf8');
-const logo = readFileSync(`${root}public/logo-light.svg`, 'utf8');
+const logos = `${root}brand/logos/Sans_fond`;
+const out = (f) => `${root}public/${f}`;
 
-const browser = await chromium.launch(
-  process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {},
-);
-const page = await browser.newPage();
+// Couleurs officielles (identiques à src/styles/global.css)
+const TERRE_ROUGE = '#5c1a16';
+const BAOBAB = '#2e4b3c';
+const MIEL = '#f3d3a0';
 
-for (const [file, size] of [['favicon-32.png', 32], ['apple-touch-icon.png', 180]]) {
-  await page.setViewportSize({ width: size, height: size });
-  await page.setContent(`<style>*{margin:0}svg{width:${size}px;height:${size}px;display:block}</style>${favicon}`);
-  await page.screenshot({ path: `${root}public/${file}`, omitBackground: true });
+const SLOGAN = 'Étape après étape';
+
+/** Charge un PNG transparent et retire les marges vides. */
+const trimmed = (file) => sharp(`${logos}/${file}`).trim().toBuffer();
+
+// 1. Logos horizontaux pour l'en-tête et le pied de page (hauteur 128 px = net sur écrans haute densité)
+for (const [file, src] of [
+  ['logo.png', 'Avec_texte/Hatua_Foundation_horizontal_terre-rouge_transparent.png'],
+  ['logo-light.png', 'Avec_texte/Hatua_Foundation_horizontal_miel_transparent.png'],
+]) {
+  await sharp(await trimmed(src)).resize({ height: 128 }).png({ compressionLevel: 9, palette: true }).toFile(out(file));
 }
 
-await page.setViewportSize({ width: 1200, height: 630 });
-await page.setContent(`<!doctype html><html><head>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500&family=Poppins:wght@600;700&display=block" rel="stylesheet">
-<style>
-  *{margin:0;box-sizing:border-box}
-  body{width:1200px;height:630px;background:#0e3d21;color:#fff;font-family:Inter,sans-serif;position:relative;overflow:hidden;padding:80px}
-  .logo svg{height:76px;width:auto}
-  h1{font-family:Poppins,sans-serif;font-size:76px;font-weight:700;margin-top:70px;line-height:1}
-  p{font-family:Poppins,sans-serif;font-size:34px;color:#f6c27a;margin-top:22px;font-weight:600}
-  small{display:block;margin-top:30px;font-size:24px;color:rgba(255,255,255,.75)}
-  .steps{position:absolute;right:0;bottom:0;display:flex;align-items:flex-end;gap:14px;padding-right:70px}
-  .steps i{display:block;width:70px;border-radius:12px 12px 0 0}
-</style></head><body>
-  <div class="logo">${logo}</div>
-  <h1>Étape après étape</h1>
-  <p>Apprendre · Développer · Progresser</p>
-  <small>Organisation à but non lucratif · Kinshasa, RDC</small>
-  <div class="steps"><i style="height:120px;background:#f6c27a"></i><i style="height:200px;background:#e59a3b"></i><i style="height:290px;background:#c2410c"></i><i style="height:390px;background:#1f7a46"></i></div>
-</body></html>`, { waitUntil: 'networkidle' });
-await page.evaluate(() => document.fonts.ready);
-await page.screenshot({ path: `${root}public/og-image.png` });
+// 2. Icônes carrées : emblème miel sur fond terre-rouge
+const emblem = await trimmed('Sans_texte/Hatua_embleme_miel_transparent.png');
+async function icon(size, ratio = 0.8) {
+  const h = Math.round(size * ratio);
+  const glyph = await sharp(emblem).resize({ height: h }).toBuffer();
+  return sharp({ create: { width: size, height: size, channels: 4, background: TERRE_ROUGE } })
+    .composite([{ input: glyph, gravity: 'center' }])
+    .png({ compressionLevel: 9 })
+    .toBuffer();
+}
 
-await browser.close();
+writeFileSync(out('favicon-32.png'), await icon(32, 0.86));
+writeFileSync(out('apple-touch-icon.png'), await icon(180, 0.72));
+writeFileSync(out('icon-192.png'), await icon(192, 0.72));
+writeFileSync(out('icon-512.png'), await icon(512, 0.72));
+
+// favicon.ico : conteneur ICO avec des images PNG (16, 32, 48 px)
+const sizes = [16, 32, 48];
+const pngs = await Promise.all(sizes.map((s) => icon(s, s === 16 ? 0.9 : 0.86)));
+const header = Buffer.alloc(6 + 16 * sizes.length);
+header.writeUInt16LE(0, 0);
+header.writeUInt16LE(1, 2);
+header.writeUInt16LE(sizes.length, 4);
+let offset = header.length;
+sizes.forEach((s, i) => {
+  const e = 6 + i * 16;
+  header.writeUInt8(s, e);
+  header.writeUInt8(s, e + 1);
+  header.writeUInt16LE(1, e + 4); // plans
+  header.writeUInt16LE(32, e + 6); // bits par pixel
+  header.writeUInt32LE(pngs[i].length, e + 8);
+  header.writeUInt32LE(offset, e + 12);
+  offset += pngs[i].length;
+});
+writeFileSync(out('favicon.ico'), Buffer.concat([header, ...pngs]));
+
+// 3. Image de partage : logo miel sur fond baobab + slogan
+const W = 1200;
+const H = 630;
+const logo = await sharp(await trimmed('Avec_texte/Hatua_Foundation_horizontal_miel_transparent.png'))
+  .resize({ width: 760 })
+  .toBuffer();
+const { height: logoH } = await sharp(logo).metadata();
+const logoTop = Math.round((H - logoH) / 2) - 50;
+const text = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">
+  <rect x="${W / 2 - 40}" y="${logoTop + logoH + 52}" width="80" height="3" rx="1.5" fill="${MIEL}" opacity="0.6"/>
+  <text x="${W / 2}" y="${logoTop + logoH + 112}" text-anchor="middle" fill="#fbf4ee"
+    font-family="Poppins, Montserrat, Arial, 'DejaVu Sans', sans-serif" font-size="40" font-weight="600" letter-spacing="1">${SLOGAN}</text>
+</svg>`);
+await sharp({ create: { width: W, height: H, channels: 4, background: BAOBAB } })
+  .composite([
+    { input: logo, top: logoTop, left: Math.round((W - 760) / 2) },
+    { input: text, top: 0, left: 0 },
+  ])
+  .png({ compressionLevel: 9 })
+  .toFile(out('og-image.png'));
+
 console.log('Images générées dans public/');

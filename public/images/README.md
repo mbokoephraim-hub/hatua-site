@@ -27,6 +27,5 @@ comme des actions réelles de la fondation.
 
 ## Autres fichiers graphiques (dossier `public/`)
 
-- `logo.svg` (fond clair) et `logo-light.svg` (fond foncé, utilisé dans le pied de page) : **logotype provisoire**.
-- `favicon.svg`, `favicon-32.png`, `apple-touch-icon.png` : icône du site.
-- `og-image.png` (1200 × 630) : image affichée lors du partage sur les réseaux sociaux.
+Les logos, favicons et l'image de partage (`og-image.png`) sont générés à partir des logos officiels
+du dossier `brand/logos/` : voir le README principal, section « Logo et favicon ».

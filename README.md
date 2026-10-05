@@ -32,13 +32,14 @@ hatua-site/
 ├── .env.example              # surcharges facultatives (formulaire, URL)
 ├── A-REMPLACER.md            # liste des contenus provisoires à compléter
 ├── public/                   # fichiers servis tels quels
-│   ├── logo.svg              # logo (fond clair) : PROVISOIRE
-│   ├── logo-light.svg        # logo (fond foncé, pied de page) : PROVISOIRE
-│   ├── favicon.svg / favicon-32.png / apple-touch-icon.png
+│   ├── logo.png              # logo horizontal terre-rouge (en-tête)
+│   ├── logo-light.png        # logo horizontal miel (pied de page)
+│   ├── favicon.ico / favicon-32.png / apple-touch-icon.png / icon-192.png / icon-512.png
 │   ├── og-image.png          # image de partage sur les réseaux sociaux
 │   ├── .htaccess             # HTTPS, page 404, cache (serveur Hostinger)
 │   └── images/               # photos (voir images/README.md)
-├── scripts/generate-images.mjs   # régénère favicons PNG et og-image.png
+├── brand/logos/              # logos officiels d'origine (non publiés)
+├── scripts/generate-images.mjs   # génère logos web, favicons et og-image.png depuis brand/
 └── src/
     ├── data/                 # ← TOUS LES TEXTES ET CONTENUS
     │   ├── site.ts           # nom, slogan, mission, vision, coordonnées, réseaux
@@ -68,21 +69,27 @@ Tout se trouve dans **`src/data/`**. Ouvrez le fichier concerné, modifiez le te
 > Astuce : dans les textes, utilisez l'apostrophe typographique `’` ; si vous utilisez `'`, entourez le texte de guillemets doubles `"…"`.
 
 ### Couleurs et polices
-Dans **`src/styles/global.css`**, bloc `@theme` en haut du fichier. Chaque couleur n'est définie qu'**une seule fois** :
+Dans **`src/styles/global.css`**, bloc `@theme` en haut du fichier. Les couleurs reprennent la **charte du logo** :
 
-| Variable | Rôle | Valeur actuelle |
-|---|---|---|
-| `--color-primary` | vert principal | `#14532d` |
-| `--color-secondary` | ocre / orange (boutons) | `#c2410c` |
-| `--color-accent` | ocre clair (décor) | `#e59a3b` |
-| `--color-cream` | fond blanc cassé | `#faf7f2` |
-| `--color-ink` | texte | `#1f2933` |
+| Variable | Couleur de la charte | Valeur | Usage |
+|---|---|---|---|
+| `--color-secondary` | terre-rouge | `#5c1a16` | titres, boutons principaux |
+| `--color-primary` | baobab | `#2e4b3c` | grands aplats, boutons verts, pied de page |
+| `--color-accent` | miel | `#f3d3a0` | accents, texte sur fond foncé |
+| `--color-cream` | ivoire | `#fbf4ee` | fond du site |
+| `--color-ink` / `--color-muted` | (neutres) | `#2b2220` / `#6b5a55` | texte |
 
 Pour changer les polices : modifiez `--font-display` / `--font-sans` **et** le lien Google Fonts dans `src/layouts/BaseLayout.astro`.
 
-### Logo
-Remplacez `public/logo.svg` (et `public/logo-light.svg` pour le fond vert du pied de page) par le logo officiel, **en gardant les mêmes noms de fichiers**.
-Mettez aussi à jour `public/favicon.svg`, puis régénérez les images PNG (voir ci-dessous).
+### Logo et favicon
+Les fichiers officiels sont rangés dans **`brand/logos/`** (toutes les déclinaisons : horizontal, vertical, emblème ; terre-rouge, miel, noir, blanc).
+Le site utilise des versions allégées, générées automatiquement :
+```bash
+node scripts/generate-images.mjs
+```
+Ce script crée `public/logo.png`, `public/logo-light.png`, le favicon (emblème miel sur fond terre-rouge), les icônes
+mobiles et l'image de partage `og-image.png` (logo + slogan, texte modifiable en haut du script).
+Pour changer de logo : remplacez les fichiers dans `brand/logos/` (mêmes noms) puis relancez la commande.
 
 ### Photos
 Voir **`public/images/README.md`**.
@@ -94,14 +101,6 @@ Voir **`public/images/README.md`**.
 
 ### Ajouter une page
 Créez un fichier dans `src/pages/` (ex. `actualites.astro`, en copiant une page existante), ajoutez-le au menu dans `src/data/navigation.ts` et à la liste `staticPages` de `src/pages/sitemap.xml.ts`.
-
-### Régénérer les favicons PNG et l'image de partage
-Après un changement de logo, de couleurs ou de slogan :
-```bash
-npm install --no-save playwright && npx playwright install chromium
-node scripts/generate-images.mjs
-```
-(Le texte de l'image de partage se modifie directement dans `scripts/generate-images.mjs`.)
 
 ### Ajouter l'anglais (plus tard)
 1. Dans `astro.config.mjs`, ajoutez `'en'` à `i18n.locales`.

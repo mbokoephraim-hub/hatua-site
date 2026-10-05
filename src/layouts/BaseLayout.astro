@@ -34,7 +34,7 @@ const jsonLd = {
   name: site.name,
   alternateName: site.nameAlt,
   url: homeUrl,
-  logo: new URL(url('/logo.svg'), Astro.site).href,
+  logo: new URL(url('/icon-512.png'), Astro.site).href,
   description: site.mission,
   slogan: site.slogan,
   email: site.contact.email,
@@ -60,9 +60,9 @@ const jsonLd = {
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     {noindex && <meta name="robots" content="noindex" />}
-    <meta name="theme-color" content="#14532d" />
+    <meta name="theme-color" content="#2e4b3c" />
 
-    <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
+    <link rel="icon" href={url('/favicon.ico')} sizes="48x48" />
     <link rel="icon" href={url('/favicon-32.png')} type="image/png" sizes="32x32" />
     <link rel="apple-touch-icon" href={url('/apple-touch-icon.png')} />
     <link rel="sitemap" href={url('/sitemap.xml')} />

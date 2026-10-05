@@ -9,12 +9,10 @@ Liste de tous les éléments provisoires du site. Cochez-les au fur et à mesure
       En cas de changement, régénérer aussi `public/og-image.png` (texte dans `scripts/generate-images.mjs`).
 - [ ] **Accès FTP Hostinger** : à ajouter comme secrets GitHub (voir README, section 5).
 
-## Identité visuelle (provisoire)
+## Identité visuelle
 
-- [ ] **Logo officiel** : fichiers à transmettre. Ils remplaceront `public/logo.svg` et `public/logo-light.svg` (mêmes noms de fichiers).
-- [ ] **Favicon** : remplacer `public/favicon.svg`, puis régénérer `favicon-32.png` et `apple-touch-icon.png`
-      (`node scripts/generate-images.mjs`, voir README).
-- [ ] **Couleurs et polices** : si une charte graphique existe, mettre à jour `src/styles/global.css` (bloc `@theme`).
+- [x] ~~Logo officiel, favicon, couleurs de la charte~~ : intégrés (`brand/logos/`, `src/styles/global.css`).
+- [ ] **Polices** : si la charte prévoit des polices précises, les indiquer pour remplacer Poppins (titres) / Inter (texte).
 
 ## [À REMPLACER] : textes provisoires
 
