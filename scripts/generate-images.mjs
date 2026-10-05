@@ -7,6 +7,7 @@
  *   public/apple-touch-icon.png icône iPhone / iPad (180 px)
  *   public/icon-192.png, icon-512.png  icônes Android / données structurées
  *   public/og-image.png         image de partage sur les réseaux sociaux (1200 × 630)
+ *   public/og-fondatrice.jpg    image de partage de la page /fondatrice (à partir de public/images/sublime-koyi-saley.jpg)
  *
  * Usage : node scripts/generate-images.mjs
  * À relancer après un changement de logo ou de slogan.
@@ -97,5 +98,29 @@ await sharp({ create: { width: W, height: H, channels: 4, background: BAOBAB } }
   ])
   .png({ compressionLevel: 9 })
   .toFile(out('og-image.png'));
+
+// 4. Image de partage de la page /fondatrice : portrait à droite, nom à gauche, fond terre-rouge
+{
+  const { existsSync } = await import('node:fs');
+  const photoPath = `${root}public/images/sublime-koyi-saley.jpg`;
+  if (existsSync(photoPath)) {
+    const photo = await sharp(photoPath).resize({ height: H }).toBuffer();
+    const { width: pw } = await sharp(photo).metadata();
+    const txt = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">
+      <text x="72" y="250" fill="${MIEL}" font-family="Sora, Arial, sans-serif" font-size="22" font-weight="600" letter-spacing="4">PRÉSIDENTE &amp; FONDATRICE</text>
+      <text x="72" y="330" fill="#fbf4ee" font-family="Sora, Arial, sans-serif" font-size="60" font-weight="600">Sublime Koyi</text>
+      <text x="72" y="400" fill="${MIEL}" font-family="Sora, Arial, sans-serif" font-size="60" font-weight="300">Saley</text>
+      <rect x="72" y="440" width="64" height="2" fill="#e07a62"/>
+      <text x="72" y="490" fill="#fbf4ee" font-family="Sora, Arial, sans-serif" font-size="24" font-weight="400">HATUA Foundation</text>
+    </svg>`);
+    await sharp({ create: { width: W, height: H, channels: 3, background: TERRE_ROUGE } })
+      .composite([
+        { input: photo, top: 0, left: W - pw },
+        { input: txt, top: 0, left: 0 },
+      ])
+      .jpeg({ quality: 82, mozjpeg: true })
+      .toFile(out('og-fondatrice.jpg'));
+  }
+}
 
 console.log('Images générées dans public/');

@@ -42,6 +42,12 @@
   --color-accent: #f3d3a0;
   --color-accent-soft: #f3d3a0;
 
+  /* Hibiscus : accents graphiques uniquement (filets, puces), jamais pour du texte sur fond clair */
+  --color-hibiscus: #e07a62;
+
+  /* Encre : texte courant de la page Fondatrice */
+  --color-encre: #2a1512;
+
   /* Neutres */
   --color-cream: #fbf4ee; /* ivoire */
   --color-sand: #f3e9df;

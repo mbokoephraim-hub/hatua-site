@@ -1,0 +1,31 @@
+---
+/**
+ * Titre de section de la page Fondatrice :
+ * intitulé « 02 — PARCOURS », puis titre sur deux lignes (SemiBold / Light de couleur différente).
+ * Les couleurs suivent l'ambiance de la section (variables --line1 / --line2 définies par la page).
+ */
+interface Props {
+  number: string;
+  label: string;
+  line1: string;
+  line2?: string;
+  id?: string;
+  as?: 'h1' | 'h2';
+  size?: 'xl' | 'lg';
+}
+const { number, label, line1, line2, id, as: Tag = 'h2', size = 'lg' } = Astro.props;
+---
+
+<p class="flex items-center gap-3 text-xs font-semibold tracking-[0.28em] text-eyebrow uppercase">
+  <span>{number} — {label}</span>
+</p>
+<Tag
+  id={id}
+  class:list={[
+    'mt-5 leading-[1.05] tracking-tight',
+    size === 'xl' ? 'text-5xl sm:text-6xl lg:text-7xl' : 'text-4xl sm:text-5xl',
+  ]}
+>
+  <span class="block font-semibold" style="color: var(--line1)">{line1}</span>
+  {line2 && <span class="block font-light" style="color: var(--line2)">{line2}</span>}
+</Tag>

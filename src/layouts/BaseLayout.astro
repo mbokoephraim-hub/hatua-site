@@ -9,21 +9,32 @@ import { url } from '../utils/url';
 
 interface Props {
   title?: string;
+  /** Titre complet de l'onglet, sans ajout automatique du nom du site */
+  fullTitle?: string;
   description?: string;
   image?: string;
-  type?: 'website' | 'article';
+  imageWidth?: number;
+  imageHeight?: number;
+  imageAlt?: string;
+  type?: 'website' | 'article' | 'profile';
   noindex?: boolean;
+  /** Données structurées JSON-LD supplémentaires propres à la page */
+  structuredData?: Record<string, unknown>;
 }
 
 const {
   title,
   description = site.shortMission,
   image = images.og,
+  imageWidth = 1200,
+  imageHeight = 630,
+  imageAlt = `${site.name} : ${site.slogan}`,
   type = 'website',
   noindex = false,
+  structuredData,
 } = Astro.props;
 
-const fullTitle = title ? `${title} | ${site.name}` : `${site.name} : ${site.slogan}`;
+const fullTitle = Astro.props.fullTitle ?? (title ? `${title} | ${site.name}` : `${site.name} : ${site.slogan}`);
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL(url(image), Astro.site);
 const homeUrl = new URL(url('/'), Astro.site).href;
@@ -75,9 +86,9 @@ const jsonLd = {
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content={`${site.name} : ${site.slogan}`} />
+    <meta property="og:image:width" content={String(imageWidth)} />
+    <meta property="og:image:height" content={String(imageHeight)} />
+    <meta property="og:image:alt" content={imageAlt} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
@@ -88,6 +99,7 @@ const jsonLd = {
     <link rel="preload" href={url('/fonts/Onest-Variable.woff2')} as="font" type="font/woff2" crossorigin />
 
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    {structuredData && <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />}
     <script is:inline>document.documentElement.classList.add('js');</script>
   </head>
   <body class="flex min-h-screen flex-col">

@@ -1,0 +1,259 @@
+---
+/**
+ * Page « Présidente & Fondatrice » : Sublime Koyi Saley.
+ * Textes : src/data/fondatrice.ts · Photos : public/images/sublime-koyi-saley*.jpg
+ * Page volontairement absente du menu : on y accède depuis la section « À la découverte de la fondatrice » de l'accueil.
+ */
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/fondatrice/SectionHeading.astro';
+import Icon from '../components/Icon.astro';
+import { fondatrice as f } from '../data/fondatrice';
+import { site, mailto } from '../data/site';
+import { url } from '../utils/url';
+
+// Si la photo principale n'a pas encore été déposée, un emplacement provisoire s'affiche.
+const hasPortrait = existsSync(join(process.cwd(), 'public', f.photos.portrait.src));
+
+const homeUrl = new URL(url('/'), Astro.site).href;
+const personLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: f.name,
+  jobTitle: f.role,
+  description: f.seo.description,
+  email: `mailto:${site.contact.email}`,
+  image: new URL(url(f.photos.portrait.src), Astro.site).href,
+  url: new URL(url('/fondatrice/'), Astro.site).href,
+  alumniOf: { '@type': 'CollegeOrUniversity', name: 'Université Catholique du Congo' },
+  worksFor: { '@type': 'NGO', name: site.nameAlt, url: homeUrl },
+};
+
+const ruleColors = ['bg-hibiscus', 'bg-secondary', 'bg-primary', 'bg-accent', 'bg-hibiscus'];
+---
+
+<BaseLayout
+  fullTitle={f.seo.title}
+  description={f.seo.description}
+  image={f.photos.og}
+  imageAlt={`${f.name}, ${f.role} de ${site.nameAlt}`}
+  type="profile"
+  structuredData={personLd}
+>
+  <div class="page-fondatrice font-display">
+    <!-- 1. HERO ------------------------------------------------------------ -->
+    <section class="tone-terre relative overflow-hidden" aria-labelledby="fondatrice-nom">
+      <div class="container-site grid items-center gap-12 py-14 sm:py-20 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16 lg:py-24">
+        <div class="order-last lg:order-first">
+          <SectionHeading number="01" label={f.role} line1={f.firstLine} line2={f.secondLine} id="fondatrice-nom" as="h1" size="xl" />
+          <p class="mt-6 text-sm leading-relaxed font-medium tracking-wide text-accent sm:text-base">
+            {f.subtitle.map((s, i) => (<>{i > 0 && <span class="mx-2 text-hibiscus" aria-hidden="true">•</span>}<span>{s}</span></>))}
+          </p>
+          <span class="mt-8 block h-px w-16 bg-hibiscus" aria-hidden="true"></span>
+          <p class="mt-8 max-w-xl text-lg leading-relaxed font-light">{f.hero}</p>
+          <div class="mt-10 flex flex-wrap gap-3">
+            <a href="#expertise" class="btn btn-primary">Découvrir son expertise <Icon name="arrow-right" size={18} /></a>
+            <a href={url('/a-propos')} class="btn btn-outline">Découvrir HATUA Foundation</a>
+          </div>
+        </div>
+
+        <figure class="relative mx-auto w-full max-w-sm sm:max-w-md lg:max-w-none">
+          <span class="absolute -right-3 -bottom-3 hidden h-full w-full border border-accent/60 sm:block" aria-hidden="true"></span>
+          {
+            hasPortrait ? (
+              <img
+                src={url(f.photos.portrait.src)}
+                alt={f.photos.portrait.alt}
+                width={f.photos.portrait.width}
+                height={f.photos.portrait.height}
+                fetchpriority="high"
+                class="relative aspect-[4/5] w-full object-cover object-top"
+              />
+            ) : (
+              <div class="relative flex aspect-[4/5] w-full items-center justify-center border border-dashed border-accent p-6 text-center text-accent">
+                [À REMPLACER] Photo à déposer : public/images/sublime-koyi-saley.jpg
+              </div>
+            )
+          }
+        </figure>
+      </div>
+    </section>
+
+    <!-- 2. PARCOURS -------------------------------------------------------- -->
+    <section class="tone-blanc section" aria-labelledby="parcours">
+      <div class="container-site grid gap-14 lg:grid-cols-[5fr_7fr] lg:gap-20">
+        <div class="reveal">
+          <SectionHeading number="02" label="Parcours" line1="Parcours" line2="académique" id="parcours" />
+          {f.parcours.text.map((p) => <p class="mt-8 text-lg leading-relaxed font-light">{p}</p>)}
+          <img
+            src={url(f.photos.pupitre.src)}
+            alt={f.photos.pupitre.alt}
+            width={f.photos.pupitre.width}
+            height={f.photos.pupitre.height}
+            loading="lazy"
+            class="mt-10 hidden aspect-[4/3] w-full object-cover object-top lg:block"
+          />
+        </div>
+
+        <div class="reveal reveal-delay-1">
+          <ol class="border-t border-encre/15">
+            {
+              f.parcours.diplomas.map((d, i) => (
+                <li class="grid grid-cols-[3rem_1fr] gap-4 border-b border-encre/15 py-7">
+                  <span class="text-sm font-semibold text-secondary">{String(i + 1).padStart(2, '0')}</span>
+                  <div class="relative">
+                    <span class="absolute top-2 -left-5 h-2 w-2 rounded-full bg-hibiscus" aria-hidden="true"></span>
+                    <h3 class="text-xl leading-snug font-semibold sm:text-2xl">{d.title}</h3>
+                    {d.detail && <p class="mt-1 font-light text-muted">{d.detail}</p>}
+                  </div>
+                </li>
+              ))
+            }
+          </ol>
+
+          <div class="tone-miel mt-10 border-l-4 border-secondary p-7 sm:p-9">
+            <p class="text-xs font-semibold tracking-[0.28em] text-eyebrow uppercase">Distinction</p>
+            <p class="mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-1 text-2xl leading-tight sm:text-3xl">
+              <span class="font-semibold text-secondary">{f.parcours.distinction.highlights[0]}</span>
+              <span class="text-hibiscus" aria-hidden="true">·</span>
+              <span class="font-light text-secondary">{f.parcours.distinction.highlights[1]}</span>
+            </p>
+            <p class="mt-4 leading-relaxed">{f.parcours.distinction.text}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. EXPERTISE ------------------------------------------------------- -->
+    <section id="expertise" class="tone-ivoire section scroll-mt-20" aria-labelledby="expertise-titre">
+      <div class="container-site">
+        <div class="reveal max-w-2xl">
+          <SectionHeading number="03" label="Expertise" line1="Domaines" line2="d’expertise" id="expertise-titre" />
+          <p class="mt-8 text-lg font-light">{f.expertise.intro}</p>
+        </div>
+        <ol class="mt-12 grid gap-px bg-encre/10 sm:grid-cols-2 lg:grid-cols-5">
+          {
+            f.expertise.items.map((item, i) => (
+              <li class={`reveal reveal-delay-${(i % 3) + 1} relative bg-white p-7 pt-9`}>
+                <span class={`absolute inset-x-0 top-0 h-1 ${ruleColors[i]}`} aria-hidden="true" />
+                <span class="text-3xl font-light text-secondary">{String(i + 1).padStart(2, '0')}</span>
+                <h3 class="mt-6 text-lg leading-snug font-semibold">{item}</h3>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    <!-- 4. VISION ---------------------------------------------------------- -->
+    <section class="tone-terre section" aria-labelledby="vision">
+      <div class="container-site grid items-center gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
+        <figure class="reveal relative mx-auto w-full max-w-sm sm:max-w-md lg:max-w-none">
+          <span class="absolute -bottom-3 -left-3 hidden h-full w-full border border-accent/60 sm:block" aria-hidden="true"></span>
+          <img
+            src={url(f.photos.intervention.src)}
+            alt={f.photos.intervention.alt}
+            width={f.photos.intervention.width}
+            height={f.photos.intervention.height}
+            loading="lazy"
+            class="relative aspect-[4/5] w-full object-cover object-top"
+          />
+        </figure>
+        <div class="reveal reveal-delay-1">
+          <SectionHeading number="04" label="Vision" line1="Sa vision" line2="de l’éducation" id="vision" />
+          <p class="mt-10 border-l-2 border-hibiscus pl-6 text-2xl leading-snug font-light text-accent sm:text-3xl">{f.vision.highlight}</p>
+          <p class="mt-8 text-lg leading-relaxed font-light">{f.vision.text[0]}</p>
+          <ul class="mt-6 flex flex-wrap gap-2" aria-label="Sources d’influence">
+            {f.vision.influences.map((x) => <li class="rounded-full border border-hibiscus/80 px-4 py-1.5 text-sm">{x}</li>)}
+          </ul>
+          <p class="mt-8 text-lg leading-relaxed font-light">{f.vision.text[1]}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. HATUA FOUNDATION ------------------------------------------------ -->
+    <section class="tone-blanc section" aria-labelledby="hatua">
+      <div class="container-site grid items-center gap-14 lg:grid-cols-[1.2fr_0.8fr] lg:gap-20">
+        <div class="reveal">
+          <SectionHeading number="05" label="HATUA Foundation" line1="HATUA" line2="Foundation" id="hatua" />
+          {f.hatua.map((p, i) => <p class:list={['text-lg leading-relaxed font-light', i === 0 ? 'mt-8' : 'mt-5']}>{p}</p>)}
+          <a href={url('/a-propos')} class="btn btn-primary mt-10">Découvrir HATUA Foundation <Icon name="arrow-right" size={18} /></a>
+        </div>
+        <figure class="reveal reveal-delay-1 mx-auto w-full max-w-xs sm:max-w-sm">
+          <img
+            src={url(f.photos.conference.src)}
+            alt={f.photos.conference.alt}
+            width={f.photos.conference.width}
+            height={f.photos.conference.height}
+            loading="lazy"
+            class="aspect-[3/4] w-full object-cover"
+          />
+          <span class="mt-4 block h-px w-16 bg-hibiscus" aria-hidden="true"></span>
+        </figure>
+      </div>
+    </section>
+
+    <!-- 6. COLLABORER ------------------------------------------------------ -->
+    <section id="collaborer" class="tone-baobab section scroll-mt-20" aria-labelledby="collaborer-titre">
+      <div class="container-site">
+        <div class="reveal max-w-3xl">
+        <SectionHeading number="06" label="Collaborer" line1="Collaborer" line2="avec Sublime" id="collaborer-titre" />
+        <p class="mt-8 text-lg leading-relaxed font-light">{f.collaborer.text}</p>
+        <div class="mt-10 flex flex-wrap gap-3">
+          <a href={mailto(f.collaborer.subject)} class="btn btn-primary"><Icon name="mail" size={18} /> Collaborer avec Sublime</a>
+          <a href="#contact" class="btn btn-outline">La contacter</a>
+        </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. COORDONNÉES ----------------------------------------------------- -->
+    <section id="contact" class="tone-ivoire section scroll-mt-20" aria-labelledby="contact-titre">
+      <div class="container-site">
+        <div class="reveal">
+          <SectionHeading number="07" label="Coordonnées" line1="Coordonnées" line2="& réseaux" id="contact-titre" />
+        </div>
+        <ul class="reveal mt-12 grid border-t border-encre/15 sm:grid-cols-2 lg:grid-cols-4">
+          {
+            f.contacts.map((c) => (
+              <li class="border-b border-encre/15 sm:odd:border-r lg:border-r lg:last:border-r-0">
+                <a
+                  href={c.href}
+                  {...(c.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                  class="group flex h-full flex-col gap-3 p-6 transition-colors hover:bg-white"
+                >
+                  <span class="flex items-center gap-2 text-xs font-semibold tracking-[0.2em] text-eyebrow uppercase">
+                    <Icon name={c.icon} size={16} /> {c.label}
+                  </span>
+                  <span class="text-lg font-medium break-words group-hover:underline">
+                    {c.value}
+                    {c.external && <span class="sr-only"> (s’ouvre dans un nouvel onglet)</span>}
+                  </span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  /* Couleurs propres à la page : texte Encre sur fonds clairs, titres sur deux lignes */
+  .page-fondatrice .tone-blanc,
+  .page-fondatrice .tone-ivoire {
+    --tone-ink: var(--color-encre);
+    --line1: var(--color-secondary);
+    --line2: var(--color-primary);
+  }
+  .page-fondatrice .tone-miel {
+    --tone-ink: var(--color-encre);
+  }
+  .page-fondatrice .tone-terre,
+  .page-fondatrice .tone-baobab {
+    --line1: var(--color-cream);
+    --line2: var(--color-accent);
+  }
+</style>

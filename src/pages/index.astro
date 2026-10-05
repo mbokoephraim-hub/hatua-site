@@ -8,6 +8,7 @@ import EngageBanner from '../components/EngageBanner.astro';
 import SocialLinks from '../components/SocialLinks.astro';
 import Icon from '../components/Icon.astro';
 import { site } from '../data/site';
+import { fondatrice } from '../data/fondatrice';
 import { poles } from '../data/poles';
 import { projects } from '../data/projects';
 import { t } from '../i18n/ui';
@@ -38,6 +39,27 @@ const featured = projects[0];
         </div>
       </div>
       <HeroSteps />
+    </div>
+  </section>
+
+  <!-- À LA DÉCOUVERTE DE LA FONDATRICE -->
+  <section class="tone-blanc py-12 sm:py-16" aria-labelledby="fondatrice-apercu">
+    <div class="container-site reveal grid items-center gap-8 sm:grid-cols-[auto_1fr] sm:gap-12">
+      <img
+        src={url(fondatrice.photos.portrait.src)}
+        alt={fondatrice.photos.portrait.alt}
+        width="176"
+        height="176"
+        loading="lazy"
+        class="mx-auto h-36 w-36 rounded-full object-cover object-[center_18%] ring-4 ring-accent ring-offset-4 ring-offset-white sm:h-44 sm:w-44"
+      />
+      <div class="text-center sm:text-left">
+        <h2 id="fondatrice-apercu" class="text-2xl font-bold sm:text-3xl">À la découverte de la fondatrice</h2>
+        <p class="mt-3 max-w-2xl leading-relaxed text-muted">{fondatrice.teaser}</p>
+        <a href={url('/fondatrice')} class="btn btn-primary mt-6">
+          Découvrir {fondatrice.name} <Icon name="arrow-right" size={18} />
+        </a>
+      </div>
     </div>
   </section>
 
