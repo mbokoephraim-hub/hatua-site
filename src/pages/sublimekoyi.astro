@@ -14,7 +14,7 @@ import { site, mailto } from '../data/site';
 import { url } from '../utils/url';
 
 // Si la photo principale n'a pas encore été déposée, un emplacement provisoire s'affiche.
-const hasPortrait = existsSync(join(process.cwd(), 'public', f.photos.hero.src));
+const hasPortrait = existsSync(join(process.cwd(), 'public', f.photos.hero.src.split('?')[0]));
 
 const homeUrl = new URL(url('/'), Astro.site).href;
 const personLd = {

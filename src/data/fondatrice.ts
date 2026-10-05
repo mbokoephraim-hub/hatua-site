@@ -20,8 +20,9 @@ export const fondatrice = {
   // Photos (dossier public/images)
   photos: {
     // Photo principale (hero de la page)
+    // « ?v=2 » force les navigateurs à recharger la photo après un remplacement (incrémentez à chaque changement)
     hero: {
-      src: '/images/sublime-koyi-saley.jpg',
+      src: '/images/sublime-koyi-saley.jpg?v=2',
       width: 1200,
       height: 1261,
       alt: 'Sublime Koyi Saley, souriante, les bras croisés, en veste noire',
