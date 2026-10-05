@@ -16,7 +16,7 @@ Liste de tous les éléments provisoires du site. Cochez-les au fur et à mesure
 
 ## [À REMPLACER] : textes provisoires
 
-- [ ] **Mot de la fondatrice** (page À propos) : `src/pages/a-propos.astro`, section « Le mot de la fondatrice ».
+- [x] ~~Mot de la fondatrice~~ : intégré (`src/data/site.ts` → `founderMessage`).
 - [ ] **Notre histoire** (page À propos) : `src/pages/a-propos.astro`, encadré « [À REMPLACER] Notre histoire »
       (année de création, contexte, premières étapes).
 
@@ -24,7 +24,7 @@ Liste de tous les éléments provisoires du site. Cochez-les au fur et à mesure
 
 Détails dans `public/images/README.md`.
 
-- [ ] `public/images/echos-classe.svg` : atelier en classe / projet ÉCHOS.
+- [x] ~~Photo ÉCHOS~~ : `public/images/echos-eleves.webp` (à compléter par des photos réelles du projet).
 - [ ] `public/images/apropos-equipe.svg` : équipe et/ou fondatrice.
 - [ ] `public/images/engager-ateliers.svg` : jeunes en atelier, bénévoles.
 

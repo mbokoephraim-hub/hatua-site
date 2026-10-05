@@ -13,7 +13,16 @@ const pole = poles.find((p) => p.id === project.pole);
 
 <article class="card reveal group grid overflow-hidden !p-0 md:grid-cols-2">
   <div class="relative aspect-[3/2] md:aspect-auto">
-    <img src={url(project.image.src)} alt={project.image.alt} width="1200" height="800" loading="lazy" class="absolute inset-0 h-full w-full object-cover" />
+    <img
+      src={url(project.image.src)}
+      srcset={project.image.srcSmall ? `${url(project.image.srcSmall)} 800w, ${url(project.image.src)} 1536w` : undefined}
+      sizes="(min-width: 768px) 50vw, 100vw"
+      alt={project.image.alt}
+      width="1536"
+      height="1024"
+      loading="lazy"
+      class="absolute inset-0 h-full w-full object-cover"
+    />
   </div>
   <div class="flex flex-col p-7 sm:p-9">
     <div class="flex flex-wrap gap-2 text-xs font-semibold">

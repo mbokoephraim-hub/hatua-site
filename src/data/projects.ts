@@ -18,7 +18,8 @@ export interface Project {
   status: string;
   location: string;
   summary: string;
-  image: { src: string; alt: string };
+  // srcSmall (facultatif) : version allégée pour les petits écrans
+  image: { src: string; srcSmall?: string; alt: string };
   context: string[];
   objectives: string[];
   timeline: TimelineStep[];
@@ -37,8 +38,9 @@ export const projects: Project[] = [
     summary:
       'Premier projet du pôle Hatua Education, ÉCHOS invite les élèves à prendre conscience des voix qui façonnent leurs décisions, pour apprendre à choisir plus librement.',
     image: {
-      src: '/images/echos-classe.svg',
-      alt: 'Visuel provisoire : emplacement réservé à une photo d’atelier en classe',
+      src: '/images/echos-eleves.webp',
+      srcSmall: '/images/echos-eleves-800.webp',
+      alt: 'Quatre élèves en uniforme, sac au dos, marchant vers les bâtiments de leur école',
     },
     context: [
       'Chaque jour, les jeunes font des choix : ce qu’ils étudient, avec qui ils passent leur temps, ce qu’ils croient, ce qu’ils veulent devenir.',

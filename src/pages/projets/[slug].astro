@@ -50,7 +50,16 @@ const pole = poles.find((p) => p.id === project.pole);
           <a href="#calendrier" class="btn btn-outline-light">Voir le calendrier</a>
         </div>
       </div>
-      <img src={url(project.image.src)} alt={project.image.alt} width="1200" height="800" class="aspect-[3/2] w-full rounded-3xl object-cover shadow-2xl" />
+      <img
+        src={url(project.image.src)}
+        srcset={project.image.srcSmall ? `${url(project.image.srcSmall)} 800w, ${url(project.image.src)} 1536w` : undefined}
+        sizes="(min-width: 1024px) 45vw, 100vw"
+        alt={project.image.alt}
+        width="1536"
+        height="1024"
+        fetchpriority="high"
+        class="aspect-[3/2] w-full rounded-3xl object-cover shadow-2xl"
+      />
     </div>
   </section>
 

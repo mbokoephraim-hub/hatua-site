@@ -1,12 +1,12 @@
 # Photos à fournir
 
-Les visuels actuels (`.svg`) sont des **emplacements provisoires**. Remplacez-les par de vraies photos
+Les visuels `.svg` sont des **emplacements provisoires**. Remplacez-les par de vraies photos
 de la fondation. N'utilisez pas d'images générées par IA ni de photos de banque d'images présentées
 comme des actions réelles de la fondation.
 
 | Fichier provisoire | Où il apparaît | Photo à fournir |
 |---|---|---|
-| `echos-classe.svg` | Accueil (bloc ÉCHOS), page Projets, page ÉCHOS | Un atelier en classe, des élèves en échange (projet ÉCHOS ou Lycée Tobongisa) |
+| ✅ `echos-eleves.webp` (+ `echos-eleves-800.webp` pour mobile) | Accueil (bloc ÉCHOS), page Projets, page ÉCHOS | Fournie. À compléter plus tard par des photos réelles du projet au Lycée Tobongisa |
 | `apropos-equipe.svg` | Page À propos | L'équipe et/ou la fondatrice, Sublime Koyi |
 | `engager-ateliers.svg` | Page S'engager | Des jeunes en atelier, des bénévoles en action |
 | *(optionnel)* | — | Photos supplémentaires : salles de classe, ateliers, communautés, équipe |
@@ -19,7 +19,7 @@ comme des actions réelles de la fondation.
 
 ## Comment remplacer une image
 
-1. Déposez la photo dans ce dossier, par exemple `public/images/echos-classe.jpg`.
+1. Déposez la photo dans ce dossier, par exemple `public/images/equipe.webp` (largeur ~1600 px).
 2. Mettez à jour le chemin et le texte alternatif (`alt`) :
    - photo d'un projet → `src/data/projects.ts` (champ `image`) ;
    - autres photos → `src/data/images.ts`.

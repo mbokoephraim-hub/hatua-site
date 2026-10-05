@@ -8,6 +8,13 @@ export const site = {
   status: 'Organisation à but non lucratif',
   founder: 'Sublime Koyi',
 
+  // Mot de la fondatrice (page À propos)
+  founderMessage: [
+    'Je crois en une éducation qui ne se limite pas à transmettre des connaissances, mais qui aide chacun à comprendre qui il est, à faire des choix éclairés et à construire son avenir avec confiance.',
+    'Je crois au pouvoir des opportunités, de l’accompagnement et des communautés qui choisissent d’investir dans leur jeunesse.',
+    'Parce qu’un avenir meilleur commence souvent par un déclic, une rencontre, une chance… et parfois simplement par un premier pas.',
+  ],
+
   slogan: 'Étape après étape',
 
   // Phrase courte (hero, pied de page, description SEO)
