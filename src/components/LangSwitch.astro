@@ -7,8 +7,13 @@ interface Props {
   lang: Lang;
   page: PageRef;
   class?: string;
+  /** Version compacte (drapeaux seuls) pour la barre du haut sur téléphone */
+  compact?: boolean;
 }
-const { lang, page, class: className = '' } = Astro.props;
+const { lang, page, class: className = '', compact = false } = Astro.props;
+// Le code « FR » / « EN » est masqué visuellement en version compacte (il reste lu par les lecteurs d'écran)
+const codeClass = compact ? 'sr-only' : '';
+const pad = compact ? 'p-1' : 'py-1 pr-2.5 pl-1';
 const other = otherLang(lang);
 const codes: Lang[] = ['fr', 'en'];
 // Identifiant unique : le sélecteur apparaît deux fois (en-tête et menu mobile)
@@ -21,8 +26,8 @@ const uid = Math.random().toString(36).slice(2, 8);
       codes.map((code) =>
         code === lang ? (
           <li>
-            <span class="flex items-center gap-1.5 rounded-full bg-primary py-1 pr-2.5 pl-1 text-white" aria-current="true">
-              <span class="inline-block h-[18px] w-[18px] shrink-0 overflow-hidden rounded-full ring-1 ring-black/10" aria-hidden="true">
+            <span class={`flex items-center gap-1.5 rounded-full bg-primary text-white ${pad}`} aria-current="true">
+              <span class:list={['inline-block shrink-0 overflow-hidden rounded-full ring-1 ring-black/10', compact ? 'h-[22px] w-[22px]' : 'h-[18px] w-[18px]']} aria-hidden="true">
                 {code === 'fr' ? (
                   <svg viewBox="0 0 3 2" preserveAspectRatio="xMidYMid slice" class="h-full w-full">
                     <rect width="1" height="2" fill="#002654" />
@@ -43,7 +48,7 @@ const uid = Math.random().toString(36).slice(2, 8);
                   </svg>
                 )}
               </span>
-              <span aria-hidden="true">{code.toUpperCase()}</span>
+              <span aria-hidden="true" class={codeClass}>{code.toUpperCase()}</span>
               <span class="sr-only">{languages[code]}</span>
             </span>
           </li>
@@ -54,10 +59,10 @@ const uid = Math.random().toString(36).slice(2, 8);
               hreflang={other}
               lang={other}
               title={t('lang.switch', lang)}
-              class="flex items-center gap-1.5 rounded-full py-1 pr-2.5 pl-1 text-ink/70 transition-colors hover:bg-primary-50 hover:text-primary"
+              class={`flex items-center gap-1.5 rounded-full text-ink/70 transition-colors hover:bg-primary-50 hover:text-primary ${pad}`}
               data-lang-link
             >
-              <span class="inline-block h-[18px] w-[18px] shrink-0 overflow-hidden rounded-full ring-1 ring-black/10" aria-hidden="true">
+              <span class:list={['inline-block shrink-0 overflow-hidden rounded-full ring-1 ring-black/10', compact ? 'h-[22px] w-[22px]' : 'h-[18px] w-[18px]']} aria-hidden="true">
                 {code === 'fr' ? (
                   <svg viewBox="0 0 3 2" preserveAspectRatio="xMidYMid slice" class="h-full w-full">
                     <rect width="1" height="2" fill="#002654" />
@@ -78,7 +83,7 @@ const uid = Math.random().toString(36).slice(2, 8);
                   </svg>
                 )}
               </span>
-              <span aria-hidden="true">{code.toUpperCase()}</span>
+              <span aria-hidden="true" class={codeClass}>{code.toUpperCase()}</span>
               <span class="sr-only">{t('lang.switch', lang)}</span>
             </a>
           </li>

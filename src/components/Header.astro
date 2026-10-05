@@ -23,9 +23,9 @@ const supportHref = routePath('engage', lang, 'don');
 ---
 
 <header class="sticky top-0 z-50 border-b border-sand/80 bg-cream/90 backdrop-blur supports-[backdrop-filter]:bg-cream/80">
-  <div class="container-site flex h-[4.5rem] items-center justify-between gap-6">
+  <div class="container-site flex h-[4.5rem] items-center justify-between gap-3 sm:gap-6">
     <a href={routePath('home', lang)} class="shrink-0" aria-label={`${site.name}, ${tr('home.aria')}`}>
-      <img src={url('/logo.png')} alt="" width="538" height="128" class="h-11 w-auto sm:h-12" />
+      <img src={url('/logo.png')} alt="" width="538" height="128" class="h-9 w-auto min-[360px]:h-11 sm:h-12" />
     </a>
 
     <nav aria-label={tr('nav.label')} class="hidden lg:block">
@@ -54,6 +54,7 @@ const supportHref = routePath('engage', lang, 'don');
     </nav>
 
     <div class="flex items-center gap-2">
+      <LangSwitch lang={lang} page={page} compact class="sm:hidden" />
       <LangSwitch lang={lang} page={page} class="hidden sm:block" />
       <a href={supportHref} class="btn btn-primary hidden !px-5 !py-2.5 sm:inline-flex">{tr('cta.support')}</a>
       <button
@@ -72,6 +73,10 @@ const supportHref = routePath('engage', lang, 'don');
 
   <nav id="menu-mobile" aria-label={tr('nav.label')} class="hidden border-t border-sand bg-cream lg:hidden" data-menu>
     <ul class="container-site flex flex-col py-3">
+      <li class="mb-2 flex items-center justify-between rounded-xl border border-sand bg-white px-3 py-2.5">
+        <span class="text-sm font-semibold text-ink">{tr('lang.label')}</span>
+        <LangSwitch lang={lang} page={page} />
+      </li>
       {
         nav.map((item) => {
           const active = isActive(item.href, item.isHome);
@@ -95,10 +100,7 @@ const supportHref = routePath('engage', lang, 'don');
       <li class="mt-3 px-3 pb-2">
         <a href={supportHref} class="btn btn-primary w-full">{tr('cta.support')}</a>
       </li>
-      <li class="flex items-center justify-between px-3 pt-2 pb-3 sm:hidden">
-        <span class="text-sm font-medium text-muted">{tr('lang.label')}</span>
-        <LangSwitch lang={lang} page={page} />
-      </li>
+
     </ul>
   </nav>
 </header>
