@@ -14,13 +14,13 @@ export const images = {
     height: 1261,
     alt: founderAlt,
   },
-  // Page S'engager. En attendant une photo d'atelier : portrait de la fondatrice.
+  // Page S'engager (section Bénévolat) : portrait de la fondatrice, en attendant une photo d'atelier.
   engage: {
-    src: '/images/fondatrice.webp',
-    srcSmall: '/images/fondatrice-640.webp',
+    src: '/images/fondatrice-engager.webp',
+    srcSmall: '/images/fondatrice-engager-640.webp',
     width: 1200,
     height: 1261,
-    alt: founderAlt,
+    alt: 'Sublime Koyi Saley, fondatrice de Hatua Foundation, souriante, en veste noire',
   },
   // Vignette à côté du mot de la fondatrice
   founderAvatar: '/images/fondatrice-avatar.webp',
