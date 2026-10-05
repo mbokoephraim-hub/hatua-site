@@ -1,0 +1,73 @@
+# Déploiement automatique sur Hostinger par FTP.
+# Se déclenche à chaque push sur la branche `main`, ou à la main (onglet Actions > « Run workflow »).
+#
+# Secrets à créer (Settings > Secrets and variables > Actions > onglet « Secrets ») :
+#   FTP_SERVER    ex. ftp.hatuafoundation.org (ou l'adresse IP indiquée dans hPanel)
+#   FTP_USERNAME  ex. u123456789.hatuafoundation.org
+#   FTP_PASSWORD  mot de passe du compte FTP
+#
+# Variables facultatives (même écran, onglet « Variables ») :
+#   FTP_SERVER_DIR  dossier de destination sur le serveur (défaut : public_html/)
+#   FTP_PROTOCOL    ftps (défaut, chiffré) ou ftp
+#   FTP_SECURITY    strict (défaut) ou loose (accepte un certificat TLS ne correspondant pas au nom du serveur)
+name: Déploiement Hostinger
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-hostinger
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v5
+
+      - name: Installer Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Installer les dépendances
+        run: npm ci
+
+      - name: Construire le site
+        run: npm run build
+        env:
+          SITE_URL: https://hatuafoundation.org
+
+      - name: Vérifier les accès FTP
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          missing=""
+          [ -z "$FTP_SERVER" ] && missing="$missing FTP_SERVER"
+          [ -z "$FTP_USERNAME" ] && missing="$missing FTP_USERNAME"
+          [ -z "$FTP_PASSWORD" ] && missing="$missing FTP_PASSWORD"
+          if [ -n "$missing" ]; then
+            echo "::error::Secrets GitHub manquants :$missing (voir README, section Déploiement)."
+            exit 1
+          fi
+
+      - name: Envoyer les fichiers sur Hostinger
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 21
+          protocol: ${{ vars.FTP_PROTOCOL || 'ftps' }}
+          security: ${{ vars.FTP_SECURITY || 'strict' }}
+          local-dir: ./dist/
+          server-dir: ${{ vars.FTP_SERVER_DIR || 'public_html/' }}

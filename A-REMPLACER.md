@@ -4,18 +4,14 @@ Liste de tous les éléments provisoires du site. Cochez-les au fur et à mesure
 
 ## [À COMPLÉTER] : informations manquantes
 
-- [ ] **Slogan officiel** : `src/data/site.ts` → `slogan` (actuellement « Étape après étape »).
-      Pensez aussi à régénérer `public/og-image.png` (texte dans `scripts/generate-images.mjs`).
-- [ ] **Instagram** : `src/data/site.ts` → `social.instagram` (URL complète ; l'icône s'affiche automatiquement).
-- [ ] **LinkedIn (page entreprise)** : `src/data/site.ts` → `social.linkedin`.
-- [ ] **Nom de domaine / URL du site** : variable `SITE_URL` chez l'hébergeur, ou `astro.config.mjs`
-      (actuellement `https://hatua-foundation.org`, valeur provisoire).
-- [ ] **Identifiant Formspree** : variable `PUBLIC_FORMSPREE_ID` (ou `PUBLIC_FORM_PROVIDER=netlify` sur Netlify).
-      Tant qu'il manque, le formulaire de contact est désactivé et renvoie vers l'e-mail.
+- [x] ~~Instagram, LinkedIn, domaine (hatuafoundation.org), identifiant Formspree~~ : renseignés.
+- [x] ~~Slogan~~ : « Étape après étape » confirmé (`src/data/site.ts` → `slogan`).
+      En cas de changement, régénérer aussi `public/og-image.png` (texte dans `scripts/generate-images.mjs`).
+- [ ] **Accès FTP Hostinger** : à ajouter comme secrets GitHub (voir README, section 5).
 
 ## Identité visuelle (provisoire)
 
-- [ ] **Logo officiel** : remplacer `public/logo.svg` et `public/logo-light.svg` (mêmes noms de fichiers).
+- [ ] **Logo officiel** : fichiers à transmettre. Ils remplaceront `public/logo.svg` et `public/logo-light.svg` (mêmes noms de fichiers).
 - [ ] **Favicon** : remplacer `public/favicon.svg`, puis régénérer `favicon-32.png` et `apple-touch-icon.png`
       (`node scripts/generate-images.mjs`, voir README).
 - [ ] **Couleurs et polices** : si une charte graphique existe, mettre à jour `src/styles/global.css` (bloc `@theme`).

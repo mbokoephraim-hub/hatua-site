@@ -1,5 +1,5 @@
 /**
- * Préfixe un chemin interne avec le `base` du site (utile pour GitHub Pages en sous-dossier)
+ * Préfixe un chemin interne avec le `base` du site (si le site est publié dans un sous-dossier)
  * et ajoute la barre finale des pages (/a-propos → /a-propos/) pour éviter les redirections.
  */
 export function url(path: string): string {

@@ -1,16 +1,14 @@
 ---
 /**
- * Formulaire de contact sans backend.
- * - Formspree (par défaut) : définir PUBLIC_FORMSPREE_ID dans .env ou chez l'hébergeur.
- * - Netlify Forms : définir PUBLIC_FORM_PROVIDER=netlify (aucun identifiant nécessaire).
+ * Formulaire de contact sans backend, envoyé via Formspree.
+ * L'identifiant du formulaire se règle dans src/data/site.ts (form.formspreeId).
  */
 import Icon from './Icon.astro';
 import { site } from '../data/site';
 
-const { provider, formspreeId } = site.form;
-const isNetlify = provider === 'netlify';
-const configured = isNetlify || Boolean(formspreeId);
-const action = isNetlify ? undefined : formspreeId ? `https://formspree.io/f/${formspreeId}` : undefined;
+const { formspreeId } = site.form;
+const configured = Boolean(formspreeId);
+const action = configured ? `https://formspree.io/f/${formspreeId}` : undefined;
 
 const subjects = [
   'Demande d’information',
@@ -30,17 +28,15 @@ const field =
   name="contact"
   method="POST"
   action={action}
-  data-provider={provider}
   data-contact-form
-  {...isNetlify ? { 'data-netlify': 'true', 'netlify-honeypot': 'bot-field' } : {}}
   class="card !p-6 sm:!p-8"
   novalidate
 >
-  {isNetlify && <input type="hidden" name="form-name" value="contact" />}
+  <input type="hidden" name="_subject" value="Nouveau message depuis le site Hatua Foundation" />
 
   <!-- Champ piège anti-spam : invisible pour les humains -->
   <p class="hidden" aria-hidden="true">
-    <label>Ne pas remplir : <input name={isNetlify ? 'bot-field' : '_gotcha'} tabindex="-1" autocomplete="off" /></label>
+    <label>Ne pas remplir : <input name="_gotcha" tabindex="-1" autocomplete="off" /></label>
   </p>
 
   {
@@ -109,13 +105,10 @@ const field =
     const data = new FormData(form);
 
     try {
-      const isNetlify = form.dataset.provider === 'netlify';
-      const res = await fetch(isNetlify ? '/' : form.action, {
+      const res = await fetch(form.action, {
         method: 'POST',
-        headers: isNetlify
-          ? { 'Content-Type': 'application/x-www-form-urlencoded' }
-          : { Accept: 'application/json' },
-        body: isNetlify ? new URLSearchParams(data as unknown as Record<string, string>).toString() : data,
+        headers: { Accept: 'application/json' },
+        body: data,
       });
       if (!res.ok) throw new Error(String(res.status));
       form.reset();

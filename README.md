@@ -20,7 +20,6 @@ npm run build      # construit le site final dans le dossier dist/
 npm run preview    # prévisualise la version construite
 ```
 
-Pour configurer le formulaire de contact en local, copiez `.env.example` en `.env` et complétez-le.
 
 ---
 
@@ -28,14 +27,16 @@ Pour configurer le formulaire de contact en local, copiez `.env.example` en `.en
 
 ```
 hatua-site/
-├── astro.config.mjs          # URL du site, sous-dossier, langues
-├── .env.example              # variables de configuration (formulaire, URL)
+├── astro.config.mjs          # URL du site (hatuafoundation.org), langues
+├── .github/workflows/deploy-hostinger.yml   # déploiement automatique FTP
+├── .env.example              # surcharges facultatives (formulaire, URL)
 ├── A-REMPLACER.md            # liste des contenus provisoires à compléter
 ├── public/                   # fichiers servis tels quels
 │   ├── logo.svg              # logo (fond clair) : PROVISOIRE
 │   ├── logo-light.svg        # logo (fond foncé, pied de page) : PROVISOIRE
 │   ├── favicon.svg / favicon-32.png / apple-touch-icon.png
 │   ├── og-image.png          # image de partage sur les réseaux sociaux
+│   ├── .htaccess             # HTTPS, page 404, cache (serveur Hostinger)
 │   └── images/               # photos (voir images/README.md)
 ├── scripts/generate-images.mjs   # régénère favicons PNG et og-image.png
 └── src/
@@ -62,7 +63,7 @@ hatua-site/
 Tout se trouve dans **`src/data/`**. Ouvrez le fichier concerné, modifiez le texte entre guillemets, enregistrez.
 
 - Slogan, mission, e-mail, téléphone : `src/data/site.ts`
-- Instagram / LinkedIn : `src/data/site.ts` → `social`. Collez l'URL complète ; tant que le champ est vide, l'icône n'est pas affichée.
+- Instagram / LinkedIn : `src/data/site.ts` → `social`. Un champ vide masque l'icône.
 
 > Astuce : dans les textes, utilisez l'apostrophe typographique `’` ; si vous utilisez `'`, entourez le texte de guillemets doubles `"…"`.
 
@@ -111,42 +112,77 @@ node scripts/generate-images.mjs
 
 ## 4. Formulaire de contact
 
-Le site est statique : l'envoi passe par un service externe. Deux options :
+Le site est statique : les messages sont transmis par **Formspree**, qui les renvoie par e-mail.
 
-**Formspree (par défaut, fonctionne partout)**
-1. Créez un compte sur [formspree.io](https://formspree.io) et un formulaire avec l'adresse `hatuafound@gmail.com`.
-2. Copiez l'identifiant (la partie après `/f/` dans `https://formspree.io/f/abcdwxyz`).
-3. Définissez la variable `PUBLIC_FORMSPREE_ID=abcdwxyz` (fichier `.env` en local, ou dans les réglages de l'hébergeur).
-
-**Netlify Forms (si le site est hébergé sur Netlify)**
-Définissez `PUBLIC_FORM_PROVIDER=netlify` dans les variables d'environnement Netlify, puis activez les notifications e-mail dans *Forms* de votre tableau de bord Netlify.
-
-Tant que rien n'est configuré, le formulaire affiche un message invitant à écrire directement par e-mail.
+- Identifiant du formulaire : `xgaoewap`, dans `src/data/site.ts` → `form.formspreeId`.
+- Les messages arrivent sur l'adresse e-mail du compte Formspree. Vous pouvez changer cette adresse et restreindre le formulaire au domaine `hatuafoundation.org` dans les réglages Formspree.
+- Un champ invisible (`_gotcha`) filtre une partie des robots spammeurs.
 
 ---
 
-## 5. Déploiement
+## 5. Déploiement sur Hostinger (automatique)
 
-Avant tout déploiement, indiquez l'URL définitive du site via la variable `SITE_URL` (ou dans `astro.config.mjs`) : elle sert au sitemap, aux liens canoniques et au partage sur les réseaux sociaux.
+Le site est publié sur **https://hatuafoundation.org** (hébergement mutualisé Hostinger).
+À chaque modification fusionnée dans la branche **`main`**, GitHub construit le site et l'envoie par FTP dans
+`public_html` (workflow `.github/workflows/deploy-hostinger.yml`). Seuls les fichiers modifiés sont renvoyés.
 
-### Netlify (recommandé)
-1. [app.netlify.com](https://app.netlify.com) → *Add new site* → *Import from Git* → choisissez ce dépôt.
-2. Les réglages sont lus depuis `netlify.toml` (commande `npm run build`, dossier `dist`).
-3. *Site configuration → Environment variables* : ajoutez `SITE_URL` et `PUBLIC_FORMSPREE_ID` (ou `PUBLIC_FORM_PROVIDER=netlify`).
+### Étape 1 : préparer Hostinger (une seule fois)
+1. **Activer le SSL** : hPanel → *Sites web* → *Gérer* (hatuafoundation.org) → *Sécurité* → *SSL*. Le certificat
+   (gratuit) doit être **actif** avant la mise en ligne, car le fichier `.htaccess` force le HTTPS.
+2. **Vider `public_html`** : hPanel → *Fichiers* → *Gestionnaire de fichiers* → ouvrez `public_html` et supprimez
+   le fichier d'accueil par défaut d'Hostinger (`default.php`), s'il existe. Sinon, il pourrait s'afficher à la place du site.
 
-### Vercel
-1. [vercel.com/new](https://vercel.com/new) → importez le dépôt (Astro est détecté automatiquement, voir `vercel.json`).
-2. Ajoutez les variables d'environnement `SITE_URL` et `PUBLIC_FORMSPREE_ID`.
+### Étape 2 : trouver vos accès FTP dans hPanel
+1. Connectez-vous sur [hpanel.hostinger.com](https://hpanel.hostinger.com).
+2. *Sites web* → cliquez sur **Gérer** à côté de `hatuafoundation.org`.
+3. Dans le menu de gauche : **Fichiers** → **Comptes FTP**.
+4. La zone **Détails FTP** indique :
+   - **IP FTP / Nom d'hôte** (ex. `ftp.hatuafoundation.org` ou une adresse IP) → secret `FTP_SERVER` ;
+   - **Nom d'utilisateur FTP** (ex. `u123456789.hatuafoundation.org`) → secret `FTP_USERNAME` ;
+   - **Port FTP** : `21` (déjà réglé dans le workflow) ;
+   - **Dossier de téléchargement des fichiers** : `public_html`.
+5. **Mot de passe** : s'il est perdu, cliquez sur **Changer le mot de passe du compte FTP** sur la même page et
+   choisissez-en un nouveau, long et unique → secret `FTP_PASSWORD`.
 
-### GitHub Pages
-1. Dans le dépôt : *Settings → Pages → Source* : **GitHub Actions**.
-2. Le workflow `.github/workflows/deploy.yml` construit et publie le site à chaque push sur `main`.
-3. Variables optionnelles (*Settings → Secrets and variables → Actions → Variables*) :
-   - `PUBLIC_FORMSPREE_ID` : identifiant Formspree ;
-   - `SITE_URL` : à définir **uniquement** si vous utilisez un domaine personnalisé (sinon le site est servi sous `https://<compte>.github.io/<depot>/`).
+*Conseil :* vous pouvez aussi créer, sur la même page, un compte FTP dédié à GitHub (rubrique *Créer un nouveau compte FTP*), limité au dossier `public_html`. Il se désactive facilement en cas de besoin, sans toucher au compte principal.
 
-### Nom de domaine
-Achetez le domaine (ex. `hatua-foundation.org`) puis suivez la procédure « custom domain » de votre hébergeur, et mettez `SITE_URL` à jour.
+### Étape 3 : ajouter les accès comme « secrets » dans GitHub
+Les secrets sont chiffrés : personne ne peut les relire, pas même vous. Ils ne figurent jamais dans le code.
+1. Sur GitHub, ouvrez le dépôt `hatua-site` → onglet **Settings** (Paramètres).
+2. Menu de gauche : **Secrets and variables** → **Actions**.
+3. Onglet **Secrets** → bouton **New repository secret**, puis créez ces trois secrets, un par un :
+
+   | Name (nom exact) | Secret (valeur) |
+   |---|---|
+   | `FTP_SERVER` | le nom d'hôte ou l'IP FTP, sans `ftp://` |
+   | `FTP_USERNAME` | le nom d'utilisateur FTP |
+   | `FTP_PASSWORD` | le mot de passe FTP |
+
+4. Cliquez sur **Add secret** à chaque fois.
+
+### Étape 4 : lancer un déploiement
+- **Automatique** : fusionnez une modification dans `main`.
+- **Manuel** : onglet **Actions** → *Déploiement Hostinger* → **Run workflow**.
+- Suivez l'exécution dans l'onglet **Actions** : une coche verte ✔ signifie que le site est en ligne.
+
+### En cas d'erreur
+| Message dans l'onglet Actions | Solution |
+|---|---|
+| `Secrets GitHub manquants` | Un secret est absent ou mal nommé (étape 3). |
+| `Login authentication failed` / `530` | Identifiant ou mot de passe FTP incorrect (étape 2). |
+| Erreur de certificat (`certificate`, `altnames`, `self signed`) | Onglet **Variables** (même écran que les secrets) → *New repository variable* : `FTP_SECURITY` = `loose`. La connexion reste chiffrée. |
+| Délai dépassé / connexion TLS refusée | Variable `FTP_PROTOCOL` = `ftp` (connexion non chiffrée : à éviter si possible). |
+| Le site s'affiche dans un sous-dossier `public_html/public_html` | Variable `FTP_SERVER_DIR` = `./` (votre compte FTP s'ouvre déjà dans `public_html`). |
+
+### Fichier `.htaccess`
+`public/.htaccess` est copié à la racine du site. Il :
+- force le **HTTPS** et redirige `www.hatuafoundation.org` vers `hatuafoundation.org` ;
+- affiche la **page 404** personnalisée (`404.html`) ;
+- ajoute des en-têtes de sécurité, la compression et la mise en cache.
+
+### Construire le site à la main (sans GitHub)
+`npm run build`, puis envoyez le **contenu** du dossier `dist/` (y compris le fichier caché `.htaccess`) dans
+`public_html` avec le gestionnaire de fichiers d'hPanel ou un logiciel FTP comme FileZilla.
 
 ---
 

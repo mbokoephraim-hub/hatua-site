@@ -3,10 +3,9 @@ import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 
 // URL publique du site (sitemap, Open Graph, URL canoniques).
-// [À COMPLÉTER] Remplacez par le nom de domaine définitif, ou définissez SITE_URL au déploiement.
-const SITE_URL = process.env.SITE_URL || 'https://hatua-foundation.org';
+const SITE_URL = process.env.SITE_URL || 'https://hatuafoundation.org';
 
-// Sous-dossier éventuel (ex. GitHub Pages sans domaine : "/hatua-site"). Laisser vide sinon.
+// Sous-dossier éventuel (si le site n'est pas à la racine du domaine). Laisser vide sinon.
 const BASE_PATH = process.env.BASE_PATH || '/';
 
 export default defineConfig({

@@ -8,7 +8,6 @@ export const site = {
   status: 'Organisation à but non lucratif',
   founder: 'Sublime Koyi',
 
-  // [À COMPLÉTER] Slogan officiel. Valeur par défaut en attendant.
   slogan: 'Étape après étape',
 
   // Phrase courte (hero, pied de page, description SEO)
@@ -53,16 +52,16 @@ export const site = {
     whatsappHref: 'https://wa.me/243972839605',
   },
 
-  // [À COMPLÉTER] URLs des réseaux sociaux. Un lien vide n'est pas affiché.
+  // Réseaux sociaux (un lien vide n'est pas affiché)
   social: {
-    instagram: '',
-    linkedin: '',
+    instagram: 'https://www.instagram.com/hatua.foundation/',
+    linkedin: 'https://www.linkedin.com/company/hatua-found/',
   },
 
-  // Formulaire de contact : configuré via les variables d'environnement (voir .env.example)
+  // Formulaire de contact (Formspree). L'identifiant est public : il apparaît dans le code HTML de la page.
+  // Peut être surchargé par la variable d'environnement PUBLIC_FORMSPREE_ID.
   form: {
-    provider: (import.meta.env.PUBLIC_FORM_PROVIDER || 'formspree') as 'formspree' | 'netlify',
-    formspreeId: import.meta.env.PUBLIC_FORMSPREE_ID || '',
+    formspreeId: import.meta.env.PUBLIC_FORMSPREE_ID || 'xgaoewap',
   },
 
   copyrightYear: 2026,
