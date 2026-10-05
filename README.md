@@ -135,6 +135,15 @@ Le site est statique : les messages sont transmis par **Formspree**, qui les ren
 - Les messages arrivent sur l'adresse e-mail du compte Formspree. Vous pouvez changer cette adresse et restreindre le formulaire au domaine `hatuafoundation.org` dans les réglages Formspree.
 - Un champ invisible (`_gotcha`) filtre une partie des robots spammeurs.
 
+### Formulaires de la page « S'engager »
+Trois formulaires (bénévolat, partenariat, don) envoient leurs réponses par e-mail via le **même compte Formspree**.
+Chaque e-mail porte un objet distinct (« Candidature bénévole », « Proposition de partenariat », « Intention de don »)
+et liste les réponses champ par champ. Les champs se modifient dans **`src/data/forms.ts`**.
+
+**Fichiers joints (CV, document de présentation, pièce jointe)** : Formspree ne les accepte que sur une **formule payante**
+(ils arrivent alors sous forme de **liens de téléchargement** dans l'e-mail). En formule gratuite, le site renvoie
+automatiquement la demande **sans** le fichier et invite la personne à l'envoyer par e-mail : aucune demande n'est perdue.
+
 ---
 
 ## 5. Déploiement sur Hostinger

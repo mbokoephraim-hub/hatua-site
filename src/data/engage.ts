@@ -29,18 +29,21 @@ export const engage = {
       {
         icon: 'school',
         title: 'Écoles',
+        formType: 'École', // valeur pré-sélectionnée dans le formulaire de partenariat
         text: 'Accueillir des activités dans votre établissement, à commencer par le projet ÉCHOS.',
         subject: 'Partenariat : établissement scolaire',
       },
       {
         icon: 'briefcase',
         title: 'Entreprises',
+        formType: 'Entreprise', // valeur pré-sélectionnée dans le formulaire de partenariat
         text: 'Soutenir un projet, mobiliser vos collaborateurs, partager une expertise ou offrir du matériel.',
         subject: 'Partenariat : entreprise',
       },
       {
         icon: 'landmark',
         title: 'Institutions',
+        formType: 'Institution publique', // valeur pré-sélectionnée dans le formulaire de partenariat
         text: 'Associations, organisations internationales, pouvoirs publics : construisons ensemble des actions à plus grande échelle.',
         subject: 'Partenariat : institution / organisation',
       },
@@ -49,7 +52,7 @@ export const engage = {
 
   donate: {
     title: 'Faire un don',
-    text: 'Votre soutien permet de lancer de nouveaux projets et d’accompagner davantage de jeunes. Le don en ligne n’est pas encore disponible : écrivez-nous et nous vous indiquerons comment contribuer.',
+    text: 'Votre soutien permet de lancer de nouveaux projets et d’accompagner davantage de jeunes. Le don en ligne n’est pas encore disponible : remplissez le formulaire ci-dessous et nous vous indiquerons comment contribuer.',
     subject: 'Je souhaite soutenir Hatua Foundation',
     body: 'Bonjour,\n\nJe souhaite soutenir Hatua Foundation.\n\nNom :\nType de soutien envisagé (don financier, matériel, autre) :\nMessage :\n\nMerci de me recontacter.',
   },

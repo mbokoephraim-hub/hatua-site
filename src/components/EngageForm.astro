@@ -1,0 +1,259 @@
+---
+/**
+ * Formulaire de la page « S'engager » (bénévolat, partenariat, don), envoyé par e-mail via Formspree.
+ * La liste des champs se règle dans src/data/forms.ts.
+ */
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+import { consentLabel, MAX_FILE_MB, type EngageFormConfig } from '../data/forms';
+
+interface Props {
+  form: EngageFormConfig;
+}
+const { form } = Astro.props;
+const { formspreeId } = site.form;
+const action = formspreeId ? `https://formspree.io/f/${formspreeId}` : undefined;
+const uid = (i: number) => `${form.id}-${i}`;
+
+const field =
+  'mt-2 block w-full rounded-xl border border-sand bg-white px-4 py-3 text-ink shadow-sm transition placeholder:text-muted/70 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none';
+const star = '<span class="text-secondary" aria-hidden="true"> *</span>';
+---
+
+<div id={`formulaire-${form.id}`} class="card scroll-mt-24 !p-0" data-engage-wrapper>
+  <div class="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+    <div>
+      <h3 class="text-xl font-semibold sm:text-2xl">{form.title}</h3>
+      <p class="mt-1 text-muted">{form.intro}</p>
+    </div>
+    <button
+      type="button"
+      class="btn btn-green hidden shrink-0"
+      aria-expanded="true"
+      aria-controls={`${form.id}-body`}
+      data-engage-toggle
+    >
+      <span data-toggle-label>Remplir le formulaire</span>
+      <Icon name="arrow-right" size={18} class="rotate-90 transition-transform" />
+    </button>
+  </div>
+
+  <div id={`${form.id}-body`} class="border-t border-sand p-6 sm:p-8" data-engage-body>
+    <form method="POST" action={action} enctype="multipart/form-data" data-engage-form novalidate>
+      <input type="hidden" name="_subject" value={form.subject} />
+      <input type="hidden" name="Formulaire" value={form.title} />
+      <p class="hidden" aria-hidden="true">
+        <label>Ne pas remplir : <input name="_gotcha" tabindex="-1" autocomplete="off" /></label>
+      </p>
+
+      {form.note && <p class="tone-miel mb-6 rounded-xl px-4 py-3 text-sm" role="note">{form.note}</p>}
+
+      <div class="grid gap-5 sm:grid-cols-2">
+        {
+          form.fields.map((f, i) => {
+            const id = uid(i);
+            const helpId = f.help ? `${id}-aide` : undefined;
+            const span = f.half ? '' : 'sm:col-span-2';
+            if (f.type === 'checkboxes' || f.type === 'radios') {
+              return (
+                <fieldset class={span} data-group={f.type === 'checkboxes' ? f.name : undefined} data-required={f.required ? '' : undefined} aria-describedby={helpId}>
+                  <legend class="font-medium">
+                    {f.label}
+                    {f.required && <Fragment set:html={star} />}
+                  </legend>
+                  {f.help && <p id={helpId} class="mt-1 text-sm text-muted">{f.help}</p>}
+                  {f.type === 'checkboxes' && <input type="hidden" name={f.name} value="" data-group-value />}
+                  <div class:list={['mt-3 grid gap-2', f.options && f.options.length > 3 && 'sm:grid-cols-2']}>
+                    {f.options?.map((o, j) => (
+                      <label class="flex cursor-pointer items-start gap-3 rounded-lg border border-sand bg-white px-3 py-2.5 text-sm transition hover:border-primary/50">
+                        <input
+                          type={f.type === 'checkboxes' ? 'checkbox' : 'radio'}
+                          name={f.type === 'radios' ? f.name : undefined}
+                          value={o}
+                          required={f.type === 'radios' && f.required && j === 0}
+                          class="mt-0.5 h-4 w-4 shrink-0 accent-primary"
+                        />
+                        <span>{o}</span>
+                      </label>
+                    ))}
+                  </div>
+                  <p class="mt-2 hidden text-sm font-medium text-secondary" data-group-error>Veuillez cocher au moins une option.</p>
+                </fieldset>
+              );
+            }
+            return (
+              <div class={span}>
+                <label for={id} class="font-medium">
+                  {f.label}
+                  {f.required && <Fragment set:html={star} />}
+                </label>
+                {f.type === 'textarea' ? (
+                  <textarea id={id} name={f.name} rows={f.rows ?? 4} required={f.required} placeholder={f.placeholder} aria-describedby={helpId} class={field} />
+                ) : f.type === 'select' ? (
+                  <select id={id} name={f.name} required={f.required} aria-describedby={helpId} class={field}>
+                    {!f.default && <option value="">Choisissez…</option>}
+                    {f.options?.map((o) => <option value={o} selected={o === f.default}>{o}</option>)}
+                  </select>
+                ) : f.type === 'file' ? (
+                  <input
+                    id={id}
+                    name={f.name}
+                    type="file"
+                    accept={f.accept}
+                    aria-describedby={helpId}
+                    data-max-mb={MAX_FILE_MB}
+                    class={`${field} file:mr-4 file:rounded-full file:border-0 file:bg-primary-50 file:px-4 file:py-2 file:font-semibold file:text-primary hover:file:bg-accent/60`}
+                  />
+                ) : (
+                  <input
+                    id={id}
+                    name={f.name}
+                    type={f.type}
+                    required={f.required}
+                    placeholder={f.placeholder}
+                    autocomplete={f.autocomplete}
+                    min={f.min}
+                    inputmode={f.type === 'number' ? 'decimal' : undefined}
+                    aria-describedby={helpId}
+                    class={field}
+                  />
+                )}
+                {f.help && <p id={helpId} class="mt-1.5 text-sm text-muted">{f.help}</p>}
+              </div>
+            );
+          })
+        }
+
+        <label class="flex items-start gap-3 text-sm sm:col-span-2">
+          <input type="checkbox" name="Consentement" value="Oui" required class="mt-0.5 h-4 w-4 shrink-0 accent-primary" />
+          <span>{consentLabel}<span class="text-secondary" aria-hidden="true"> *</span></span>
+        </label>
+      </div>
+
+      <p class="mt-5 text-sm text-muted"><span class="text-secondary" aria-hidden="true">*</span> Champs obligatoires</p>
+
+      <button type="submit" class="btn btn-primary mt-6 w-full disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto" disabled={!action}>
+        {form.submit} <Icon name="send" size={18} />
+      </button>
+
+      <p class="mt-5 hidden rounded-xl p-4 font-medium" role="status" aria-live="polite" tabindex="-1" data-form-status data-success={form.success}></p>
+    </form>
+  </div>
+</div>
+
+<script>
+  const EMAIL = 'hatuafound@gmail.com';
+
+  // --- Ouverture / fermeture des formulaires (repliés par défaut pour alléger la page)
+  const wrappers = [...document.querySelectorAll<HTMLElement>('[data-engage-wrapper]')];
+  const setOpen = (w: HTMLElement, open: boolean) => {
+    const btn = w.querySelector<HTMLButtonElement>('[data-engage-toggle]');
+    const body = w.querySelector<HTMLElement>('[data-engage-body]');
+    if (!btn || !body) return;
+    btn.setAttribute('aria-expanded', String(open));
+    body.hidden = !open;
+    btn.querySelector('[data-toggle-label]')!.textContent = open ? 'Masquer le formulaire' : 'Remplir le formulaire';
+    btn.querySelector('svg')?.classList.toggle('-rotate-90', open);
+    btn.querySelector('svg')?.classList.toggle('rotate-90', !open);
+  };
+  const openFromHash = () => {
+    const target = wrappers.find((w) => `#${w.id}` === location.hash);
+    if (target) {
+      setOpen(target, true);
+      target.scrollIntoView({ block: 'start' });
+    }
+  };
+  wrappers.forEach((w) => {
+    const btn = w.querySelector<HTMLButtonElement>('[data-engage-toggle]');
+    if (!btn) return;
+    btn.classList.remove('hidden');
+    btn.classList.add('inline-flex');
+    setOpen(w, false);
+    btn.addEventListener('click', () => setOpen(w, btn.getAttribute('aria-expanded') !== 'true'));
+  });
+  openFromHash();
+  window.addEventListener('hashchange', openFromHash);
+  // Un lien vers un formulaire l'ouvre toujours, même s'il a été refermé entre-temps
+  document.querySelectorAll<HTMLAnchorElement>('a[href^="#formulaire-"]').forEach((a) => {
+    a.addEventListener('click', () => {
+      const target = wrappers.find((w) => `#${w.id}` === a.hash);
+      if (target) setOpen(target, true);
+    });
+  });
+
+  // --- Liens qui ouvrent un formulaire et pré-remplissent un champ (ex. « École »)
+  document.querySelectorAll<HTMLAnchorElement>('a[data-prefill-field]').forEach((a) => {
+    a.addEventListener('click', () => {
+      const wrapper = document.querySelector<HTMLElement>(a.hash);
+      const el = wrapper?.querySelector<HTMLSelectElement>(`[name="${a.dataset.prefillField}"]`);
+      if (el && a.dataset.prefillValue) el.value = a.dataset.prefillValue;
+    });
+  });
+
+  // --- Envoi
+  const show = (status: HTMLElement, msg: string, ok: boolean) => {
+    status.textContent = msg;
+    status.classList.remove('hidden', 'bg-primary-50', 'text-primary-dark', 'bg-secondary-50', 'text-secondary-dark');
+    status.classList.add(...(ok ? ['bg-primary-50', 'text-primary-dark'] : ['bg-secondary-50', 'text-secondary-dark']));
+    status.focus();
+  };
+
+  const send = (form: HTMLFormElement, data: FormData) =>
+    fetch(form.action, { method: 'POST', headers: { Accept: 'application/json' }, body: data });
+
+  document.querySelectorAll<HTMLFormElement>('form[data-engage-form]').forEach((form) => {
+    const status = form.querySelector<HTMLElement>('[data-form-status]')!;
+    const button = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // Cases à cocher : regroupées en une seule ligne lisible dans l'e-mail
+      let groupsOk = true;
+      form.querySelectorAll<HTMLFieldSetElement>('fieldset[data-group]').forEach((fs) => {
+        const values = [...fs.querySelectorAll<HTMLInputElement>('input[type="checkbox"]:checked')].map((c) => c.value);
+        fs.querySelector<HTMLInputElement>('[data-group-value]')!.value = values.join(', ');
+        const missing = fs.hasAttribute('data-required') && values.length === 0;
+        fs.querySelector('[data-group-error]')?.classList.toggle('hidden', !missing);
+        if (missing) groupsOk = false;
+      });
+
+      if (!form.checkValidity() || !groupsOk) {
+        form.reportValidity();
+        if (!groupsOk) form.querySelector<HTMLElement>('fieldset[data-group] [data-group-error]:not(.hidden)')?.scrollIntoView({ block: 'center' });
+        return;
+      }
+
+      // Taille des fichiers
+      const files = [...form.querySelectorAll<HTMLInputElement>('input[type="file"]')].filter((i) => i.files?.length);
+      for (const input of files) {
+        const max = Number(input.dataset.maxMb || 10);
+        if (input.files![0].size > max * 1024 * 1024) {
+          show(status, `Le fichier « ${input.files![0].name} » dépasse ${max} Mo. Choisissez un fichier plus léger.`, false);
+          return;
+        }
+      }
+
+      button.disabled = true;
+      const data = new FormData(form);
+      try {
+        let res = await send(form, data);
+        let fileNotice = '';
+        // Si Formspree refuse les fichiers (formule gratuite), on renvoie la demande sans pièce jointe
+        if (!res.ok && files.length) {
+          files.forEach((i) => data.delete(i.name));
+          data.append('Pièce jointe', 'Non transmise (fichier refusé par le service d’envoi) : demander le document par e-mail');
+          res = await send(form, data);
+          fileNotice = ` Votre fichier n’a toutefois pas pu être transmis : merci de l’envoyer à ${EMAIL}.`;
+        }
+        if (!res.ok) throw new Error(String(res.status));
+        form.reset();
+        show(status, (status.dataset.success || 'Merci ! Votre demande a bien été envoyée.') + fileNotice, true);
+      } catch {
+        show(status, `Désolé, l’envoi a échoué. Réessayez plus tard ou écrivez-nous à ${EMAIL}.`, false);
+      } finally {
+        button.disabled = false;
+      }
+    });
+  });
+</script>

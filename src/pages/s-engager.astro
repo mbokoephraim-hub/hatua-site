@@ -3,10 +3,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHeader from '../components/PageHeader.astro';
 import SectionTitle from '../components/SectionTitle.astro';
 import Icon from '../components/Icon.astro';
+import EngageForm from '../components/EngageForm.astro';
+import { engageForms } from '../data/forms';
 import { engage } from '../data/engage';
 import { images } from '../data/images';
-import { site, mailto } from '../data/site';
-import { t } from '../i18n/ui';
+import { site } from '../data/site';
 import { url } from '../utils/url';
 
 const { volunteer, partners, donate } = engage;
@@ -60,11 +61,14 @@ const { volunteer, partners, donate } = engage;
               ))
             }
           </ol>
-          <a href={mailto(volunteer.subject, volunteer.body)} class="btn btn-green mt-8 w-full sm:w-auto">
-            <Icon name="mail" size={18} /> Proposer ma candidature
+          <a href="#formulaire-benevolat" class="btn btn-green mt-8 w-full sm:w-auto">
+            <Icon name="user-plus" size={18} /> Proposer ma candidature
           </a>
         </div>
       </div>
+    </div>
+    <div class="container-site reveal mt-14">
+      <EngageForm form={engageForms.benevolat} />
     </div>
   </section>
 
@@ -81,13 +85,21 @@ const { volunteer, partners, donate } = engage;
               </span>
               <h3 class="mt-5 text-xl font-semibold">{p.title}</h3>
               <p class="mt-2 flex-1 leading-relaxed text-muted">{p.text}</p>
-              <a href={mailto(p.subject)} class="mt-5 inline-flex items-center gap-1.5 font-semibold text-secondary hover:underline">
+              <a
+                href="#formulaire-partenariat"
+                data-prefill-field="Type d’organisation"
+                data-prefill-value={p.formType}
+                class="mt-5 inline-flex items-center gap-1.5 font-semibold text-secondary hover:underline"
+              >
                 Proposer un partenariat <span class="sr-only">({p.title})</span> <Icon name="arrow-right" size={18} />
               </a>
             </li>
           ))
         }
       </ul>
+      <div class="reveal mt-10">
+        <EngageForm form={engageForms.partenariat} />
+      </div>
     </div>
   </section>
 
@@ -106,14 +118,17 @@ const { volunteer, partners, donate } = engage;
           <h2 id="don-titre" class="mt-4 text-3xl font-bold sm:text-4xl">{donate.title}</h2>
           <p class="mt-4 text-lg leading-relaxed">{donate.text}</p>
           <div class="mt-8 flex flex-wrap gap-3">
-            <a href={mailto(donate.subject, donate.body)} class="btn btn-primary">
-              <Icon name="mail" size={18} /> {t('cta.contactSupport')}
+            <a href="#formulaire-don" class="btn btn-primary">
+              <Icon name="gift" size={18} /> Remplir le formulaire de don
             </a>
             <a href={site.contact.whatsappHref} target="_blank" rel="noopener noreferrer" class="btn btn-outline">
               <Icon name="whatsapp" size={18} /> WhatsApp
             </a>
           </div>
         </div>
+      </div>
+      <div class="reveal mt-10">
+        <EngageForm form={engageForms.don} />
       </div>
     </div>
   </section>
