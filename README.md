@@ -123,11 +123,35 @@ Le site est statique : les messages sont transmis par **Formspree**, qui les ren
 
 ---
 
-## 5. Déploiement sur Hostinger (automatique)
+## 5. Déploiement sur Hostinger
 
-Le site est publié sur **https://hatuafoundation.org** (hébergement mutualisé Hostinger).
-À chaque modification fusionnée dans la branche **`main`**, GitHub construit le site et l'envoie par FTP dans
-`public_html` (workflow `.github/workflows/deploy-hostinger.yml`). Seuls les fichiers modifiés sont renvoyés.
+Le site est publié sur **https://hatuafoundation.org** (hébergement Hostinger).
+
+### Méthode recommandée : intégration GitHub de Hostinger
+Hostinger récupère le code sur GitHub, construit le site et le met en ligne à chaque modification de la branche choisie.
+
+1. hPanel → *Sites web* → hatuafoundation.org → déploiement **depuis GitHub** (autorisez l'accès au dépôt `hatua-site`).
+2. Réglages :
+
+   | Champ | Valeur |
+   |---|---|
+   | Préréglage du cadre (framework) | **Astro** |
+   | Branche | **`main`** |
+   | Version de Node | **22.x** |
+   | Dossier racine | `./` |
+   | Commande d'installation | `npm ci` (ou `npm install`) |
+   | Commande de compilation | `npm run build` |
+   | Dossier de sortie | `dist` |
+   | Variables d'environnement | aucune (domaine et Formspree sont déjà dans le code) |
+
+3. Lancez le déploiement, puis ouvrez https://hatuafoundation.org pour vérifier.
+
+Ensuite, toute modification fusionnée dans `main` est mise en ligne automatiquement.
+
+### Méthode de secours : FTP via GitHub Actions
+Le workflow `.github/workflows/deploy-hostinger.yml` envoie le site par FTP dans `public_html`.
+Il ne se lance **qu'à la main** (onglet *Actions* → *Déploiement Hostinger (FTP)* → *Run workflow*), pour ne pas
+entrer en conflit avec la méthode recommandée. N'utilisez pas les deux méthodes en même temps.
 
 ### Étape 1 : préparer Hostinger (une seule fois)
 1. **Activer le SSL** : hPanel → *Sites web* → *Gérer* (hatuafoundation.org) → *Sécurité* → *SSL*. Le certificat

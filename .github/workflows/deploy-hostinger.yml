@@ -1,5 +1,7 @@
-# Déploiement automatique sur Hostinger par FTP.
-# Se déclenche à chaque push sur la branche `main`, ou à la main (onglet Actions > « Run workflow »).
+# Déploiement sur Hostinger par FTP : méthode DE SECOURS.
+# Le site est normalement déployé par l'intégration GitHub de Hostinger (voir README, section 5).
+# Ce workflow ne se lance qu'à la main : onglet Actions > « Déploiement Hostinger (FTP) » > « Run workflow ».
+# Pour le réactiver à chaque push sur main, ajoutez sous `on:` :  push: { branches: [main] }
 #
 # Secrets à créer (Settings > Secrets and variables > Actions > onglet « Secrets ») :
 #   FTP_SERVER    ex. ftp.hatuafoundation.org (ou l'adresse IP indiquée dans hPanel)
@@ -10,11 +12,9 @@
 #   FTP_SERVER_DIR  dossier de destination sur le serveur (défaut : public_html/)
 #   FTP_PROTOCOL    ftps (défaut, chiffré) ou ftp
 #   FTP_SECURITY    strict (défaut) ou loose (accepte un certificat TLS ne correspondant pas au nom du serveur)
-name: Déploiement Hostinger
+name: Déploiement Hostinger (FTP)
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
