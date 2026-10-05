@@ -13,6 +13,10 @@ export default defineConfig({
   base: BASE_PATH,
   trailingSlash: 'ignore', // les liens internes sont générés avec la barre finale (src/utils/url.ts),
   // Structure multilingue prête : ajoutez 'en' dans `locales` le moment venu.
+  // Ancienne adresse de la page de la fondatrice (redirection de secours si .htaccess n'est pas appliqué)
+  redirects: {
+    '/fondatrice': '/sublimekoyi/',
+  },
   i18n: {
     defaultLocale: 'fr',
     locales: ['fr'],

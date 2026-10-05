@@ -3,7 +3,7 @@ import { projects } from '../data/projects';
 import { url } from '../utils/url';
 
 // Pages statiques du site (ajoutez ici toute nouvelle page). Les projets sont ajoutés automatiquement.
-const staticPages = ['/', '/a-propos', '/poles', '/projets', '/s-engager', '/contact', '/fondatrice'];
+const staticPages = ['/', '/a-propos', '/poles', '/projets', '/s-engager', '/contact', '/sublimekoyi'];
 
 export const GET: APIRoute = ({ site }) => {
   const paths = [...staticPages, ...projects.map((p) => `/projets/${p.slug}`)];

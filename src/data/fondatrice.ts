@@ -1,5 +1,5 @@
 /**
- * Page « Présidente & Fondatrice » (/fondatrice).
+ * Page « Présidente & Fondatrice » (/sublimekoyi).
  * Textes fournis par la fondation : à modifier ici uniquement.
  */
 import { site } from './site';
