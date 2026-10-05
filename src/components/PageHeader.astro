@@ -1,0 +1,24 @@
+---
+/** En-tête des pages intérieures, avec le motif « marches ». */
+interface Props {
+  eyebrow: string;
+  title: string;
+  intro?: string;
+}
+const { eyebrow, title, intro } = Astro.props;
+---
+
+<section class="relative overflow-hidden border-b border-sand bg-sand/50">
+  <svg class="pointer-events-none absolute right-0 bottom-0 h-full max-h-64 w-auto text-primary/[0.06]" viewBox="0 0 400 260" aria-hidden="true">
+    <path fill="currentColor" d="M0 260v-50h100v-60h100V90h100V30h100v230z" />
+  </svg>
+  <div class="container-site relative py-14 sm:py-20">
+    <p class="eyebrow">
+      <span class="step-line" aria-hidden="true"><span></span><span></span><span></span></span>
+      {eyebrow}
+    </p>
+    <h1 class="mt-4 max-w-3xl text-4xl font-bold sm:text-5xl">{title}</h1>
+    {intro && <p class="mt-5 max-w-2xl text-lg leading-relaxed text-muted">{intro}</p>}
+    <slot />
+  </div>
+</section>

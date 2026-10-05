@@ -1,0 +1,32 @@
+---
+import type { TimelineStep } from '../data/projects';
+
+interface Props {
+  steps: TimelineStep[];
+}
+const { steps } = Astro.props;
+---
+
+<ol class="relative grid gap-8 md:grid-cols-3 md:gap-6">
+  <!-- ligne de progression -->
+  <span class="absolute top-6 bottom-6 left-6 w-0.5 bg-gradient-to-b from-accent to-primary md:top-6 md:right-[16%] md:bottom-auto md:left-[16%] md:h-0.5 md:w-auto md:bg-gradient-to-r" aria-hidden="true"></span>
+  {
+    steps.map((step, i) => (
+      <li class={`reveal reveal-delay-${i + 1} relative flex gap-5 md:flex-col md:items-center md:text-center`}>
+        <span
+          class:list={[
+            'relative z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-full font-display text-sm font-bold ring-8 ring-cream',
+            i === steps.length - 1 ? 'bg-primary text-white' : 'bg-secondary text-white',
+          ]}
+        >
+          {String(i + 1).padStart(2, '0')}
+        </span>
+        <div>
+          <p class="font-display text-sm font-semibold uppercase tracking-wider text-secondary">{step.date}</p>
+          <h3 class="mt-1 text-xl font-semibold">{step.title}</h3>
+          <p class="mt-2 leading-relaxed text-muted">{step.text}</p>
+        </div>
+      </li>
+    ))
+  }
+</ol>

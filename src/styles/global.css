@@ -1,0 +1,160 @@
+@import "tailwindcss";
+
+/*
+ * ============================================================
+ *  IDENTITÉ VISUELLE : modifiez les couleurs et polices ICI.
+ *  Chaque variable crée les classes Tailwind correspondantes
+ *  (ex. --color-primary → bg-primary, text-primary, border-primary…).
+ * ============================================================
+ */
+@theme {
+  /* Vert profond : croissance, avenir */
+  --color-primary: #14532d;
+  --color-primary-dark: #0e3d21;
+  --color-primary-light: #1f7a46;
+  --color-primary-50: #e7f2ea;
+
+  /* Ocre / orange chaud : énergie, jeunesse, terre */
+  --color-secondary: #c2410c;
+  --color-secondary-dark: #9a3412;
+  --color-secondary-50: #fdf0e6;
+
+  /* Ocre clair : décoratif uniquement (contraste insuffisant pour du texte sur fond clair) */
+  --color-accent: #e59a3b;
+  --color-accent-soft: #f6c27a;
+
+  /* Neutres */
+  --color-cream: #faf7f2;
+  --color-sand: #f1eadf;
+  --color-ink: #1f2933;
+  --color-muted: #52606d;
+
+  /* Typographie */
+  --font-display: "Poppins", "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-cream font-sans text-ink antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  h1, h2, h3, h4 {
+    @apply font-display text-primary-dark;
+    text-wrap: balance;
+    letter-spacing: -0.01em;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-secondary);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  ::selection {
+    background: var(--color-accent-soft);
+    color: var(--color-ink);
+  }
+}
+
+@layer components {
+  .container-site {
+    @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+  }
+  .section {
+    @apply py-16 sm:py-20 lg:py-24;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 font-display text-[0.95rem] font-semibold transition duration-200;
+  }
+  .btn-primary {
+    @apply bg-secondary text-white shadow-sm hover:bg-secondary-dark hover:shadow-md;
+  }
+  .btn-green {
+    @apply bg-primary text-white shadow-sm hover:bg-primary-dark hover:shadow-md;
+  }
+  .btn-outline {
+    @apply border-2 border-primary text-primary hover:bg-primary hover:text-white;
+  }
+  .btn-light {
+    @apply bg-white text-primary-dark hover:bg-cream;
+  }
+  .btn-outline-light {
+    @apply border-2 border-white/80 text-white hover:bg-white hover:text-primary-dark;
+  }
+
+  .card {
+    @apply rounded-2xl border border-sand bg-white p-6 shadow-[0_1px_2px_rgb(31_41_51/0.04)] transition duration-300;
+  }
+  .card-hover {
+    @apply hover:-translate-y-1 hover:border-primary-50 hover:shadow-[0_18px_40px_-20px_rgb(20_83_45/0.35)];
+  }
+
+  .eyebrow {
+    @apply inline-flex items-center gap-3 font-display text-sm font-semibold uppercase tracking-[0.14em] text-secondary;
+  }
+
+  .prose-hatua p + p {
+    @apply mt-4;
+  }
+
+  /* Texte provisoire à remplacer : bien visible pour l'équipe */
+  .placeholder-note {
+    @apply rounded-xl border-2 border-dashed border-accent bg-secondary-50 p-5 text-ink;
+  }
+
+  /* Motif « marches » : petite ligne de progression sous les titres */
+  .step-line {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 4px;
+    height: 14px;
+  }
+  .step-line span {
+    display: block;
+    width: 14px;
+    border-radius: 2px;
+    background: var(--color-accent);
+  }
+  .step-line span:nth-child(1) { height: 5px; opacity: 0.55; }
+  .step-line span:nth-child(2) { height: 9px; opacity: 0.8; }
+  .step-line span:nth-child(3) { height: 14px; background: var(--color-secondary); }
+}
+
+/* Apparition douce au défilement (uniquement si JS actif et mouvement autorisé) */
+@media (prefers-reduced-motion: no-preference) {
+  .js .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .js .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+  .js .reveal-delay-1 { transition-delay: 0.08s; }
+  .js .reveal-delay-2 { transition-delay: 0.16s; }
+  .js .reveal-delay-3 { transition-delay: 0.24s; }
+
+  .hero-step {
+    animation: rise 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: none; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

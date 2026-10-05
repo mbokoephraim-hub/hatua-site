@@ -1,0 +1,129 @@
+---
+/**
+ * Formulaire de contact sans backend.
+ * - Formspree (par défaut) : définir PUBLIC_FORMSPREE_ID dans .env ou chez l'hébergeur.
+ * - Netlify Forms : définir PUBLIC_FORM_PROVIDER=netlify (aucun identifiant nécessaire).
+ */
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+
+const { provider, formspreeId } = site.form;
+const isNetlify = provider === 'netlify';
+const configured = isNetlify || Boolean(formspreeId);
+const action = isNetlify ? undefined : formspreeId ? `https://formspree.io/f/${formspreeId}` : undefined;
+
+const subjects = [
+  'Demande d’information',
+  'Bénévolat',
+  'Partenariat',
+  'Soutien / don',
+  'Projet ÉCHOS',
+  'Presse / média',
+  'Autre',
+];
+
+const field =
+  'mt-2 block w-full rounded-xl border border-sand bg-white px-4 py-3 text-ink shadow-sm transition placeholder:text-muted/70 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none';
+---
+
+<form
+  name="contact"
+  method="POST"
+  action={action}
+  data-provider={provider}
+  data-contact-form
+  {...isNetlify ? { 'data-netlify': 'true', 'netlify-honeypot': 'bot-field' } : {}}
+  class="card !p-6 sm:!p-8"
+  novalidate
+>
+  {isNetlify && <input type="hidden" name="form-name" value="contact" />}
+
+  <!-- Champ piège anti-spam : invisible pour les humains -->
+  <p class="hidden" aria-hidden="true">
+    <label>Ne pas remplir : <input name={isNetlify ? 'bot-field' : '_gotcha'} tabindex="-1" autocomplete="off" /></label>
+  </p>
+
+  {
+    !configured && (
+      <div class="placeholder-note mb-6 text-sm" role="note">
+        <strong>[À COMPLÉTER]</strong> Le formulaire n’est pas encore relié à un service d’envoi. En attendant, écrivez-nous
+        directement à <a class="font-semibold text-secondary-dark underline" href={`mailto:${site.contact.email}`}>{site.contact.email}</a>.
+      </div>
+    )
+  }
+
+  <div class="grid gap-5 sm:grid-cols-2">
+    <div>
+      <label for="cf-name" class="font-medium">Nom <span class="text-secondary" aria-hidden="true">*</span></label>
+      <input id="cf-name" name="nom" type="text" autocomplete="name" required class={field} />
+    </div>
+    <div>
+      <label for="cf-email" class="font-medium">E-mail <span class="text-secondary" aria-hidden="true">*</span></label>
+      <input id="cf-email" name="email" type="email" autocomplete="email" required class={field} />
+    </div>
+  </div>
+
+  <div class="mt-5">
+    <label for="cf-subject" class="font-medium">Objet <span class="text-secondary" aria-hidden="true">*</span></label>
+    <select id="cf-subject" name="objet" required class={field}>
+      <option value="">Choisissez un objet</option>
+      {subjects.map((s) => <option value={s}>{s}</option>)}
+    </select>
+  </div>
+
+  <div class="mt-5">
+    <label for="cf-message" class="font-medium">Message <span class="text-secondary" aria-hidden="true">*</span></label>
+    <textarea id="cf-message" name="message" rows="6" required class={field}></textarea>
+  </div>
+
+  <p class="mt-4 text-sm text-muted"><span class="text-secondary" aria-hidden="true">*</span> Champs obligatoires</p>
+
+  <div class="mt-6 flex flex-wrap items-center gap-4">
+    <button type="submit" class="btn btn-primary disabled:cursor-not-allowed disabled:opacity-60" disabled={!configured}>
+      Envoyer le message <Icon name="send" size={18} />
+    </button>
+  </div>
+
+  <p class="mt-5 hidden rounded-xl p-4 font-medium" role="status" aria-live="polite" data-form-status></p>
+</form>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
+  const status = form?.querySelector<HTMLElement>('[data-form-status]');
+
+  const show = (msg: string, ok: boolean) => {
+    if (!status) return;
+    status.textContent = msg;
+    status.classList.remove('hidden', 'bg-primary-50', 'text-primary-dark', 'bg-secondary-50', 'text-secondary-dark');
+    status.classList.add(...(ok ? ['bg-primary-50', 'text-primary-dark'] : ['bg-secondary-50', 'text-secondary-dark']));
+  };
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+    const button = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+    if (button) button.disabled = true;
+    const data = new FormData(form);
+
+    try {
+      const isNetlify = form.dataset.provider === 'netlify';
+      const res = await fetch(isNetlify ? '/' : form.action, {
+        method: 'POST',
+        headers: isNetlify
+          ? { 'Content-Type': 'application/x-www-form-urlencoded' }
+          : { Accept: 'application/json' },
+        body: isNetlify ? new URLSearchParams(data as unknown as Record<string, string>).toString() : data,
+      });
+      if (!res.ok) throw new Error(String(res.status));
+      form.reset();
+      show('Merci ! Votre message a bien été envoyé. Nous vous répondrons dès que possible.', true);
+    } catch {
+      show('Désolé, l’envoi a échoué. Réessayez plus tard ou écrivez-nous directement par e-mail.', false);
+    } finally {
+      if (button) button.disabled = false;
+    }
+  });
+</script>

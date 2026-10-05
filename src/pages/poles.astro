@@ -1,0 +1,91 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import Icon from '../components/Icon.astro';
+import { poles } from '../data/poles';
+import { projects } from '../data/projects';
+import { site } from '../data/site';
+import { url } from '../utils/url';
+---
+
+<BaseLayout title="Nos pôles" description={`Les sept pôles d’action de ${site.name} : éducation, jeunesse, femmes, communautés, compétences, leadership, recherche et impact.`}>
+  <PageHeader
+    eyebrow="Nos pôles"
+    title="Sept pôles, une même direction"
+    intro={`${site.domainsSentence} Nos actions s’organisent autour de sept pôles complémentaires.`}
+  >
+    <nav aria-label="Accès rapide aux pôles" class="mt-8">
+      <ul class="flex flex-wrap gap-2">
+        {
+          poles.map((p, i) => (
+            <li>
+              <a href={`#${p.id}`} class="inline-flex items-center gap-2 rounded-full border border-sand bg-white px-4 py-2 text-sm font-medium hover:border-primary hover:text-primary">
+                <span class="font-display text-xs font-bold text-secondary">{String(i + 1).padStart(2, '0')}</span>
+                {p.title}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </PageHeader>
+
+  <div class="container-site py-10 sm:py-16">
+    {
+      poles.map((pole, i) => {
+        const related = projects.filter((pr) => pr.pole === pole.id);
+        return (
+          <section id={pole.id} aria-labelledby={`${pole.id}-titre`} class="reveal scroll-mt-24 border-b border-sand py-12 last:border-0 sm:py-16">
+            <div class="grid gap-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:gap-16">
+              <div>
+                <div class="flex items-center gap-4">
+                  <span class="font-display text-5xl font-bold text-accent/60 before:content-[attr(data-num)] sm:text-6xl" data-num={String(i + 1).padStart(2, '0')} aria-hidden="true"></span>
+                  <span class="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-white">
+                    <Icon name={pole.icon} size={28} />
+                  </span>
+                </div>
+                <p class="mt-5 text-sm font-semibold tracking-wider text-secondary uppercase">{pole.englishName}</p>
+                <h2 id={`${pole.id}-titre`} class="mt-1 text-3xl font-bold sm:text-4xl">{pole.title}</h2>
+                <p class="mt-4 text-lg leading-relaxed text-muted">{pole.description}</p>
+                {related.length > 0 && (
+                  <div class="mt-6 flex flex-wrap gap-2">
+                    {related.map((pr) => (
+                      <a href={url(`/projets/${pr.slug}`)} class="inline-flex items-center gap-2 rounded-full bg-secondary-50 px-4 py-2 text-sm font-semibold text-secondary-dark hover:bg-secondary hover:text-white">
+                        Projet : {pr.title} <Icon name="arrow-right" size={16} />
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div class="rounded-3xl bg-white p-7 shadow-sm ring-1 ring-sand sm:p-9">
+                <h3 class="text-lg font-semibold">Axes de travail envisagés</h3>
+                <p class="mt-1 text-sm text-muted">Pistes d’action que ce pôle pourrait développer, étape par étape.</p>
+                <ul class="mt-5 space-y-3.5">
+                  {pole.actions.map((a) => (
+                    <li class="flex gap-3">
+                      <span class="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary-50 text-primary">
+                        <Icon name="check" size={14} />
+                      </span>
+                      <span class="leading-relaxed">{a}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </section>
+        );
+      })
+    }
+  </div>
+
+  <section class="section bg-white">
+    <div class="container-site reveal text-center">
+      <h2 class="text-3xl font-bold">Un pôle vous parle ?</h2>
+      <p class="mx-auto mt-3 max-w-xl text-lg text-muted">Rejoignez-nous comme bénévole ou partenaire pour faire avancer ces projets.</p>
+      <div class="mt-7 flex flex-wrap justify-center gap-3">
+        <a href={url('/s-engager')} class="btn btn-primary">S’engager <Icon name="arrow-right" size={18} /></a>
+        <a href={url('/contact')} class="btn btn-outline">Nous contacter</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

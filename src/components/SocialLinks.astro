@@ -1,0 +1,43 @@
+---
+import Icon from './Icon.astro';
+import { site, socialLinks } from '../data/site';
+
+interface Props {
+  variant?: 'light' | 'dark';
+  withContact?: boolean;
+}
+const { variant = 'dark', withContact = true } = Astro.props;
+
+const links = [
+  ...(withContact
+    ? [
+        { id: 'whatsapp', label: 'WhatsApp', href: site.contact.whatsappHref },
+        { id: 'mail', label: 'E-mail', href: `mailto:${site.contact.email}` },
+      ]
+    : []),
+  ...socialLinks,
+];
+---
+
+<ul class="flex flex-wrap gap-2.5">
+  {
+    links.map((l) => (
+      <li>
+        <a
+          href={l.href}
+          aria-label={l.label}
+          title={l.label}
+          {...(l.href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+          class:list={[
+            'inline-flex h-11 w-11 items-center justify-center rounded-full transition',
+            variant === 'light'
+              ? 'bg-white/10 text-white hover:bg-accent hover:text-primary-dark'
+              : 'bg-primary-50 text-primary hover:bg-primary hover:text-white',
+          ]}
+        >
+          <Icon name={l.id} size={20} />
+        </a>
+      </li>
+    ))
+  }
+</ul>

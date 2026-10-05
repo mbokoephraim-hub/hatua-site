@@ -1,0 +1,31 @@
+---
+/** Visuel du hero : les quatre verbes de la mission, en marches qui montent. */
+import { site } from '../data/site';
+const heights = ['h-[38%]', 'h-[56%]', 'h-[74%]', 'h-[92%]'];
+const tones = [
+  'bg-primary-50 text-primary-dark',
+  'bg-accent-soft/70 text-primary-dark',
+  'bg-secondary text-white',
+  'bg-primary text-white',
+];
+---
+
+<div class="relative mx-auto aspect-[5/4] w-full max-w-lg" aria-hidden="true">
+  <!-- ligne pointillée de progression -->
+  <svg class="absolute inset-0 h-full w-full" viewBox="0 0 400 320" preserveAspectRatio="none" fill="none">
+    <path d="M20 230 L120 175 L220 115 L320 55 L385 20" stroke="var(--color-accent)" stroke-width="3" stroke-dasharray="2 12" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+  </svg>
+  <div class="absolute inset-x-0 bottom-0 flex h-full items-end gap-2.5 sm:gap-3">
+    {
+      site.steps.map((step, i) => (
+        <div
+          class={`hero-step flex flex-1 flex-col justify-between rounded-t-2xl p-3 sm:p-4 ${heights[i]} ${tones[i]}`}
+          style={`animation-delay:${0.15 + i * 0.15}s`}
+        >
+          <span class="font-display text-2xl font-bold opacity-80 sm:text-3xl">{String(i + 1).padStart(2, '0')}</span>
+          <span class="font-display text-[0.7rem] leading-tight font-semibold sm:text-sm">{step}</span>
+        </div>
+      ))
+    }
+  </div>
+</div>

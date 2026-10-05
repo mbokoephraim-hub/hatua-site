@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800" role="img" aria-label="Visuel provisoire : Atelier ÉCHOS en classe">
+  <!-- VISUEL PROVISOIRE : remplacer par une vraie photo (voir public/images/README.md) -->
+  <rect width="1200" height="800" fill="#F1EADF"/>
+  <g opacity="0.9">
+    <rect x="0" y="560" width="300" height="240" fill="#E7F2EA"/>
+    <rect x="300" y="460" width="300" height="340" fill="#D5E8DA"/>
+    <rect x="600" y="360" width="300" height="440" fill="#BBD9C4"/>
+    <rect x="900" y="260" width="300" height="540" fill="#14532D" opacity="0.18"/>
+  </g>
+  <path d="M60 640 H300 V540 H600 V440 H900 V340 H1140" fill="none" stroke="#E59A3B" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2 18"/>
+  <circle cx="1140" cy="340" r="14" fill="#C2410C"/>
+  <g font-family="Poppins, Montserrat, 'Segoe UI', Arial, sans-serif" text-anchor="middle">
+    <text x="600" y="200" font-size="44" font-weight="700" fill="#14532D">Photo à venir</text>
+    <text x="600" y="256" font-size="28" font-weight="500" fill="#52606D">Atelier ÉCHOS en classe</text>
+  </g>
+</svg>

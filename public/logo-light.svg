@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 230 64" width="230" height="64" role="img" aria-labelledby="logo-light-title">
+  <title id="logo-light-title">HATUA Foundation</title>
+  <!-- Logotype PROVISOIRE : remplacez ce fichier par le logo officiel (même nom). -->
+  <rect x="2" y="38" width="12" height="20" rx="3" fill="#F6C27A"/>
+  <rect x="18" y="25" width="12" height="33" rx="3" fill="#E59A3B"/>
+  <rect x="34" y="8" width="12" height="50" rx="3" fill="#FFFFFF"/>
+  <text x="58" y="38" textLength="168" lengthAdjust="spacingAndGlyphs" font-family="Poppins, Montserrat, 'Segoe UI', Arial, sans-serif" font-weight="700" font-size="31" fill="#FFFFFF">HATUA</text>
+  <text x="59" y="57" textLength="166" lengthAdjust="spacingAndGlyphs" font-family="Poppins, Montserrat, 'Segoe UI', Arial, sans-serif" font-weight="600" font-size="12" fill="#F6C27A">FOUNDATION</text>
+</svg>

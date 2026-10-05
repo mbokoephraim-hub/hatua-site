@@ -1,0 +1,27 @@
+---
+interface Props {
+  eyebrow?: string;
+  number?: string;
+  title: string;
+  intro?: string;
+  align?: 'left' | 'center';
+  id?: string;
+  light?: boolean;
+}
+const { eyebrow, number, title, intro, align = 'left', id, light = false } = Astro.props;
+---
+
+<div class:list={['reveal max-w-2xl', align === 'center' && 'mx-auto text-center']}>
+  {
+    (eyebrow || number) && (
+      <p class:list={['eyebrow', align === 'center' && 'justify-center', light && '!text-accent-soft']}>
+        {number && <span class="tabular-nums">{number}</span>}
+        <span class="step-line" aria-hidden="true"><span /><span /><span /></span>
+        {eyebrow && <span>{eyebrow}</span>}
+      </p>
+    )
+  }
+  <h2 id={id} class:list={['mt-4 text-3xl font-bold sm:text-4xl', light && '!text-white']}>{title}</h2>
+  {intro && <p class:list={['mt-4 text-lg leading-relaxed', light ? 'text-white/85' : 'text-muted']}>{intro}</p>}
+  <slot />
+</div>
