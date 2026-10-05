@@ -30,7 +30,16 @@ const { volunteer, partners, donate } = engage;
         <ul class="reveal mt-4 flex flex-wrap gap-2">
           {volunteer.profiles.map((p) => <li class="rounded-full bg-primary-50 px-4 py-2 text-sm font-medium text-primary-dark">{p}</li>)}
         </ul>
-        <img src={url(images.engage.src)} alt={images.engage.alt} width="1200" height="800" loading="lazy" class="reveal mt-10 aspect-[3/2] w-full rounded-3xl object-cover" />
+        <img
+          src={url(images.engage.src)}
+          srcset={`${url(images.engage.srcSmall)} 640w, ${url(images.engage.src)} 1200w`}
+          sizes="(min-width: 1024px) 45vw, 100vw"
+          alt={images.engage.alt}
+          width={images.engage.width}
+          height={images.engage.height}
+          loading="lazy"
+          class="reveal mt-10 aspect-[4/3] w-full rounded-3xl object-cover object-[center_15%]"
+        />
       </div>
       <div class="lg:pt-24">
         <div class="card reveal !p-7 sm:!p-9">

@@ -25,8 +25,8 @@ Liste de tous les éléments provisoires du site. Cochez-les au fur et à mesure
 Détails dans `public/images/README.md`.
 
 - [x] ~~Photo ÉCHOS~~ : `public/images/echos-eleves.webp` (à compléter par des photos réelles du projet).
-- [ ] `public/images/apropos-equipe.svg` : équipe et/ou fondatrice.
-- [ ] `public/images/engager-ateliers.svg` : jeunes en atelier, bénévoles.
+- [ ] **Photo d'équipe** (page À propos) : le portrait de la fondatrice est utilisé en attendant (`src/data/images.ts` → `about`).
+- [ ] **Photo d'atelier** (page S'engager) : le portrait de la fondatrice est utilisé en attendant (`src/data/images.ts` → `engage`).
 
 ## [À VALIDER] : textes rédigés à partir de la mission
 

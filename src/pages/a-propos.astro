@@ -39,8 +39,18 @@ import { url } from '../utils/url';
           </p>
         </div>
       </div>
-      <figure class="reveal">
-        <img src={url(images.about.src)} alt={images.about.alt} width="1200" height="800" loading="lazy" class="aspect-[3/2] w-full rounded-3xl object-cover shadow-lg" />
+      <figure class="reveal mx-auto w-full max-w-md lg:max-w-none">
+        <img
+          src={url(images.about.src)}
+          srcset={`${url(images.about.srcSmall)} 640w, ${url(images.about.src)} 1200w`}
+          sizes="(min-width: 1024px) 40vw, (min-width: 448px) 448px, 100vw"
+          alt={images.about.alt}
+          width={images.about.width}
+          height={images.about.height}
+          loading="lazy"
+          class="aspect-[4/5] w-full rounded-3xl object-cover object-top shadow-lg"
+        />
+        <figcaption class="mt-3 text-center text-sm text-muted">{site.founder}, fondatrice de {site.name}</figcaption>
       </figure>
     </div>
   </section>
@@ -98,7 +108,7 @@ import { url } from '../utils/url';
             {site.founderMessage.map((p, i) => <p class:list={[i === site.founderMessage.length - 1 && 'font-semibold text-secondary']}>{p}</p>)}
           </blockquote>
           <figcaption class="relative mt-8 flex items-center gap-4">
-            <span class="step-line text-secondary" aria-hidden="true"><span></span><span></span><span></span></span>
+            <img src={url(images.founderAvatar)} alt="" width="96" height="96" loading="lazy" class="h-14 w-14 rounded-full object-cover ring-2 ring-accent" />
             <span>
               <span class="block font-display font-semibold text-secondary">{site.founder}</span>
               <span class="block text-sm text-muted">Fondatrice de {site.name}</span>
