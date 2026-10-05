@@ -19,8 +19,16 @@ export const fondatrice = {
 
   // Photos (dossier public/images)
   photos: {
-    portrait: {
+    // Photo principale (hero de la page)
+    hero: {
       src: '/images/sublime-koyi-saley.jpg',
+      width: 1200,
+      height: 1261,
+      alt: 'Sublime Koyi Saley, souriante, les bras croisés, en veste noire',
+    },
+    // Portrait studio (section HATUA Foundation de la page, accueil, image de partage)
+    portrait: {
+      src: '/images/sublime-koyi-saley-portrait.jpg',
       width: 1200,
       height: 1261,
       alt: 'Portrait de Sublime Koyi Saley, souriante, en veste noire',
@@ -36,12 +44,6 @@ export const fondatrice = {
       width: 580,
       height: 628,
       alt: 'Prise de parole au micro lors d’une conférence',
-    },
-    conference: {
-      src: '/images/sublime-koyi-saley-conference.jpg',
-      width: 471,
-      height: 655,
-      alt: 'Prise de parole au pupitre lors d’une conférence',
     },
     og: '/og-fondatrice.jpg',
   },

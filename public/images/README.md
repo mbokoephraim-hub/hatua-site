@@ -8,8 +8,9 @@ comme des actions réelles de la fondation.
 |---|---|---|
 | ✅ `echos-eleves.webp` (+ `echos-eleves-800.webp` pour mobile) | Accueil (bloc ÉCHOS), page Projets, page ÉCHOS | Fournie. À compléter plus tard par des photos réelles du projet au Lycée Tobongisa |
 | `fondatrice.webp` (+ `-640` et `-avatar`) | Page À propos, page S'engager, mot de la fondatrice | Fournie. **Provisoire** sur À propos (→ photo d'équipe) et S'engager (→ photo d'atelier) |
-| `sublime-koyi-saley.jpg` | Page Fondatrice (hero, partage), accueil (section « À la découverte de la fondatrice ») | Fournie. Peut être remplacée par un fichier du même nom |
-| `sublime-koyi-saley-intervention.jpg`, `-pupitre.jpg`, `-conference.jpg` | Page Fondatrice (Vision, Parcours, HATUA Foundation) | Fournies |
+| `sublime-koyi-saley.jpg` | Page /sublimekoyi (hero) | Fournie. Peut être remplacée par un fichier du même nom |
+| `sublime-koyi-saley-portrait.jpg` | Page /sublimekoyi (section HATUA Foundation), accueil (« À la découverte de la fondatrice »), image de partage | Fournie |
+| `sublime-koyi-saley-intervention.jpg`, `-pupitre.jpg` | Page /sublimekoyi (Vision, Parcours) | Fournies |
 | *(optionnel)* | — | Photos supplémentaires : salles de classe, ateliers, communautés, équipe |
 
 ## Conseils

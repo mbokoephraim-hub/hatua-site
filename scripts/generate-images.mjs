@@ -7,7 +7,7 @@
  *   public/apple-touch-icon.png icône iPhone / iPad (180 px)
  *   public/icon-192.png, icon-512.png  icônes Android / données structurées
  *   public/og-image.png         image de partage sur les réseaux sociaux (1200 × 630)
- *   public/og-fondatrice.jpg    image de partage de la page /sublimekoyi (à partir de public/images/sublime-koyi-saley.jpg)
+ *   public/og-fondatrice.jpg    image de partage de la page /sublimekoyi (à partir de public/images/sublime-koyi-saley-portrait.jpg)
  *
  * Usage : node scripts/generate-images.mjs
  * À relancer après un changement de logo ou de slogan.
@@ -102,7 +102,7 @@ await sharp({ create: { width: W, height: H, channels: 4, background: BAOBAB } }
 // 4. Image de partage de la page /sublimekoyi : portrait à droite, nom à gauche, fond terre-rouge
 {
   const { existsSync } = await import('node:fs');
-  const photoPath = `${root}public/images/sublime-koyi-saley.jpg`;
+  const photoPath = `${root}public/images/sublime-koyi-saley-portrait.jpg`;
   if (existsSync(photoPath)) {
     const photo = await sharp(photoPath).resize({ height: H }).toBuffer();
     const { width: pw } = await sharp(photo).metadata();

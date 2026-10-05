@@ -14,7 +14,7 @@ import { site, mailto } from '../data/site';
 import { url } from '../utils/url';
 
 // Si la photo principale n'a pas encore été déposée, un emplacement provisoire s'affiche.
-const hasPortrait = existsSync(join(process.cwd(), 'public', f.photos.portrait.src));
+const hasPortrait = existsSync(join(process.cwd(), 'public', f.photos.hero.src));
 
 const homeUrl = new URL(url('/'), Astro.site).href;
 const personLd = {
@@ -24,7 +24,7 @@ const personLd = {
   jobTitle: f.role,
   description: f.seo.description,
   email: `mailto:${site.contact.email}`,
-  image: new URL(url(f.photos.portrait.src), Astro.site).href,
+  image: new URL(url(f.photos.hero.src), Astro.site).href,
   url: new URL(url('/sublimekoyi/'), Astro.site).href,
   alumniOf: { '@type': 'CollegeOrUniversity', name: 'Université Catholique du Congo' },
   worksFor: { '@type': 'NGO', name: site.nameAlt, url: homeUrl },
@@ -63,10 +63,10 @@ const ruleColors = ['bg-hibiscus', 'bg-secondary', 'bg-primary', 'bg-accent', 'b
           {
             hasPortrait ? (
               <img
-                src={url(f.photos.portrait.src)}
-                alt={f.photos.portrait.alt}
-                width={f.photos.portrait.width}
-                height={f.photos.portrait.height}
+                src={url(f.photos.hero.src)}
+                alt={f.photos.hero.alt}
+                width={f.photos.hero.width}
+                height={f.photos.hero.height}
                 fetchpriority="high"
                 class="relative aspect-[4/5] w-full object-cover object-top"
               />
@@ -182,12 +182,12 @@ const ruleColors = ['bg-hibiscus', 'bg-secondary', 'bg-primary', 'bg-accent', 'b
         </div>
         <figure class="reveal reveal-delay-1 mx-auto w-full max-w-xs sm:max-w-sm">
           <img
-            src={url(f.photos.conference.src)}
-            alt={f.photos.conference.alt}
-            width={f.photos.conference.width}
-            height={f.photos.conference.height}
+            src={url(f.photos.portrait.src)}
+            alt={f.photos.portrait.alt}
+            width={f.photos.portrait.width}
+            height={f.photos.portrait.height}
             loading="lazy"
-            class="aspect-[3/4] w-full object-cover"
+            class="aspect-[3/4] w-full object-cover object-top"
           />
           <span class="mt-4 block h-px w-16 bg-hibiscus" aria-hidden="true"></span>
         </figure>
