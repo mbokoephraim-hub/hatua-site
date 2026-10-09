@@ -10,6 +10,7 @@ authorLink: "founder"
 image: "/images/articles/echos-influences/1-couverture.svg"
 imageAlt: "Illustration : une adolescente pensive, au centre, entourée de cinq médaillons représentant la famille, les amis, l’école, les réseaux sociaux et ses aspirations"
 tags: ["ÉCHOS", "Research & Impact"]
+translation: "who-really-influences-teenagers-choices"
 draft: false
 ---
 

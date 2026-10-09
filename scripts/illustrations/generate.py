@@ -203,13 +203,44 @@ def ecole():
 
 
 # ---------------------------------------------------------------- SCHÉMAS (insérés dans la page, textes en HTML)
-def modele_ecologique():
+# Textes des schémas, en français et en anglais
+TEXTES = {
+    'fr': {
+        'anneaux': ('Culture, normes et valeurs', 'Réseaux sociaux et numérique', 'Quartier et communauté'),
+        'micro': ('Famille', 'Amis', 'École'),
+        'centre': ('L’adolescent', 'et ses choix'),
+        'titre': 'Les environnements qui entourent l’adolescent',
+        'desc': 'Schéma en cercles concentriques inspiré du modèle écologique de Bronfenbrenner : au centre, l’adolescent ; '
+                'autour, la famille, les amis et l’école ; puis le quartier et la communauté ; puis les réseaux sociaux et le numérique ; enfin la culture, les normes et les valeurs.',
+        'barres': (('Influence des amis', 40), ('Influence des parents', 28), ('Gêne', 20)),
+        'pct': lambda v: f'{v} %',
+        'barre_titre': lambda label, v: f'{label} : {v} % des répondants',
+        'graphique': 'Facteurs de démotivation cités par les répondants à Kamina : influence des amis 40 %, influence des parents 28 %, gêne 20 %',
+    },
+    'en': {
+        'anneaux': ('Culture, norms and values', 'Social media and digital life', 'Neighbourhood and community'),
+        'micro': ('Family', 'Friends', 'School'),
+        'centre': ('Adolescent', 'and their choices'),
+        'micro_r': 114,
+        'titre': 'The environments surrounding the adolescent',
+        'desc': 'Concentric circles inspired by Bronfenbrenner’s ecological model: at the centre, the adolescent; '
+                'around them, family, friends and school; then the neighbourhood and community; then social media and digital life; finally culture, norms and values.',
+        'barres': (('Influence of friends', 40), ('Influence of parents', 28), ('Embarrassment', 20)),
+        'pct': lambda v: f'{v}%',
+        'barre_titre': lambda label, v: f'{label}: {v}% of respondents',
+        'graphique': 'Demotivating factors cited by respondents in Kamina: influence of friends 40%, influence of parents 28%, embarrassment 20%',
+    },
+}
+
+
+def modele_ecologique(lang='fr'):
+    t = TEXTES[lang]
     W = H = 640
     c = 320
     rings = [
-        (305, MIEL_CLAIR, 'Culture, normes et valeurs'),
-        (250, '#f6dcd3', 'Réseaux sociaux et numérique'),
-        (195, BAOBAB_CLAIR, 'Quartier et communauté'),
+        (305, MIEL_CLAIR, t['anneaux'][0]),
+        (250, '#f6dcd3', t['anneaux'][1]),
+        (195, BAOBAB_CLAIR, t['anneaux'][2]),
         (140, MIEL, ''),
     ]
     b = []
@@ -220,24 +251,25 @@ def modele_ecologique():
     for r, _, label in rings[:3]:
         b.append(f'<text x="{c}" y="{c - r + 36}" font-size="21" font-weight="600" fill="{ENCRE}" text-anchor="middle" letter-spacing="0.3">{label}</text>')
     # microsystème : famille, amis, école
-    for label, ang in (('Famille', -90), ('Amis', 30), ('École', 150)):
+    for label, ang in zip(t['micro'], (-90, 30, 150)):
         a = math.radians(ang)
-        x, y = c + math.cos(a) * 104, c + math.sin(a) * 104
+        mr = t.get('micro_r', 104)
+        x, y = c + math.cos(a) * mr, c + math.sin(a) * mr
         b.append(f'<text x="{x:.1f}" y="{y + 6:.1f}" font-size="22" font-weight="700" fill="{TERRE}" text-anchor="middle">{label}</text>')
-    b.append(f'<text x="{c}" y="{c - 4}" font-size="20" font-weight="700" fill="{IVOIRE}" text-anchor="middle">L’adolescent</text>')
-    b.append(f'<text x="{c}" y="{c + 20}" font-size="15" fill="{MIEL}" text-anchor="middle">et ses choix</text>')
+    b.append(f'<text x="{c}" y="{c - 4}" font-size="20" font-weight="700" fill="{IVOIRE}" text-anchor="middle">{t["centre"][0]}</text>')
+    b.append(f'<text x="{c}" y="{c + 20}" font-size="15" fill="{MIEL}" text-anchor="middle">{t["centre"][1]}</text>')
     body = ''.join(b)
     return (f'<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 {W} {H}" role="img" aria-labelledby="modele-titre modele-desc" font-family="inherit">'
-            f'<title id="modele-titre">Les environnements qui entourent l’adolescent</title>'
-            f'<desc id="modele-desc">Schéma en cercles concentriques inspiré du modèle écologique de Bronfenbrenner : au centre, l’adolescent ; '
-            f'autour, la famille, les amis et l’école ; puis le quartier et la communauté ; puis les réseaux sociaux et le numérique ; enfin la culture, les normes et les valeurs.</desc>'
+            f'<title id="modele-titre">{t["titre"]}</title>'
+            f'<desc id="modele-desc">{t["desc"]}</desc>'
             f'{body}</svg>')
 
 
-def kamina():
+def kamina(lang='fr'):
+    t = TEXTES[lang]
     # Format étroit, libellés au-dessus des barres : reste lisible sur mobile
     W, H = 460, 236
-    data = [('Influence des amis', 40), ('Influence des parents', 28), ('Gêne', 20)]
+    data = t['barres']
     left, right, top, bar_h, row = 8, 420, 30, 26, 70
     scale = (right - left) / 100
     b = []
@@ -245,17 +277,17 @@ def kamina():
     for v in (0, 25, 50, 75, 100):
         x = left + v * scale
         b.append(f'<line x1="{x}" x2="{x}" y1="{top - 4}" y2="{bottom + 8}" stroke="#dcc8b6" stroke-width="1.5"/>')
-        b.append(f'<text x="{x}" y="{bottom + 30}" font-size="15" fill="#6b5a55" text-anchor="{"start" if v == 0 else "end" if v == 100 else "middle"}">{v} %</text>')
+        b.append(f'<text x="{x}" y="{bottom + 30}" font-size="15" fill="#6b5a55" text-anchor="{"start" if v == 0 else "end" if v == 100 else "middle"}">{t["pct"](v)}</text>')
     for i, (label, v) in enumerate(data):
         y = top + i * row
         w = v * scale
         b.append(f'<text x="{left}" y="{y - 8}" font-size="18" font-weight="600" fill="{ENCRE}">{label}</text>')
-        b.append(f'<g><title>{label} : {v} % des répondants</title>'
+        b.append(f'<g><title>{t["barre_titre"](label, v)}</title>'
                  f'<path d="M{left},{y} H{left + w - 4} Q{left + w},{y} {left + w},{y + 4} V{y + bar_h - 4} Q{left + w},{y + bar_h} {left + w - 4},{y + bar_h} H{left} Z" fill="{TERRE}"/></g>')
-        b.append(f'<text x="{left + w + 10}" y="{y + bar_h/2 + 6}" font-size="18" font-weight="700" fill="{ENCRE}">{v} %</text>')
+        b.append(f'<text x="{left + w + 10}" y="{y + bar_h/2 + 6}" font-size="18" font-weight="700" fill="{ENCRE}">{t["pct"](v)}</text>')
     body = ''.join(b)
     return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" role="img" aria-labelledby="kamina-titre" font-family="inherit">'
-            f'<title id="kamina-titre">Facteurs de démotivation cités par les répondants à Kamina : influence des amis 40 %, influence des parents 28 %, gêne 20 %</title>'
+            f'<title id="kamina-titre">{t["graphique"]}</title>'
             f'{body}</svg>')
 
 
@@ -267,3 +299,5 @@ if __name__ == '__main__':
     save('5-ecole-kinshasa.svg', ecole())
     save('schema-modele-ecologique.svg', modele_ecologique())
     save('graphique-kamina.svg', kamina())
+    save('schema-modele-ecologique-en.svg', modele_ecologique('en'))
+    save('graphique-kamina-en.svg', kamina('en'))
