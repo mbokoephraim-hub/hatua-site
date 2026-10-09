@@ -66,7 +66,11 @@ const { site } = getContent(lang);
   <div class="relative border-t border-white/10">
     <div class="container-site flex flex-col gap-2 py-6 text-sm text-white/70 sm:flex-row sm:items-center sm:justify-between">
       <p>© {site.copyrightYear} {site.name}. {tr('footer.rights')}</p>
-      <p>{site.status} · {site.location.city}, {site.location.countryShort}</p>
+      <p>
+        {site.status} · {site.location.city}, {site.location.countryShort}
+        <span aria-hidden="true"> · </span>
+        <a href="https://echos.hatuafoundation.org" class="underline-offset-2 hover:text-white hover:underline" rel="nofollow">{tr('footer.echosApp')}</a>
+      </p>
     </div>
   </div>
 </footer>
