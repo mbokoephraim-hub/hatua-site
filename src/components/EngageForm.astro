@@ -249,6 +249,10 @@ const star = '<span class="text-secondary" aria-hidden="true"> *</span>';
 
       button.disabled = true;
       const data = new FormData(form);
+      // Champs fichier laissés vides : on ne les envoie pas (une pièce jointe vide peut faire refuser tout l'envoi)
+      form.querySelectorAll<HTMLInputElement>('input[type="file"]').forEach((i) => {
+        if (!i.files?.length) data.delete(i.name);
+      });
       try {
         let res = await send(form, data);
         let fileNotice = '';
