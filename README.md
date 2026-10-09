@@ -52,6 +52,7 @@ hatua-site/
     │   └── images.ts         # chemins et textes alternatifs des photos
     ├── i18n/                 # langues : adresses FR/EN (index.ts) et libellés d'interface (ui.ts)
     ├── views/                # mise en page de chaque page, commune au français et à l'anglais
+    ├── content/articles/     # articles (fr/ et en/), un fichier Markdown par article
     ├── styles/global.css     # ← COULEURS ET POLICES
     ├── layouts/BaseLayout.astro   # <head>, SEO, en-tête, pied de page
     ├── components/           # blocs réutilisables (Header, Footer, cartes, frise…)
@@ -109,6 +110,22 @@ node scripts/generate-images.mjs
 Ce script crée `public/logo.png`, `public/logo-light.png`, le favicon (emblème miel sur fond terre-rouge), les icônes
 mobiles et l'image de partage `og-image.png` (logo + slogan, texte modifiable en haut du script).
 Pour changer de logo : remplacez les fichiers dans `brand/logos/` (mêmes noms) puis relancez la commande.
+
+### Publier un article
+Les articles sont de simples fichiers texte (Markdown) :
+- français : `src/content/articles/fr/` → publiés sur `/articles/<nom-du-fichier>/`
+- anglais : `src/content/articles/en/` → publiés sur `/en/articles/<nom-du-fichier>/`
+
+1. Copiez le modèle `src/content/articles/fr/_modele.md` (ou `en/_template.md`) sous un nouveau nom **sans « _ »**,
+   en minuscules avec des tirets (ex. `lancement-echos.md`).
+2. Remplissez l'en-tête : titre, résumé, date, auteur, image (déposée dans `public/images/articles/`), thèmes.
+3. Écrivez le texte en dessous (intertitres avec `##`, **gras**, listes, liens, citations avec `>`).
+4. Mettez `draft: false` pour publier. Avec `draft: true`, l'article reste un **brouillon invisible** sur le site.
+5. Pour relier la version anglaise et la version française d'un même article, indiquez dans le champ
+   `translation` le nom du fichier de l'autre langue : le sélecteur FR | EN mènera directement à la traduction.
+
+La liste des articles, la page de chaque article, les boutons de partage, le sitemap et les informations pour Google
+sont générés automatiquement. Pour **prévisualiser les brouillons** : `SHOW_DRAFTS=true npm run build && npm run preview`.
 
 ### Photos
 Voir **`public/images/README.md`**.

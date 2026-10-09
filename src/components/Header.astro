@@ -28,7 +28,7 @@ const supportHref = routePath('engage', lang, 'don');
       <img src={url('/logo.png')} alt="" width="538" height="128" class="h-9 w-auto min-[360px]:h-11 sm:h-12" />
     </a>
 
-    <nav aria-label={tr('nav.label')} class="hidden lg:block">
+    <nav aria-label={tr('nav.label')} class="hidden xl:block">
       <ul class="flex items-center gap-1">
         {
           nav.slice(1).map((item) => {
@@ -39,7 +39,7 @@ const supportHref = routePath('engage', lang, 'don');
                   href={item.href}
                   aria-current={active ? 'page' : undefined}
                   class:list={[
-                    'relative rounded-full px-3.5 py-2 text-[0.95rem] font-medium transition-colors hover:text-primary',
+                    'relative rounded-full px-3 py-2 text-[0.95rem] font-medium whitespace-nowrap transition-colors hover:text-primary',
                     active ? 'text-primary' : 'text-ink/80',
                   ]}
                 >
@@ -59,7 +59,7 @@ const supportHref = routePath('engage', lang, 'don');
       <a href={supportHref} class="btn btn-primary hidden !px-5 !py-2.5 sm:inline-flex">{tr('cta.support')}</a>
       <button
         type="button"
-        class="inline-flex h-11 w-11 items-center justify-center rounded-full text-primary hover:bg-primary-50 lg:hidden"
+        class="inline-flex h-11 w-11 items-center justify-center rounded-full text-primary hover:bg-primary-50 xl:hidden"
         aria-controls="menu-mobile"
         aria-expanded="false"
         data-menu-toggle
@@ -71,7 +71,7 @@ const supportHref = routePath('engage', lang, 'don');
     </div>
   </div>
 
-  <nav id="menu-mobile" aria-label={tr('nav.label')} class="hidden border-t border-sand bg-cream lg:hidden" data-menu>
+  <nav id="menu-mobile" aria-label={tr('nav.label')} class="hidden border-t border-sand bg-cream xl:hidden" data-menu>
     <ul class="container-site flex flex-col py-3">
       <li class="mb-2 flex items-center justify-between rounded-xl border border-sand bg-white px-3 py-2.5">
         <span class="text-sm font-semibold text-ink">{tr('lang.label')}</span>
@@ -124,6 +124,6 @@ const supportHref = routePath('engage', lang, 'don');
         btn.focus();
       }
     });
-    window.matchMedia('(min-width: 1024px)').addEventListener('change', (e) => e.matches && setOpen(false));
+    window.matchMedia('(min-width: 1280px)').addEventListener('change', (e) => e.matches && setOpen(false));
   }
 </script>

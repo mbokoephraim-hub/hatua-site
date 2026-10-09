@@ -1,0 +1,195 @@
+---
+/** Page d'un article (français et anglais). Le texte vient du fichier Markdown de l'article. */
+import { render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import Icon from '../components/Icon.astro';
+import { getContent } from '../data';
+import { articleSlug, formatDate, getArticles, readingTime, type Article } from '../data/articles';
+import { articlePath, getLang, otherLang, path } from '../i18n';
+import { url } from '../utils/url';
+
+interface Props {
+  article: Article;
+}
+const { article } = Astro.props;
+const lang = getLang(Astro.currentLocale);
+const { site } = getContent(lang);
+const { Content } = await render(article);
+// Typographie française : espace insécable fine avant « : ; ! ? » » et après « « » (uniquement dans le texte, pas dans les balises)
+const typo = (html: string) =>
+  html.replace(/>([^<]+)</g, (_, text: string) => `>${text.replace(/ ([:;!?»])/g, '\u202F$1').replace(/« /g, '«\u202F')}<`);
+const html = article.rendered?.html ? (lang === 'fr' ? typo(article.rendered.html) : article.rendered.html) : null;
+const { title, description, date, author, image, imageAlt, tags, translation, draft } = article.data;
+const slug = articleSlug(article);
+
+// Version dans l'autre langue (si le champ « translation » pointe vers un article existant)
+const other = otherLang(lang);
+const translated = translation ? (await getArticles(other)).find((a) => articleSlug(a) === translation) : undefined;
+const slugs = { [lang]: slug, ...(translated ? { [other]: translation } : {}) };
+
+const related = (await getArticles(lang)).filter((a) => a.id !== article.id).slice(0, 3);
+const pageUrl = new URL(articlePath(slug, lang), Astro.site).href;
+const share = encodeURIComponent(pageUrl);
+const shareText = encodeURIComponent(`${title} — ${pageUrl}`);
+
+const T = {
+  fr: {
+    breadcrumb: 'Fil d’Ariane',
+    articles: 'Articles',
+    by: 'Par',
+    min: 'min de lecture',
+    draft: 'Brouillon : cet article n’est pas publié',
+    share: 'Partager l’article',
+    copy: 'Copier le lien',
+    copied: 'Lien copié !',
+    related: 'À lire aussi',
+    back: 'Tous les articles',
+    ctaTitle: 'Envie d’agir à nos côtés ?',
+    ctaText: 'Bénévolat, partenariat, don : chaque pas compte.',
+    cta: 'S’engager',
+  },
+  en: {
+    breadcrumb: 'Breadcrumb',
+    articles: 'Articles',
+    by: 'By',
+    min: 'min read',
+    draft: 'Draft: this article is not published',
+    share: 'Share this article',
+    copy: 'Copy link',
+    copied: 'Link copied!',
+    related: 'Read also',
+    back: 'All articles',
+    ctaTitle: 'Would you like to act with us?',
+    ctaText: 'Volunteering, partnership, donation: every step counts.',
+    cta: 'Get involved',
+  },
+}[lang];
+
+const articleLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: title,
+  description,
+  datePublished: date.toISOString(),
+  inLanguage: lang,
+  author: { '@type': author === site.nameAlt || author === site.name ? 'Organization' : 'Person', name: author },
+  publisher: { '@type': 'NGO', name: site.nameAlt, logo: { '@type': 'ImageObject', url: new URL(url('/icon-512.png'), Astro.site).href } },
+  mainEntityOfPage: pageUrl,
+  ...(image ? { image: new URL(url(image), Astro.site).href } : {}),
+  ...(tags.length ? { keywords: tags.join(', ') } : {}),
+};
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  type="article"
+  image={image}
+  imageAlt={imageAlt}
+  noindex={draft}
+  structuredData={articleLd}
+  page={{ key: 'article', slugs }}
+>
+  <article>
+    <header class="tone-ivoire">
+      <div class="container-site max-w-4xl pt-12 pb-10 sm:pt-16">
+        <nav aria-label={T.breadcrumb} class="text-sm text-muted">
+          <ol class="flex flex-wrap items-center gap-2">
+            <li><a href={path('articles', lang)} class="inline-flex items-center gap-1.5 hover:text-secondary hover:underline"><Icon name="arrow-left" size={14} /> {T.articles}</a></li>
+          </ol>
+        </nav>
+        {draft && <p class="mt-6 rounded-xl bg-secondary px-4 py-2 text-sm font-semibold text-white">{T.draft}</p>}
+        {tags.length > 0 && (
+          <ul class="mt-6 flex flex-wrap gap-2 text-xs font-semibold">
+            {tags.map((tag) => <li class="rounded-full bg-primary-50 px-3 py-1 text-primary">{tag}</li>)}
+          </ul>
+        )}
+        <h1 class="mt-5 text-4xl leading-tight font-bold sm:text-5xl">{title}</h1>
+        <p class="mt-5 text-xl leading-relaxed text-muted">{description}</p>
+        <p class="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted">
+          <span>{T.by} <strong class="font-semibold text-ink">{author}</strong></span>
+          <time datetime={date.toISOString()}>{formatDate(date, lang)}</time>
+          <span class="inline-flex items-center gap-1.5"><Icon name="clock" size={15} /> {readingTime(article)} {T.min}</span>
+        </p>
+      </div>
+    </header>
+
+    {
+      image && (
+        <figure class="tone-ivoire">
+          <div class="container-site max-w-5xl pb-4">
+            <img src={url(image)} alt={imageAlt ?? ''} width="1600" height="900" fetchpriority="high" class="aspect-[16/9] w-full rounded-3xl object-cover" />
+          </div>
+        </figure>
+      )
+    }
+
+    <div class="tone-blanc">
+      <div class="container-site max-w-3xl py-12 sm:py-16">
+        <div class="prose-article">
+          {html ? <Fragment set:html={html} /> : <Content />}
+        </div>
+
+        <!-- Partage -->
+        <div class="mt-14 border-t border-sand pt-8">
+          <p class="font-display font-semibold text-secondary">{T.share}</p>
+          <ul class="mt-4 flex flex-wrap gap-2.5">
+            <li><a href={`https://wa.me/?text=${shareText}`} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" title="WhatsApp" class="inline-flex h-11 w-11 items-center justify-center rounded-full bg-primary-50 text-primary transition hover:bg-primary hover:text-white"><Icon name="whatsapp" size={20} /></a></li>
+            <li><a href={`https://www.linkedin.com/sharing/share-offsite/?url=${share}`} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn" class="inline-flex h-11 w-11 items-center justify-center rounded-full bg-primary-50 text-primary transition hover:bg-primary hover:text-white"><Icon name="linkedin" size={20} /></a></li>
+            <li><a href={`https://www.facebook.com/sharer/sharer.php?u=${share}`} target="_blank" rel="noopener noreferrer" aria-label="Facebook" title="Facebook" class="inline-flex h-11 w-11 items-center justify-center rounded-full bg-primary-50 text-primary transition hover:bg-primary hover:text-white"><Icon name="facebook" size={20} /></a></li>
+            <li>
+              <button type="button" data-copy-link={pageUrl} data-copied={T.copied} class="inline-flex h-11 items-center gap-2 rounded-full bg-primary-50 px-4 text-sm font-semibold text-primary transition hover:bg-primary hover:text-white">
+                <Icon name="link" size={18} /> <span data-copy-label>{T.copy}</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  {
+    related.length > 0 && (
+      <section class="section tone-ivoire" aria-labelledby="a-lire-aussi">
+        <div class="container-site">
+          <h2 id="a-lire-aussi" class="text-3xl font-bold">{T.related}</h2>
+          <ul class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {related.map((a) => <li><ArticleCard article={a} /></li>)}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section tone-terre">
+    <div class="container-site flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
+      <div>
+        <h2 class="text-2xl font-bold sm:text-3xl">{T.ctaTitle}</h2>
+        <p class="mt-2 text-muted">{T.ctaText}</p>
+      </div>
+      <div class="flex flex-wrap gap-3">
+        <a href={path('engage', lang)} class="btn btn-primary">{T.cta} <Icon name="arrow-right" size={18} /></a>
+        <a href={path('articles', lang)} class="btn btn-outline">{T.back}</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-copy-link]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(btn.dataset.copyLink ?? location.href);
+        const label = btn.querySelector('[data-copy-label]');
+        if (label) {
+          const before = label.textContent;
+          label.textContent = btn.dataset.copied ?? '';
+          setTimeout(() => (label.textContent = before), 2000);
+        }
+      } catch {
+        /* presse-papiers indisponible : rien à faire */
+      }
+    });
+  });
+</script>

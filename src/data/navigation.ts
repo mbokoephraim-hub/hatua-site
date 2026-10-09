@@ -7,6 +7,7 @@ export const mainNav: { key: RouteKey; label: UiKey }[] = [
   { key: 'about', label: 'nav.about' },
   { key: 'poles', label: 'nav.poles' },
   { key: 'projects', label: 'nav.projects' },
+  { key: 'articles', label: 'nav.articles' },
   { key: 'engage', label: 'nav.engage' },
   { key: 'contact', label: 'nav.contact' },
 ];

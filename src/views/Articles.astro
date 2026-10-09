@@ -1,0 +1,79 @@
+---
+/** Liste des articles (français et anglais). */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import SocialLinks from '../components/SocialLinks.astro';
+import Icon from '../components/Icon.astro';
+import { getContent } from '../data';
+import { getArticles } from '../data/articles';
+import { getLang, path } from '../i18n';
+
+const lang = getLang(Astro.currentLocale);
+const { site } = getContent(lang);
+const articles = await getArticles(lang);
+const [latest, ...others] = articles;
+
+const T = {
+  fr: {
+    title: 'Articles',
+    description: `Actualités, réflexions et nouvelles des projets de ${site.name}.`,
+    headerTitle: 'Nos articles',
+    headerIntro: 'Actualités de la fondation, nouvelles de nos projets et réflexions sur l’éducation et la jeunesse.',
+    list: 'Liste des articles',
+    emptyTitle: 'Les premiers articles arrivent bientôt',
+    emptyText: 'Suivez-nous sur les réseaux sociaux pour ne rien manquer de nos premières publications.',
+    contact: 'Proposer un sujet',
+  },
+  en: {
+    title: 'Articles',
+    description: `News, reflections and project updates from ${site.name}.`,
+    headerTitle: 'Our articles',
+    headerIntro: 'Foundation news, updates on our projects and reflections on education and youth.',
+    list: 'Article list',
+    emptyTitle: 'Our first articles are coming soon',
+    emptyText: 'Follow us on social media so you don’t miss our first publications.',
+    contact: 'Suggest a topic',
+  },
+}[lang];
+---
+
+<BaseLayout title={T.title} description={T.description} page={{ key: 'articles' }}>
+  <PageHeader tone="miel" eyebrow={T.title} title={T.headerTitle} intro={T.headerIntro} />
+
+  <section class="section tone-ivoire" aria-label={T.list}>
+    <div class="container-site">
+      <h2 class="sr-only">{T.list}</h2>
+      {
+        latest ? (
+          <>
+            <ArticleCard article={latest} featured />
+            {others.length > 0 && (
+              <ul class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {others.map((a) => (
+                  <li>
+                    <ArticleCard article={a} />
+                  </li>
+                ))}
+              </ul>
+            )}
+          </>
+        ) : (
+          <div class="reveal mx-auto max-w-2xl rounded-3xl border-2 border-dashed border-sand bg-white p-10 text-center">
+            <span class="mx-auto inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-50 text-primary">
+              <Icon name="book" size={28} />
+            </span>
+            <p class="mt-5 font-display text-xl font-semibold text-secondary">{T.emptyTitle}</p>
+            <p class="mx-auto mt-2 max-w-md text-muted">{T.emptyText}</p>
+            <div class="mt-6 flex justify-center">
+              <SocialLinks />
+            </div>
+            <a href={path('contact', lang)} class="btn btn-outline mt-6">
+              {T.contact} <Icon name="arrow-right" size={18} />
+            </a>
+          </div>
+        )
+      }
+    </div>
+  </section>
+</BaseLayout>
