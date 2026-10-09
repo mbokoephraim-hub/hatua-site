@@ -1,5 +1,7 @@
 ---
 /** Page d'un article (français et anglais). Le texte vient du fichier Markdown de l'article. */
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { render } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ArticleCard from '../components/ArticleCard.astro';
@@ -19,8 +21,27 @@ const { Content } = await render(article);
 // Typographie française : espace insécable fine avant « : ; ! ? » » et après « « » (uniquement dans le texte, pas dans les balises)
 const typo = (html: string) =>
   html.replace(/>([^<]+)</g, (_, text: string) => `>${text.replace(/ ([:;!?»])/g, '\u202F$1').replace(/« /g, '«\u202F')}<`);
-const html = article.rendered?.html ? (lang === 'fr' ? typo(article.rendered.html) : article.rendered.html) : null;
-const { title, description, date, author, image, imageAlt, tags, translation, draft } = article.data;
+// Les schémas et graphiques SVG (<div data-inline-svg="/images/…svg">) sont insérés directement dans la page :
+// leurs textes restent lisibles par les lecteurs d'écran et prennent la police du site.
+const inlineSvg = (html: string) =>
+  html.replace(/<div data-inline-svg="([^"]+)"><\/div>/g, (_, src: string) => {
+    try {
+      const svg = readFileSync(join(process.cwd(), 'public', src), 'utf8').replace(/<\?xml[^>]*>\s*/, '');
+      return `<div class="svg-inline">${svg}</div>`;
+    } catch {
+      return `<img src="${url(src)}" alt="" />`;
+    }
+  });
+const html = article.rendered?.html ? inlineSvg(lang === 'fr' ? typo(article.rendered.html) : article.rendered.html) : null;
+const { title, description, date, author, authorRole, authorImage, authorLink, kicker, image, imageAlt, tags, translation, draft } = article.data;
+const { fondatrice } = getContent(lang);
+// Encadré « À propos de l'autrice » : renseigné automatiquement quand authorLink vaut « founder »
+const authorBox =
+  authorLink === 'founder'
+    ? { photo: '/images/fondatrice-640.webp', bio: fondatrice.teaser, href: path('founder', lang) }
+    : authorImage
+      ? { photo: authorImage, bio: authorRole ?? '', href: authorLink }
+      : null;
 const slug = articleSlug(article);
 
 // Version dans l'autre langue (si le champ « translation » pointe vers un article existant)
@@ -38,6 +59,8 @@ const T = {
     breadcrumb: 'Fil d’Ariane',
     articles: 'Articles',
     by: 'Par',
+    about: 'À propos de l’autrice',
+    profile: 'Découvrir son parcours',
     min: 'min de lecture',
     draft: 'Brouillon : cet article n’est pas publié',
     share: 'Partager l’article',
@@ -53,6 +76,8 @@ const T = {
     breadcrumb: 'Breadcrumb',
     articles: 'Articles',
     by: 'By',
+    about: 'About the author',
+    profile: 'Read her story',
     min: 'min read',
     draft: 'Draft: this article is not published',
     share: 'Share this article',
@@ -73,7 +98,7 @@ const articleLd = {
   description,
   datePublished: date.toISOString(),
   inLanguage: lang,
-  author: { '@type': author === site.nameAlt || author === site.name ? 'Organization' : 'Person', name: author },
+  author: { '@type': author === site.nameAlt || author === site.name ? 'Organization' : 'Person', name: author, ...(authorBox?.href ? { url: new URL(authorBox.href, Astro.site).href } : {}) },
   publisher: { '@type': 'NGO', name: site.nameAlt, logo: { '@type': 'ImageObject', url: new URL(url('/icon-512.png'), Astro.site).href } },
   mainEntityOfPage: pageUrl,
   ...(image ? { image: new URL(url(image), Astro.site).href } : {}),
@@ -105,10 +130,17 @@ const articleLd = {
             {tags.map((tag) => <li class="rounded-full bg-primary-50 px-3 py-1 text-primary">{tag}</li>)}
           </ul>
         )}
-        <h1 class="mt-5 text-4xl leading-tight font-bold sm:text-5xl">{title}</h1>
+        {kicker && <p class="eyebrow mt-6">{kicker}</p>}
+        <h1 class="mt-3 text-4xl leading-tight font-bold sm:text-5xl">{title}</h1>
         <p class="mt-5 text-xl leading-relaxed text-muted">{description}</p>
-        <p class="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted">
-          <span>{T.by} <strong class="font-semibold text-ink">{author}</strong></span>
+        <p class="mt-7 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted">
+          <span class="inline-flex items-center gap-3">
+            {authorImage && <img src={url(authorImage)} alt="" width="48" height="48" class="h-12 w-12 rounded-full object-cover ring-2 ring-hibiscus/60" />}
+            <span>
+              {T.by} <strong class="font-semibold text-ink">{author}</strong>
+              {authorRole && <span class="block text-xs">{authorRole}</span>}
+            </span>
+          </span>
           <time datetime={date.toISOString()}>{formatDate(date, lang)}</time>
           <span class="inline-flex items-center gap-1.5"><Icon name="clock" size={15} /> {readingTime(article)} {T.min}</span>
         </p>
@@ -130,6 +162,24 @@ const articleLd = {
         <div class="prose-article">
           {html ? <Fragment set:html={html} /> : <Content />}
         </div>
+
+        {
+          authorBox && (
+            <aside class="card mt-14 flex flex-col gap-6 sm:flex-row sm:items-center" aria-labelledby="a-propos-auteur">
+              <img src={url(authorBox.photo)} alt={author} width="160" height="168" loading="lazy" class="h-36 w-36 shrink-0 rounded-2xl object-cover object-top sm:h-40 sm:w-40" />
+              <div>
+                <p id="a-propos-auteur" class="eyebrow">{T.about}</p>
+                <p class="mt-2 font-display text-xl font-bold text-secondary">{author}</p>
+                {authorBox.bio && <p class="mt-2 leading-relaxed text-muted">{authorBox.bio}</p>}
+                {authorBox.href && (
+                  <a href={authorBox.href} class="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-secondary hover:underline">
+                    {T.profile} <Icon name="arrow-right" size={16} />
+                  </a>
+                )}
+              </div>
+            </aside>
+          )
+        }
 
         <!-- Partage -->
         <div class="mt-14 border-t border-sand pt-8">

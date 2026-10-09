@@ -13,6 +13,12 @@ const articles = defineCollection({
     description: z.string(),
     date: z.coerce.date(),
     author: z.string().default('HATUA Foundation'),
+    // Facultatif : fonction de l'auteur, photo (dans public/) et lien « founder » vers la page de la fondatrice
+    authorRole: z.string().optional(),
+    authorImage: z.string().optional(),
+    authorLink: z.string().optional(),
+    // Facultatif : petite ligne au-dessus du titre (rubrique, projet…)
+    kicker: z.string().optional(),
     image: z.string().optional(),
     imageAlt: z.string().optional(),
     tags: z.array(z.string()).default([]),

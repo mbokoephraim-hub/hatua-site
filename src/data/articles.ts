@@ -21,10 +21,23 @@ export async function getArticles(lang: Lang): Promise<Article[]> {
 
 /** Durée de lecture estimée, en minutes (environ 200 mots par minute). */
 export function readingTime(a: Article): number {
-  const words = (a.body ?? '').trim().split(/\s+/).filter(Boolean).length;
+  const words = (a.body ?? '').replace(/<[^>]+>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
   return Math.max(1, Math.round(words / 200));
 }
 
 export function formatDate(date: Date, lang: Lang): string {
-  return new Intl.DateTimeFormat(lang === 'fr' ? 'fr-FR' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' }).format(date);
+  return new Intl.DateTimeFormat(lang === 'fr' ? 'fr-FR' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(date);
+}
+
+/** Articles regroupés par mois (du plus récent au plus ancien), pour le catalogue. */
+export function groupByMonth(articles: Article[], lang: Lang) {
+  const fmt = new Intl.DateTimeFormat(lang === 'fr' ? 'fr-FR' : 'en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+  const groups = new Map<string, { key: string; label: string; year: number; items: Article[] }>();
+  for (const a of articles) {
+    const d = a.data.date;
+    const key = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}`;
+    if (!groups.has(key)) groups.set(key, { key, label: fmt.format(d), year: d.getUTCFullYear(), items: [] });
+    groups.get(key)!.items.push(a);
+  }
+  return [...groups.values()];
 }

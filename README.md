@@ -127,6 +127,35 @@ Les articles sont de simples fichiers texte (Markdown) :
 La liste des articles, la page de chaque article, les boutons de partage, le sitemap et les informations pour Google
 sont générés automatiquement. Pour **prévisualiser les brouillons** : `SHOW_DRAFTS=true npm run build && npm run preview`.
 
+La page `/articles/` affiche l'article le plus récent « À la une », puis un **catalogue chronologique** (regroupé par mois,
+avec des filtres par année et par thème).
+
+#### Mise en page enrichie d'un article
+Champs facultatifs de l'en-tête : `kicker` (petite ligne au-dessus du titre), `authorRole`, `authorImage`
+(photo ronde à côté du nom) et `authorLink: "founder"` (ajoute en fin d'article l'encadré « À propos de l'autrice »
+avec la photo et la présentation de la fondatrice).
+
+Dans le texte, on peut insérer ces blocs HTML (exemples complets dans
+`src/content/articles/fr/qui-influence-vraiment-les-choix-des-adolescents.md`) :
+
+| Bloc | Rôle |
+|---|---|
+| `<figure class="illu illu-large">` | illustration plus large que le texte |
+| `<figure class="illu illu-droite">` / `illu-gauche` | illustration à côté du texte (pleine largeur sur mobile) |
+| `<figure class="schema">` + `<div data-inline-svg="/images/…svg">` | schéma SVG inséré dans la page (texte lisible) |
+| `<aside class="chiffres">` + `<div class="chiffre">` | chiffres clés |
+| `<blockquote class="temoignage">` + `<cite>` | témoignage |
+| `<p class="exergue">` | phrase mise en avant |
+| `<div class="a-retenir">` | encadré à retenir |
+| `<div class="cartes">` + `<div class="carte">` | cartes avec icône |
+| `<section class="conclusion">` | conclusion mise en valeur |
+| `<section class="references">` | références bibliographiques |
+
+Le premier paragraphe est automatiquement mis en forme comme chapô et les intertitres `##` sont numérotés.
+
+Les illustrations 2D de l'article ÉCHOS sont des fichiers SVG générés par `python3 scripts/illustrations/generate.py`
+(aucune dépendance) dans `public/images/articles/echos-influences/`.
+
 ### Photos
 Voir **`public/images/README.md`**.
 

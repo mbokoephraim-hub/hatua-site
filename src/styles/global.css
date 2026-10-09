@@ -264,6 +264,23 @@
   .step-line span:nth-child(3) { width: 18px; }
 }
 
+/* Pastilles de filtre (catalogue des articles) */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.25rem;
+  padding: 0.35rem 0.95rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-sand);
+  background: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-secondary);
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+.chip:hover { border-color: var(--color-hibiscus); }
+.chip[aria-pressed='true'] { background: var(--color-secondary); border-color: var(--color-secondary); color: #fff; }
+
 /* Texte des articles (contenu Markdown) */
 .prose-article {
   color: var(--tone-ink);
@@ -317,6 +334,173 @@
   text-align: center;
 }
 .prose-article hr { border-color: var(--color-sand); margin: 2.5em 0; }
+
+/* ——— Composants de mise en page des articles (blocs HTML dans le Markdown) ——— */
+/* Chapô : premier paragraphe */
+.prose-article > p:first-child {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  line-height: 1.65;
+  color: var(--color-secondary);
+}
+.prose-article > p:first-child::first-letter {
+  float: left;
+  margin: 0.08em 0.12em 0 0;
+  font-size: 3.4em;
+  line-height: 0.8;
+  font-weight: 700;
+  color: var(--color-hibiscus);
+}
+/* Intertitres numérotés, avec les trois marches du logo */
+.prose-article { counter-reset: partie; }
+.prose-article > h2 {
+  counter-increment: partie;
+  position: relative;
+  padding-top: 0.9em;
+  color: var(--color-secondary);
+}
+.prose-article > h2::before {
+  content: counter(partie, decimal-leading-zero);
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--color-hibiscus);
+}
+.prose-article > :is(h2, section) { clear: both; }
+
+/* Illustrations */
+.prose-article .illu { margin-top: 2em; margin-bottom: 2em; }
+.prose-article .illu img { border-radius: 1.5rem; background: var(--color-sand); }
+.prose-article .illu-large, .prose-article .graphique, .prose-article .chiffres, .prose-article .cartes {
+  margin-inline: calc(-1 * min(7rem, max(0px, (100vw - 48rem) / 2)));
+}
+@media (min-width: 1024px) {
+  .prose-article .illu-droite, .prose-article .illu-gauche {
+    width: 46%;
+    margin-top: 0.4em;
+    margin-bottom: 1em;
+  }
+  .prose-article .illu-droite { float: right; margin-left: 2rem; margin-right: -4rem; }
+  .prose-article .illu-gauche { float: left; margin-right: 2rem; margin-left: -4rem; }
+  .prose-article .illu-droite figcaption, .prose-article .illu-gauche figcaption { text-align: left; }
+}
+.prose-article .schema { max-width: 30rem; margin: 2em auto; }
+.prose-article .svg-inline svg { width: 100%; height: auto; display: block; font-family: var(--font-display); }
+
+/* Chiffres clés */
+.prose-article .chiffres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2em;
+  margin-bottom: 2em;
+  padding: 1.5rem;
+  border-radius: 1.5rem;
+  background: var(--color-secondary);
+  color: #fff;
+}
+.prose-article .chiffres > * { margin: 0; }
+.prose-article .chiffres-titre, .prose-article .chiffres-source { flex-basis: 100%; }
+.prose-article .chiffres .chiffre { flex: 1 1 12rem; }
+.prose-article .chiffres-titre { font-family: var(--font-display); font-weight: 600; font-size: 1rem; line-height: 1.5; color: var(--color-accent); }
+.prose-article .chiffres-source { font-size: 0.85rem; line-height: 1.5; opacity: 0.85; }
+.prose-article .chiffre { display: flex; flex-direction: column; gap: 0.35rem; padding: 1rem 1.1rem; border-radius: 1rem; background: rgb(255 255 255 / 0.08); }
+.prose-article .chiffre strong { font-family: var(--font-display); font-size: 2rem; line-height: 1.1; color: #fff; }
+.prose-article .chiffre span { font-size: 0.95rem; line-height: 1.45; }
+.prose-article .chiffre-texte strong { font-size: 1.35rem; line-height: 1.25; }
+.prose-article .chiffre-seul { margin-top: 1rem; background: var(--color-secondary); color: #fff; flex-direction: row; align-items: center; gap: 1rem; }
+.prose-article .chiffre-seul strong { font-size: 2.4rem; color: var(--color-accent); white-space: nowrap; }
+.prose-article .graphique .svg-inline { max-width: 34rem; }
+
+/* Graphique */
+.prose-article .graphique { margin-top: 2em; margin-bottom: 2em; padding: 1.5rem; border-radius: 1.5rem; background: var(--color-sand); }
+.prose-article .graphique > * { margin-top: 0; }
+.prose-article .graphique-titre { font-family: var(--font-display); font-weight: 600; color: var(--color-secondary); line-height: 1.4; margin-bottom: 0.75rem; }
+.prose-article .graphique figcaption { text-align: left; margin-top: 0.75rem; }
+
+/* Témoignage */
+.prose-article blockquote.temoignage {
+  position: relative;
+  margin: 2.25em 0;
+  padding: 2.25rem 1.75rem 1.5rem;
+  border: 0;
+  border-radius: 1.5rem;
+  background: var(--color-accent);
+  color: var(--color-encre);
+}
+.prose-article blockquote.temoignage::before {
+  content: '“';
+  position: absolute;
+  top: -0.35em;
+  left: 1.25rem;
+  font-size: 5rem;
+  line-height: 1;
+  color: var(--color-hibiscus);
+}
+.prose-article blockquote.temoignage p { font-size: 1.5rem; font-weight: 600; }
+.prose-article blockquote.temoignage cite { display: block; margin-top: 0.9rem; font-family: var(--font-body); font-size: 0.9rem; font-style: normal; line-height: 1.5; }
+
+/* Trois comportements parentaux */
+.prose-article .trio { display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); clear: both; }
+.prose-article .trio-item { display: flex; flex-direction: column; gap: 0.25rem; padding: 1rem 1.1rem; border-radius: 1rem; border-top: 4px solid; font-size: 0.95rem; line-height: 1.45; background: var(--color-sand); }
+.prose-article .trio-item strong { font-family: var(--font-display); font-size: 1.1rem; }
+.prose-article .trio-plus { border-color: var(--color-primary); }
+.prose-article .trio-plus strong { color: var(--color-primary); }
+.prose-article .trio-moins { border-color: var(--color-hibiscus); }
+
+/* Phrases que se répètent les élèves */
+.prose-article .phrases { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.prose-article .phrase { margin: 0; padding: 0.5rem 1rem; border-radius: 999px 999px 999px 0.3rem; background: var(--color-secondary-50); font-family: var(--font-display); font-size: 1rem; color: var(--color-secondary); }
+
+/* Phrase en exergue */
+.prose-article .exergue {
+  margin: 1.75em 0;
+  padding: 0.5em 0 0.5em 1.25rem;
+  border-left: 4px solid var(--color-hibiscus);
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--color-secondary);
+}
+
+/* Encadré « à retenir » */
+.prose-article .a-retenir { padding: 1.75rem; border-radius: 1.5rem; background: var(--color-primary); color: #fff; }
+.prose-article .a-retenir > * { margin: 0; }
+.prose-article .a-retenir > * + * { margin-top: 0.6em; }
+.prose-article .a-retenir-titre { font-family: var(--font-display); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--color-accent); }
+.prose-article .a-retenir p:not(.a-retenir-titre) { font-family: var(--font-display); font-size: 1.25rem; line-height: 1.6; }
+
+/* Cartes (implications) */
+.prose-article .cartes { display: flex; flex-wrap: wrap; gap: 1rem; }
+.prose-article .cartes > * + * { margin-top: 0; }
+.prose-article .carte { flex: 1 1 20rem; padding: 1.5rem; border-radius: 1.25rem; background: #fff; border: 1px solid var(--color-sand); box-shadow: 0 6px 24px -12px rgb(42 21 18 / 0.18); font-size: 1rem; line-height: 1.65; }
+.prose-article .carte > * { margin: 0; }
+.prose-article .carte > * + * { margin-top: 0.6rem; }
+.prose-article .carte h3 { font-size: 1.15rem; color: var(--color-secondary); }
+.prose-article .carte-icone { display: inline-flex; width: 3rem; height: 3rem; align-items: center; justify-content: center; border-radius: 999px; background: var(--color-primary-50); color: var(--color-primary); }
+.prose-article .carte-icone svg { width: 1.5rem; height: 1.5rem; }
+.prose-article .carte-large { flex-basis: 100%; background: var(--color-sand); }
+.prose-article .etapes { counter-reset: etape; list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.prose-article .etapes li { counter-increment: etape; margin: 0; padding: 0.4rem 0.9rem 0.4rem 0.4rem; border-radius: 999px; background: #fff; font-size: 0.9rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem; }
+.prose-article .etapes li::before { content: counter(etape); display: inline-flex; width: 1.6rem; height: 1.6rem; align-items: center; justify-content: center; border-radius: 999px; background: var(--color-hibiscus); color: var(--color-encre); font-size: 0.8rem; }
+
+/* Conclusion */
+.prose-article .conclusion { padding: 2rem 1.75rem; border-radius: 1.5rem; background: var(--color-secondary); color: #fff; }
+.prose-article .conclusion > * { margin: 0; }
+.prose-article .conclusion > * + * { margin-top: 1em; }
+.prose-article .conclusion h2 { color: #fff; font-size: 1.9rem; }
+.prose-article .conclusion strong { color: var(--color-accent); }
+.prose-article .conclusion-question { padding: 1.25rem 1.5rem; border-radius: 1rem; background: var(--color-accent); color: var(--color-encre); font-family: var(--font-display); font-size: 1.3rem; font-weight: 600; line-height: 1.5; }
+
+/* Références */
+.prose-article .references { margin-top: 3em; padding-top: 2em; border-top: 1px solid var(--color-sand); font-size: 0.95rem; line-height: 1.65; }
+.prose-article .references h2 { margin-top: 0; font-size: 1.35rem; }
+.prose-article .references ol { margin-top: 1em; }
+.prose-article .references li { word-break: break-word; }
 
 /* Apparition douce au défilement (uniquement si JS actif et mouvement autorisé) */
 @media (prefers-reduced-motion: no-preference) {
