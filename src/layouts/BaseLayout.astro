@@ -159,5 +159,16 @@ const websiteLd =
         els.forEach((el) => el.classList.add('is-visible'));
       }
     </script>
+    <script>
+      // Mesure d'audience anonyme et sans cookie : une page vue (et un visiteur unique par jour, compté côté serveur)
+      try {
+        const body = new Blob([JSON.stringify({ type: 'visit', path: location.pathname })], { type: 'application/json' });
+        if (!navigator.sendBeacon?.('/api/stats.php', body)) {
+          fetch('/api/stats.php', { method: 'POST', body, keepalive: true, headers: { 'Content-Type': 'application/json' } }).catch(() => undefined);
+        }
+      } catch {
+        /* rien */
+      }
+    </script>
   </body>
 </html>

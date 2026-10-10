@@ -48,6 +48,14 @@ function db(): PDO
         moderated_at TEXT
     )');
     $pdo->exec('CREATE INDEX IF NOT EXISTS comments_slug ON comments (slug, status)');
+    // Compteurs par jour (pour les graphiques du tableau de bord ÉCHOS)
+    $pdo->exec('CREATE TABLE IF NOT EXISTS daily (day TEXT NOT NULL, key TEXT NOT NULL, type TEXT NOT NULL, count INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (day, key, type))');
+    // « J'aime » sur les commentaires (une personne = un j'aime par commentaire)
+    $pdo->exec('CREATE TABLE IF NOT EXISTS likes (comment_id INTEGER NOT NULL, fingerprint TEXT NOT NULL, created_at TEXT NOT NULL, PRIMARY KEY (comment_id, fingerprint))');
+    $cols = array_column($pdo->query('PRAGMA table_info(comments)')->fetchAll(), 'name');
+    if (!in_array('likes', $cols, true)) {
+        $pdo->exec('ALTER TABLE comments ADD COLUMN likes INTEGER NOT NULL DEFAULT 0');
+    }
     return $pdo;
 }
 
@@ -62,6 +70,13 @@ function fingerprint(): string
     $ip = $_SERVER['REMOTE_ADDR'] ?? '';
     $ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
     return hash('sha256', trim((string) file_get_contents($saltFile)) . '|' . $ip . '|' . $ua);
+}
+
+/** Ajoute 1 au compteur du jour. */
+function count_daily(PDO $pdo, string $key, string $type): void
+{
+    $pdo->prepare('INSERT INTO daily (day, key, type, count) VALUES (?, ?, ?, 1) ON CONFLICT(day, key, type) DO UPDATE SET count = count + 1')
+        ->execute([gmdate('Y-m-d'), $key, $type]);
 }
 
 function is_bot(): bool

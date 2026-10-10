@@ -34,17 +34,32 @@ try {
     }
 
     $data = json_input();
-    $slug = valid_slug($data['slug'] ?? null);
-    $type = ($data['type'] ?? '') === 'read' ? 'read' : 'view';
     if (is_bot()) {
         json_out(['ok' => true]);
     }
     $pdo = db();
+
+    // Visite d'une page quelconque du site : pages vues + visiteurs uniques du jour
+    if (($data['type'] ?? '') === 'visit') {
+        $path = substr(preg_replace('#[^a-z0-9/_-]#i', '', (string) ($data['path'] ?? '/')), 0, 120) ?: '/';
+        count_daily($pdo, 'site', 'pageview');
+        count_daily($pdo, 'page:' . $path, 'pageview');
+        $ins = $pdo->prepare('INSERT OR IGNORE INTO hits (slug, type, fingerprint, day) VALUES (?, ?, ?, ?)');
+        $ins->execute(['site', 'visitor', fingerprint(), gmdate('Y-m-d')]);
+        if ($ins->rowCount() === 1) {
+            count_daily($pdo, 'site', 'visitor');
+        }
+        json_out(['ok' => true]);
+    }
+
+    $slug = valid_slug($data['slug'] ?? null);
+    $type = ($data['type'] ?? '') === 'read' ? 'read' : 'view';
     $ins = $pdo->prepare('INSERT OR IGNORE INTO hits (slug, type, fingerprint, day) VALUES (?, ?, ?, ?)');
     $ins->execute([$slug, $type, fingerprint(), gmdate('Y-m-d')]);
     if ($ins->rowCount() === 1) {
         $pdo->prepare('INSERT INTO counters (slug, type, count) VALUES (?, ?, 1) ON CONFLICT(slug, type) DO UPDATE SET count = count + 1')
             ->execute([$slug, $type]);
+        count_daily($pdo, $slug, $type);
     }
     // Ménage : les empreintes ne servent qu'à éviter les doublons du jour
     if (random_int(1, 50) === 1) {

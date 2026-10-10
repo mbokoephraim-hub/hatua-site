@@ -90,6 +90,8 @@ const T = {
     rate: 'Vous avez envoyé plusieurs commentaires en peu de temps. Réessayez dans quelques minutes.',
     replyFrom: 'Réponse de HATUA Foundation',
     pending: 'En attente de relecture : visible seulement par vous pour l’instant',
+    like: 'J’aime',
+    likeAria: 'J’aime ce commentaire',
     privacy: 'Votre nom et votre commentaire seront visibles par tous. N’indiquez pas d’informations personnelles sur un enfant.',
     honeypot: 'Ne pas remplir ce champ',
   },
@@ -126,6 +128,8 @@ const T = {
     rate: 'You have posted several comments in a short time. Please try again in a few minutes.',
     replyFrom: 'Reply from HATUA Foundation',
     pending: 'Awaiting review: only visible to you for now',
+    like: 'Like',
+    likeAria: 'Like this comment',
     privacy: 'Your name and comment will be visible to everyone. Do not share personal information about a child.',
     honeypot: 'Leave this field empty',
   },
@@ -246,7 +250,7 @@ const articleLd = {
         <!-- Commentaires (publiés après validation dans ÉCHOS) -->
         <section id="commentaires" class="mt-14 border-t border-sand pt-8" aria-labelledby="titre-commentaires" data-comments={statsKey}
           data-l-view={T.view} data-l-views={T.views} data-l-read={T.read} data-l-reads={T.reads}
-          data-l-thanks={T.thanks} data-l-error={T.error} data-l-rate={T.rate} data-l-reply={T.replyFrom} data-l-pending={T.pending} data-l-sending={T.sending} data-l-send={T.send} data-lang={lang}>
+          data-l-thanks={T.thanks} data-l-error={T.error} data-l-rate={T.rate} data-l-reply={T.replyFrom} data-l-pending={T.pending} data-l-like={T.like} data-l-like-aria={T.likeAria} data-l-sending={T.sending} data-l-send={T.send} data-lang={lang}>
           <h2 id="titre-commentaires" class="font-display text-2xl font-bold">{T.comments} <span class="text-muted" data-comment-count></span></h2>
           <p class="mt-2 text-muted">{T.commentsIntro}</p>
           <ol class="mt-6 grid gap-4" data-comment-list></ol>
@@ -350,7 +354,53 @@ const articleLd = {
     }
 
     // 3. Commentaires validés + ceux de ce visiteur encore en attente (gardés sur son appareil)
-    type C = { id?: number; name: string; message: string; reply?: string | null; created_at: string; pending?: boolean };
+    type C = { id?: number; name: string; message: string; reply?: string | null; created_at: string; pending?: boolean; likes?: number };
+    // « J'aime » déjà donnés depuis cet appareil
+    const likedKey = 'hatua-liked-comments';
+    const liked = new Set<number>((() => {
+      try {
+        return JSON.parse(localStorage.getItem(likedKey) ?? '[]');
+      } catch {
+        return [];
+      }
+    })());
+    const saveLiked = () => {
+      try {
+        localStorage.setItem(likedKey, JSON.stringify([...liked].slice(-500)));
+      } catch {
+        /* stockage indisponible */
+      }
+    };
+    const heart = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="currentColor"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>';
+    const likeButton = (c: C) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      const paint = (n: number) => {
+        const on = liked.has(c.id!);
+        btn.className = `mt-3 inline-flex min-h-9 items-center gap-1.5 rounded-full px-3 text-sm font-semibold transition ${on ? 'bg-secondary text-white' : 'bg-primary-50 text-primary hover:bg-secondary-50 hover:text-secondary'}`;
+        btn.setAttribute('aria-pressed', String(on));
+        btn.setAttribute('aria-label', `${L.lLikeAria} (${n})`);
+        btn.innerHTML = `${heart}<span>${L.lLike}</span><span aria-hidden="true">· ${n}</span>`;
+      };
+      let count = c.likes ?? 0;
+      paint(count);
+      btn.addEventListener('click', async () => {
+        const unlike = liked.has(c.id!);
+        btn.disabled = true;
+        try {
+          const r = await post('/api/comments.php', { like: c.id, unlike });
+          if (!r.ok) return;
+          count = (await r.json()).likes ?? count;
+          if (unlike) liked.delete(c.id!);
+          else liked.add(c.id!);
+          saveLiked();
+          paint(count);
+        } finally {
+          btn.disabled = false;
+        }
+      });
+      return btn;
+    };
     const list = box.querySelector<HTMLOListElement>('[data-comment-list]')!;
     const dateFmt = new Intl.DateTimeFormat(L.lang === 'en' ? 'en-GB' : 'fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
     const mineKey = `hatua-comments:${key}`;
@@ -401,6 +451,7 @@ const articleLd = {
       box.querySelector('[data-no-comments]')!.classList.toggle('hidden', approved.length + mine.length > 0);
       for (const c of [...approved, ...mine.map((m) => ({ ...m, pending: true }))]) {
         const li = render(c);
+        if (!c.pending && c.id) li.append(likeButton(c));
         if (c.reply) {
             const rep = document.createElement('div');
             rep.className = 'mt-4 rounded-xl border-l-4 border-hibiscus bg-sand/60 p-4';
