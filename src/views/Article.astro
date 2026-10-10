@@ -92,6 +92,19 @@ const T = {
     pending: 'En attente de relecture : visible seulement par vous pour l’instant',
     like: 'J’aime',
     likeAria: 'J’aime ce commentaire',
+    thumb: 'Pouce',
+    thumbAria: 'Pouce levé pour ce commentaire',
+    reply: 'Répondre',
+    replyTo: 'Réponse à',
+    replyAria: 'Répondre à',
+    replies: 'réponses',
+    oneReply: 'réponse',
+    sendReply: 'Envoyer la réponse',
+    cancel: 'Annuler',
+    shareComment: 'Partager',
+    shareAria: 'Partager le commentaire de',
+    linkCopied: 'Lien copié !',
+    replyThanks: 'Merci ! Votre réponse a bien été reçue. Elle apparaîtra après relecture par l’équipe.',
     privacy: 'Votre nom et votre commentaire seront visibles par tous. N’indiquez pas d’informations personnelles sur un enfant.',
     honeypot: 'Ne pas remplir ce champ',
   },
@@ -130,6 +143,19 @@ const T = {
     pending: 'Awaiting review: only visible to you for now',
     like: 'Like',
     likeAria: 'Like this comment',
+    thumb: 'Thumbs up',
+    thumbAria: 'Thumbs up for this comment',
+    reply: 'Reply',
+    replyTo: 'Reply to',
+    replyAria: 'Reply to',
+    replies: 'replies',
+    oneReply: 'reply',
+    sendReply: 'Post reply',
+    cancel: 'Cancel',
+    shareComment: 'Share',
+    shareAria: 'Share the comment by',
+    linkCopied: 'Link copied!',
+    replyThanks: 'Thank you! Your reply has been received. It will appear once our team has reviewed it.',
     privacy: 'Your name and comment will be visible to everyone. Do not share personal information about a child.',
     honeypot: 'Leave this field empty',
   },
@@ -250,10 +276,39 @@ const articleLd = {
         <!-- Commentaires (publiés après validation dans ÉCHOS) -->
         <section id="commentaires" class="mt-14 border-t border-sand pt-8" aria-labelledby="titre-commentaires" data-comments={statsKey}
           data-l-view={T.view} data-l-views={T.views} data-l-read={T.read} data-l-reads={T.reads}
-          data-l-thanks={T.thanks} data-l-error={T.error} data-l-rate={T.rate} data-l-reply={T.replyFrom} data-l-pending={T.pending} data-l-like={T.like} data-l-like-aria={T.likeAria} data-l-sending={T.sending} data-l-send={T.send} data-lang={lang}>
+          data-l-thanks={T.thanks} data-l-error={T.error} data-l-rate={T.rate} data-l-reply={T.replyFrom} data-l-pending={T.pending} data-l-like={T.like} data-l-like-aria={T.likeAria} data-l-sending={T.sending} data-l-send={T.send} data-lang={lang}
+          data-l-thumb={T.thumb} data-l-thumb-aria={T.thumbAria} data-l-reply-btn={T.reply} data-l-reply-to={T.replyTo} data-l-reply-aria={T.replyAria}
+          data-l-replies={T.replies} data-l-one-reply={T.oneReply} data-l-share={T.shareComment} data-l-share-aria={T.shareAria} data-l-copied={T.linkCopied}
+          data-l-reply-thanks={T.replyThanks} data-url={pageUrl}>
           <h2 id="titre-commentaires" class="font-display text-2xl font-bold">{T.comments} <span class="text-muted" data-comment-count></span></h2>
           <p class="mt-2 text-muted">{T.commentsIntro}</p>
-          <ol class="mt-6 grid gap-4" data-comment-list></ol>
+          <ol class="mt-6 grid gap-5" data-comment-list></ol>
+          <p class="sr-only" aria-live="polite" data-live></p>
+          <template data-reply-template>
+            <form class="mt-4 grid gap-3 rounded-2xl border-2 border-accent bg-cream p-4" novalidate>
+              <p class="flex flex-wrap items-center gap-2 text-sm font-semibold text-secondary">{T.replyTo} <span class="rounded-full bg-secondary px-2.5 py-0.5 text-white" data-reply-who></span></p>
+              <div class="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <label class="mb-1 block text-sm font-semibold" data-for="name">{T.name} <span class="text-secondary" aria-hidden="true">*</span></label>
+                  <input name="name" type="text" required minlength="2" maxlength="60" autocomplete="name" class="w-full rounded-xl border border-sand bg-white px-4 py-2.5" />
+                </div>
+                <div>
+                  <label class="mb-1 block text-sm font-semibold" data-for="email">{T.email}</label>
+                  <input name="email" type="email" maxlength="150" autocomplete="email" class="w-full rounded-xl border border-sand bg-white px-4 py-2.5" />
+                </div>
+              </div>
+              <div>
+                <label class="mb-1 block text-sm font-semibold" data-for="message">{T.message} <span class="text-secondary" aria-hidden="true">*</span></label>
+                <textarea name="message" required minlength="3" maxlength="2000" rows="3" class="w-full rounded-xl border border-sand bg-white px-4 py-2.5"></textarea>
+              </div>
+              <p class="hidden" aria-hidden="true"><label>{T.honeypot} <input name="website" tabindex="-1" autocomplete="off" /></label></p>
+              <div class="flex flex-wrap gap-2">
+                <button type="submit" class="btn btn-primary">{T.sendReply} <Icon name="send" size={18} /></button>
+                <button type="button" class="btn btn-outline" data-reply-cancel>{T.cancel}</button>
+              </div>
+              <p class="hidden rounded-xl bg-secondary-50 p-3 font-medium text-secondary-dark" role="status" tabindex="-1" data-reply-status></p>
+            </form>
+          </template>
           <p class="mt-4 hidden text-muted" data-no-comments>{T.noComments}</p>
 
           <form class="card mt-8 grid gap-4" data-comment-form novalidate>
@@ -353,126 +408,291 @@ const articleLd = {
       io.observe(end);
     }
 
-    // 3. Commentaires validés + ceux de ce visiteur encore en attente (gardés sur son appareil)
-    type C = { id?: number; name: string; message: string; reply?: string | null; created_at: string; pending?: boolean; likes?: number };
-    // « J'aime » déjà donnés depuis cet appareil
-    const likedKey = 'hatua-liked-comments';
-    const liked = new Set<number>((() => {
-      try {
-        return JSON.parse(localStorage.getItem(likedKey) ?? '[]');
-      } catch {
-        return [];
-      }
-    })());
-    const saveLiked = () => {
-      try {
-        localStorage.setItem(likedKey, JSON.stringify([...liked].slice(-500)));
-      } catch {
-        /* stockage indisponible */
-      }
+    // 3. Commentaires validés (avec leurs réponses) + ceux de ce visiteur encore en attente (gardés sur son appareil)
+    type C = {
+      id?: number; name: string; message: string; reply?: string | null; created_at: string; pending?: boolean;
+      likes?: number; thumbs?: number; parent_id?: number | null; reply_to?: string | null;
     };
-    const heart = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="currentColor"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>';
-    const likeButton = (c: C) => {
-      const btn = document.createElement('button');
+    const store = {
+      get<T>(k: string, fallback: T): T {
+        try {
+          return JSON.parse(localStorage.getItem(k) ?? 'null') ?? fallback;
+        } catch {
+          return fallback;
+        }
+      },
+      set(k: string, v: unknown) {
+        try {
+          localStorage.setItem(k, JSON.stringify(v));
+        } catch {
+          /* stockage indisponible */
+        }
+      },
+    };
+    // Réactions déjà données depuis cet appareil (le serveur, lui, compte une fois par personne)
+    const reacted = {
+      love: new Set<number>(store.get<number[]>('hatua-liked-comments', [])),
+      thumb: new Set<number>(store.get<number[]>('hatua-thumbed-comments', [])),
+    };
+    const saveReacted = () => {
+      store.set('hatua-liked-comments', [...reacted.love].slice(-500));
+      store.set('hatua-thumbed-comments', [...reacted.thumb].slice(-500));
+    };
+    const svg = (d: string, fill = false) =>
+      `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="${fill ? 'currentColor' : 'none'}" stroke="${fill ? 'none' : 'currentColor'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+    const ICON = {
+      love: svg('<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>', true),
+      thumb: svg('<path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/>'),
+      reply: svg('<path d="M9 17 4 12l5-5"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/>'),
+      share: svg('<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98M15.41 6.51l-6.82 3.98"/>'),
+    };
+    // Une couleur par personne (toujours la même pour un même nom)
+    const PALETTE = [
+      { av: 'bg-secondary text-white', edge: 'border-l-secondary' },
+      { av: 'bg-primary text-white', edge: 'border-l-primary' },
+      { av: 'bg-hibiscus text-encre', edge: 'border-l-hibiscus' },
+      { av: 'bg-accent text-encre', edge: 'border-l-accent' },
+      { av: 'bg-primary-light text-white', edge: 'border-l-primary-light' },
+    ];
+    const colorOf = (name: string) => PALETTE[[...name.toLowerCase()].reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) >>> 0, 7) % PALETTE.length];
+    const initials = (name: string) => (name.match(/\p{L}[\p{L}'’-]*/gu) ?? ['?']).slice(0, 2).map((w) => w[0].toUpperCase()).join('');
+    const el = <K extends keyof HTMLElementTagNameMap>(tag: K, cls = '', text?: string) => {
+      const e = document.createElement(tag);
+      if (cls) e.className = cls;
+      if (text !== undefined) e.textContent = text;
+      return e;
+    };
+    const live = box.querySelector<HTMLElement>('[data-live]')!;
+    const announce = (msg: string) => {
+      live.textContent = '';
+      setTimeout(() => (live.textContent = msg), 50);
+    };
+
+    const list = box.querySelector<HTMLOListElement>('[data-comment-list]')!;
+    const dateFmt = new Intl.DateTimeFormat(L.lang === 'en' ? 'en-GB' : 'fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+    const mineKey = `hatua-comments:${key}`;
+    const loadMine = (): C[] => store.get<C[]>(mineKey, []);
+    const saveMine = (items: C[]) => store.set(mineKey, items.slice(-20));
+
+    // Bouton « pouce » ou « j'aime »
+    const reactButton = (c: C, kind: 'love' | 'thumb') => {
+      const btn = el('button');
       btn.type = 'button';
-      const paint = (n: number) => {
-        const on = liked.has(c.id!);
-        btn.className = `mt-3 inline-flex min-h-9 items-center gap-1.5 rounded-full px-3 text-sm font-semibold transition ${on ? 'bg-secondary text-white' : 'bg-primary-50 text-primary hover:bg-secondary-50 hover:text-secondary'}`;
+      let count = (kind === 'love' ? c.likes : c.thumbs) ?? 0;
+      const paint = () => {
+        const on = reacted[kind].has(c.id!);
+        const styles = kind === 'love'
+          ? (on ? 'bg-hibiscus text-encre' : 'bg-secondary-50 text-secondary hover:bg-hibiscus hover:text-encre')
+          : (on ? 'bg-primary text-white' : 'bg-primary-50 text-primary hover:bg-primary hover:text-white');
+        btn.className = `inline-flex min-h-9 items-center gap-1.5 rounded-full px-3 text-sm font-semibold transition active:scale-95 ${styles}`;
         btn.setAttribute('aria-pressed', String(on));
-        btn.setAttribute('aria-label', `${L.lLikeAria} (${n})`);
-        btn.innerHTML = `${heart}<span>${L.lLike}</span><span aria-hidden="true">· ${n}</span>`;
+        btn.setAttribute('aria-label', `${kind === 'love' ? L.lLikeAria : L.lThumbAria} (${count})`);
+        btn.innerHTML = `${ICON[kind]}<span class="hidden sm:inline">${kind === 'love' ? L.lLike : L.lThumb}</span>${count ? `<span aria-hidden="true" class="tabular-nums">${count}</span>` : ''}`;
       };
-      let count = c.likes ?? 0;
-      paint(count);
+      paint();
       btn.addEventListener('click', async () => {
-        const unlike = liked.has(c.id!);
+        const undo = reacted[kind].has(c.id!);
         btn.disabled = true;
         try {
-          const r = await post('/api/comments.php', { like: c.id, unlike });
+          const r = await post('/api/comments.php', { like: c.id, kind, unlike: undo });
           if (!r.ok) return;
-          count = (await r.json()).likes ?? count;
-          if (unlike) liked.delete(c.id!);
-          else liked.add(c.id!);
-          saveLiked();
-          paint(count);
+          count = (await r.json()).count ?? count;
+          if (undo) reacted[kind].delete(c.id!);
+          else reacted[kind].add(c.id!);
+          saveReacted();
+          paint();
         } finally {
           btn.disabled = false;
         }
       });
       return btn;
     };
-    const list = box.querySelector<HTMLOListElement>('[data-comment-list]')!;
-    const dateFmt = new Intl.DateTimeFormat(L.lang === 'en' ? 'en-GB' : 'fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
-    const mineKey = `hatua-comments:${key}`;
-    const loadMine = (): C[] => {
-      try {
-        return JSON.parse(localStorage.getItem(mineKey) ?? '[]');
-      } catch {
-        return [];
-      }
+
+    // Partager un commentaire précis (lien direct vers lui)
+    const shareButton = (c: C) => {
+      const btn = el('button', 'inline-flex min-h-9 items-center gap-1.5 rounded-full bg-sand px-3 text-sm font-semibold text-ink transition hover:bg-secondary hover:text-white active:scale-95');
+      btn.type = 'button';
+      btn.setAttribute('aria-label', `${L.lShareAria} ${c.name}`);
+      btn.innerHTML = `${ICON.share}<span class="hidden sm:inline" data-label>${L.lShare}</span>`;
+      btn.addEventListener('click', async () => {
+        const link = `${L.url}#comment-${c.id}`;
+        const excerpt = c.message.length > 120 ? `${c.message.slice(0, 117)}…` : c.message;
+        if (navigator.share) {
+          try {
+            await navigator.share({ title: document.title, text: `${c.name} : « ${excerpt} »`, url: link });
+            return;
+          } catch (e) {
+            if ((e as DOMException)?.name === 'AbortError') return;
+          }
+        }
+        try {
+          await navigator.clipboard.writeText(link);
+          const label = btn.querySelector<HTMLElement>('[data-label]')!;
+          label.classList.remove('hidden');
+          label.textContent = L.lCopied!;
+          announce(L.lCopied!);
+          setTimeout(() => {
+            label.textContent = L.lShare!;
+            label.classList.add('hidden');
+          }, 2000);
+        } catch {
+          location.hash = `comment-${c.id}`;
+        }
+      });
+      return btn;
     };
-    const saveMine = (items: C[]) => {
-      try {
-        localStorage.setItem(mineKey, JSON.stringify(items.slice(-10)));
-      } catch {
-        /* stockage indisponible */
-      }
+
+    // Formulaire de réponse (un seul ouvert à la fois, sous le commentaire visé)
+    const tpl = box.querySelector<HTMLTemplateElement>('[data-reply-template]')!;
+    let openForm: HTMLFormElement | null = null;
+    const openReply = (target: C, host: HTMLElement, trigger: HTMLButtonElement) => {
+      openForm?.remove();
+      const form = (tpl.content.firstElementChild as HTMLFormElement).cloneNode(true) as HTMLFormElement;
+      form.querySelectorAll<HTMLLabelElement>('label[data-for]').forEach((lab) => {
+        const field = form.querySelector<HTMLElement>(`[name="${lab.dataset.for}"]`)!;
+        field.id = `r-${target.id}-${lab.dataset.for}`;
+        lab.htmlFor = field.id;
+      });
+      form.querySelector('[data-reply-who]')!.textContent = `@${target.name}`;
+      const nameInput = form.querySelector<HTMLInputElement>('[name="name"]')!;
+      nameInput.value = store.get<string>('hatua-comment-name', '');
+      const statusBox = form.querySelector<HTMLElement>('[data-reply-status]')!;
+      const opened = Date.now();
+      const close = () => {
+        form.remove();
+        openForm = null;
+        trigger.setAttribute('aria-expanded', 'false');
+        trigger.focus();
+      };
+      form.querySelector('[data-reply-cancel]')!.addEventListener('click', close);
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          return;
+        }
+        const f = new FormData(form);
+        const btn = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+        btn.disabled = true;
+        try {
+          const r = await post('/api/comments.php', {
+            slug: key, parent: target.id, name: f.get('name'), email: f.get('email'), message: f.get('message'),
+            website: f.get('website'), elapsed: Math.round((Date.now() - opened) / 1000),
+          });
+          if (r.status === 429) throw new Error(L.lRate);
+          if (!r.ok) throw new Error(L.lError);
+          const res = await r.json().catch(() => ({}));
+          store.set('hatua-comment-name', String(f.get('name')));
+          saveMine([...loadMine(), {
+            id: res.id, name: String(f.get('name')), message: String(f.get('message')), created_at: new Date().toISOString(),
+            parent_id: res.parent_id ?? target.parent_id ?? target.id, reply_to: res.reply_to ?? target.name,
+          }]);
+          openForm = null;
+          showAll(approvedCache);
+          announce(L.lReplyThanks!);
+        } catch (err) {
+          statusBox.textContent = (err as Error).message || L.lError!;
+          statusBox.classList.remove('hidden');
+          statusBox.focus();
+        } finally {
+          btn.disabled = false;
+        }
+      });
+      host.append(form);
+      openForm = form;
+      trigger.setAttribute('aria-expanded', 'true');
+      (nameInput.value ? form.querySelector<HTMLTextAreaElement>('textarea')! : nameInput).focus();
     };
-    const render = (c: C) => {
-      // textContent uniquement : aucun HTML venant des visiteurs n'est interprété
-      const li = document.createElement('li');
-      li.className = c.pending ? 'card border-dashed !border-hibiscus' : 'card';
-      const head = document.createElement('p');
-      head.className = 'text-sm text-muted';
-      const who = document.createElement('strong');
-      who.className = 'font-semibold text-ink';
-      who.textContent = c.name;
-      head.append(who, ` · ${dateFmt.format(new Date(c.created_at))}`);
-      if (c.pending) {
-        const tag = document.createElement('span');
-        tag.className = 'mt-1 block w-fit rounded-full bg-accent px-3 py-0.5 text-xs font-semibold text-encre sm:ml-2 sm:mt-0 sm:inline-block';
-        tag.textContent = L.lPending!;
-        head.append(tag);
+
+    // Carte d'un commentaire ou d'une réponse (textContent uniquement : aucun HTML venant des visiteurs n'est interprété)
+    const render = (c: C, isReply: boolean) => {
+      const tone = colorOf(c.name);
+      const li = el('li', isReply
+        ? `rounded-2xl bg-cream p-4 ${c.pending ? 'border-2 border-dashed border-hibiscus' : ''}`
+        : `rounded-2xl border-l-4 bg-white p-5 shadow-sm ring-1 ring-sand ${c.pending ? 'border-dashed !border-l-hibiscus' : tone.edge}`);
+      if (c.id && !c.pending) li.id = `comment-${c.id}`;
+      li.classList.add('scroll-mt-28', 'transition-shadow');
+
+      const head = el('div', 'flex items-start gap-3');
+      const avatar = el('span', `inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold ${tone.av}`, initials(c.name));
+      avatar.setAttribute('aria-hidden', 'true');
+      const meta = el('div', 'min-w-0');
+      const line = el('p', 'text-sm text-muted');
+      line.append(el('strong', 'font-semibold text-ink', c.name), ` · ${dateFmt.format(new Date(c.created_at))}`);
+      if (c.pending) line.append(el('span', 'mt-1 block w-fit rounded-full bg-accent px-3 py-0.5 text-xs font-semibold text-encre sm:ml-2 sm:mt-0 sm:inline-block', L.lPending!));
+      meta.append(line);
+      const body = el('p', 'mt-1.5 whitespace-pre-line break-words');
+      if (c.reply_to) {
+        const tag = el('span', 'mr-1.5 rounded-full bg-secondary-50 px-2 py-0.5 text-sm font-semibold text-secondary', `@${c.reply_to}`);
+        tag.setAttribute('title', `${L.lReplyTo} ${c.reply_to}`);
+        body.append(tag);
       }
-      const body = document.createElement('p');
-      body.className = 'mt-2 whitespace-pre-line';
-      body.textContent = c.message;
-      li.append(head, body);
+      body.append(c.message);
+      meta.append(body);
+      head.append(avatar, meta);
+      li.append(head);
+
+      if (!c.pending && c.id) {
+        const bar = el('div', 'mt-3 flex flex-wrap gap-2 sm:pl-13');
+        const replyBtn = el('button', 'inline-flex min-h-9 items-center gap-1.5 rounded-full bg-accent/60 px-3 text-sm font-semibold text-encre transition hover:bg-accent active:scale-95');
+        replyBtn.type = 'button';
+        replyBtn.setAttribute('aria-expanded', 'false');
+        replyBtn.setAttribute('aria-label', `${L.lReplyAria} ${c.name}`);
+        replyBtn.innerHTML = `${ICON.reply}<span>${L.lReplyBtn}</span>`;
+        replyBtn.addEventListener('click', () => (openForm && replyBtn.getAttribute('aria-expanded') === 'true' ? (openForm.remove(), (openForm = null), replyBtn.setAttribute('aria-expanded', 'false')) : openReply(c, li, replyBtn)));
+        bar.append(reactButton(c, 'thumb'), reactButton(c, 'love'), replyBtn, shareButton(c));
+        li.append(bar);
+      }
+      if (c.reply) {
+        const rep = el('div', 'mt-4 rounded-xl border-l-4 border-primary bg-primary-50 p-4');
+        rep.append(el('p', 'text-sm font-semibold text-primary', L.lReply!), el('p', 'mt-1 whitespace-pre-line', c.reply));
+        li.append(rep);
+      }
       return li;
     };
+
     const showAll = (approved: C[]) => {
       const ids = new Set(approved.map((c) => c.id));
       // Un commentaire publié n'est plus « en attente » : on l'oublie sur l'appareil
       const month = Date.now() - 30 * 86400000;
-      const mine = loadMine().filter((c) => !ids.has(c.id) && new Date(c.created_at).getTime() > month);
+      const mine = loadMine().filter((c) => !ids.has(c.id) && new Date(c.created_at).getTime() > month).map((m) => ({ ...m, pending: true }));
       saveMine(mine);
+      const all = [...approved, ...mine];
+      const tops = all.filter((c) => !c.parent_id);
+      const repliesOf = (id?: number) => all.filter((c) => c.parent_id && c.parent_id === id);
       list.replaceChildren();
       box.querySelector('[data-comment-count]')!.textContent = approved.length ? `(${approved.length})` : '';
-      box.querySelector('[data-no-comments]')!.classList.toggle('hidden', approved.length + mine.length > 0);
-      for (const c of [...approved, ...mine.map((m) => ({ ...m, pending: true }))]) {
-        const li = render(c);
-        if (!c.pending && c.id) li.append(likeButton(c));
-        if (c.reply) {
-            const rep = document.createElement('div');
-            rep.className = 'mt-4 rounded-xl border-l-4 border-hibiscus bg-sand/60 p-4';
-            const t = document.createElement('p');
-            t.className = 'text-sm font-semibold text-secondary';
-            t.textContent = L.lReply!;
-            const rb = document.createElement('p');
-            rb.className = 'mt-1 whitespace-pre-line';
-            rb.textContent = c.reply;
-            rep.append(t, rb);
-            li.append(rep);
+      box.querySelector('[data-no-comments]')!.classList.toggle('hidden', all.length > 0);
+      for (const c of tops) {
+        const li = render(c, false);
+        const replies = repliesOf(c.id);
+        if (replies.length) {
+          li.append(el('p', 'mt-4 text-xs font-semibold tracking-wide text-secondary uppercase', `${replies.length} ${replies.length > 1 ? L.lReplies : L.lOneReply}`));
+          const ol = el('ol', 'mt-2 grid gap-3 border-l-2 border-dashed border-hibiscus/60 pl-3 sm:ml-5 sm:pl-5');
+          replies.forEach((r) => ol.append(render(r, true)));
+          li.append(ol);
         }
         list.append(li);
       }
     };
+
+    // Lien direct vers un commentaire (#comment-12) : on le montre et on le fait ressortir
+    const highlight = () => {
+      const target = location.hash.startsWith('#comment-') ? document.getElementById(location.hash.slice(1)) : null;
+      if (!target) return;
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      target.classList.add('ring-4', 'ring-accent');
+      setTimeout(() => target.classList.remove('ring-4', 'ring-accent'), 4000);
+    };
+    window.addEventListener('hashchange', highlight);
+
     let approvedCache: C[] = [];
     fetch(`/api/comments.php?slug=${encodeURIComponent(key)}`)
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => {
         approvedCache = d?.comments ?? [];
         showAll(approvedCache);
+        highlight();
       })
       .catch(() => showAll([]));
 
@@ -487,6 +707,8 @@ const articleLd = {
       status.classList.add(...(ok ? ['bg-primary-50', 'text-primary-dark'] : ['bg-secondary-50', 'text-secondary-dark']));
       status.focus();
     };
+    const mainName = form.querySelector<HTMLInputElement>('[name="name"]')!;
+    if (!mainName.value) mainName.value = store.get<string>('hatua-comment-name', '');
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!form.checkValidity()) {
@@ -507,9 +729,11 @@ const articleLd = {
         if (r.status === 429) return say(L.lRate!, false);
         if (!r.ok) throw new Error(String(r.status));
         const res = await r.json().catch(() => ({}));
+        store.set('hatua-comment-name', String(f.get('name')));
         saveMine([...loadMine(), { id: res.id, name: String(f.get('name')), message: String(f.get('message')), created_at: new Date().toISOString() }]);
         showAll(approvedCache);
         form.reset();
+        mainName.value = String(f.get('name'));
         say(L.lThanks!, true);
       } catch {
         say(L.lError!, false);

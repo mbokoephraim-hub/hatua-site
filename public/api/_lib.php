@@ -52,10 +52,21 @@ function db(): PDO
     $pdo->exec('CREATE TABLE IF NOT EXISTS daily (day TEXT NOT NULL, key TEXT NOT NULL, type TEXT NOT NULL, count INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (day, key, type))');
     // « J'aime » sur les commentaires (une personne = un j'aime par commentaire)
     $pdo->exec('CREATE TABLE IF NOT EXISTS likes (comment_id INTEGER NOT NULL, fingerprint TEXT NOT NULL, created_at TEXT NOT NULL, PRIMARY KEY (comment_id, fingerprint))');
+    // « Pouce » sur les commentaires (même principe que les « j'aime »)
+    $pdo->exec('CREATE TABLE IF NOT EXISTS thumbs (comment_id INTEGER NOT NULL, fingerprint TEXT NOT NULL, created_at TEXT NOT NULL, PRIMARY KEY (comment_id, fingerprint))');
     $cols = array_column($pdo->query('PRAGMA table_info(comments)')->fetchAll(), 'name');
-    if (!in_array('likes', $cols, true)) {
-        $pdo->exec('ALTER TABLE comments ADD COLUMN likes INTEGER NOT NULL DEFAULT 0');
+    $add = [
+        'likes' => 'INTEGER NOT NULL DEFAULT 0',
+        'thumbs' => 'INTEGER NOT NULL DEFAULT 0',
+        'parent_id' => 'INTEGER', // réponse à un commentaire (fil à un seul niveau : toujours le commentaire de départ)
+        'reply_to' => 'TEXT',     // nom de la personne à qui l'on répond (affiché « @Nom »)
+    ];
+    foreach ($add as $col => $type) {
+        if (!in_array($col, $cols, true)) {
+            $pdo->exec("ALTER TABLE comments ADD COLUMN $col $type");
+        }
     }
+    $pdo->exec('CREATE INDEX IF NOT EXISTS comments_parent ON comments (parent_id)');
     return $pdo;
 }
 

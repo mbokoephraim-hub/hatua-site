@@ -136,6 +136,10 @@ Chaque article affiche son nombre de **vues** (une personne comptée une fois pa
 (copié avec le site sur Hostinger) ; les données sont dans `domains/hatuafoundation.org/site-data/blog.sqlite`, **hors du dossier public**.
 - Les commentaires sont publiés **après validation** dans l'application ÉCHOS : *Administration → Commentaires du site*
   (Publier, Refuser, Supprimer, Répondre au nom de HATUA). Un e-mail prévient hatuafound@gmail.com à chaque nouveau commentaire.
+- Les visiteurs peuvent **répondre à un commentaire précis** : la réponse est rangée sous le commentaire de départ et
+  la personne à qui l'on répond est mentionnée (« @Nom »). Les réponses passent aussi par la validation.
+- Chaque commentaire publié a ses boutons **Pouce**, **J'aime** (une fois par personne), **Répondre** et **Partager**
+  (lien direct `#comment-<id>`, qui fait ressortir le commentaire à l'ouverture).
 - Anti-spam : champ piège, délai minimal de saisie, 3 envois par 10 minutes, 2 liens au maximum.
 - Vie privée : aucune adresse IP conservée (empreinte anonyme salée) ; l'e-mail facultatif n'est jamais publié.
 - En local (`npm run dev`), les compteurs et commentaires ne s'affichent pas : ils n'apparaissent qu'en ligne.
