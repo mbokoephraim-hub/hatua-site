@@ -58,6 +58,7 @@ try {
 
     $pdo->prepare('INSERT INTO comments (slug, name, email, message, status, fingerprint, created_at) VALUES (?, ?, ?, ?, \'pending\', ?, ?)')
         ->execute([$slug, $name, $email ?: null, $message, $fp, gmdate('c')]);
+    $id = (int) $pdo->lastInsertId();
 
     // Prévenir l'équipe (le contenu n'est pas copié dans l'e-mail : il se lit dans ÉCHOS)
     @mail(
@@ -67,7 +68,7 @@ try {
         "From: HATUA Foundation <no-reply@hatuafoundation.org>\r\nContent-Type: text/plain; charset=UTF-8"
     );
 
-    json_out(['ok' => true, 'pending' => true]);
+    json_out(['ok' => true, 'pending' => true, 'id' => $id]);
 } catch (Throwable $e) {
     error_log('comments.php: ' . $e->getMessage());
     json_out(['error' => 'server'], 500);
