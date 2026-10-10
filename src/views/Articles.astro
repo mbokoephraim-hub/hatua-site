@@ -144,6 +144,7 @@ const T = {
                           <span class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-semibold text-muted">
                             <time datetime={a.data.date.toISOString()} class="text-secondary">{formatDate(a.data.date, lang)}</time>
                             <span>{readingTime(a)} {T.min}</span>
+                            <span class="hidden items-center gap-1" data-views-for={`${lang}/${articleSlug(a)}`} data-one={lang === 'fr' ? 'vue' : 'view'} data-label={lang === 'fr' ? 'vues' : 'views'}><span data-n></span></span>
                             {a.data.draft && <span class="rounded-full bg-secondary px-2 py-0.5 text-white">{lang === 'fr' ? 'Brouillon' : 'Draft'}</span>}
                           </span>
                           <span class="mt-1.5 block font-display text-lg leading-snug font-semibold text-ink group-hover:underline sm:text-xl">{a.data.title}</span>

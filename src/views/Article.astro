@@ -43,6 +43,8 @@ const authorBox =
       ? { photo: authorImage, bio: authorRole ?? '', href: authorLink }
       : null;
 const slug = articleSlug(article);
+// Identifiant de l'article pour les compteurs et les commentaires (ex. « fr/mon-article »)
+const statsKey = `${lang}/${slug}`;
 
 // Version dans l'autre langue (si le champ « translation » pointe vers un article existant)
 const other = otherLang(lang);
@@ -71,6 +73,24 @@ const T = {
     ctaTitle: 'Envie d’agir à nos côtés ?',
     ctaText: 'Bénévolat, partenariat, don : chaque pas compte.',
     cta: 'S’engager',
+    views: 'vues',
+    view: 'vue',
+    reads: 'lectures complètes',
+    read: 'lecture complète',
+    comments: 'Commentaires',
+    commentsIntro: 'Réagissez à cet article. Votre commentaire sera publié après relecture par l’équipe.',
+    noComments: 'Aucun commentaire pour l’instant : soyez la première ou le premier à réagir.',
+    name: 'Votre nom ou prénom',
+    email: 'Votre e-mail (facultatif, jamais publié)',
+    message: 'Votre commentaire',
+    send: 'Envoyer le commentaire',
+    sending: 'Envoi…',
+    thanks: 'Merci ! Votre commentaire a bien été reçu. Il apparaîtra ici après relecture par l’équipe.',
+    error: 'L’envoi n’a pas abouti. Vérifiez les champs et réessayez dans un instant.',
+    rate: 'Vous avez envoyé plusieurs commentaires en peu de temps. Réessayez dans quelques minutes.',
+    replyFrom: 'Réponse de HATUA Foundation',
+    privacy: 'Votre nom et votre commentaire seront visibles par tous. N’indiquez pas d’informations personnelles sur un enfant.',
+    honeypot: 'Ne pas remplir ce champ',
   },
   en: {
     breadcrumb: 'Breadcrumb',
@@ -88,6 +108,24 @@ const T = {
     ctaTitle: 'Would you like to act with us?',
     ctaText: 'Volunteering, partnership, donation: every step counts.',
     cta: 'Get involved',
+    views: 'views',
+    view: 'view',
+    reads: 'full reads',
+    read: 'full read',
+    comments: 'Comments',
+    commentsIntro: 'Share your thoughts on this article. Your comment will be published after review by our team.',
+    noComments: 'No comments yet: be the first to respond.',
+    name: 'Your name or first name',
+    email: 'Your email (optional, never published)',
+    message: 'Your comment',
+    send: 'Post comment',
+    sending: 'Sending…',
+    thanks: 'Thank you! Your comment has been received. It will appear here once our team has reviewed it.',
+    error: 'Sending failed. Please check the fields and try again in a moment.',
+    rate: 'You have posted several comments in a short time. Please try again in a few minutes.',
+    replyFrom: 'Reply from HATUA Foundation',
+    privacy: 'Your name and comment will be visible to everyone. Do not share personal information about a child.',
+    honeypot: 'Leave this field empty',
   },
 }[lang];
 
@@ -143,6 +181,10 @@ const articleLd = {
           </span>
           <time datetime={date.toISOString()}>{formatDate(date, lang)}</time>
           <span class="inline-flex items-center gap-1.5"><Icon name="clock" size={15} /> {readingTime(article)} {T.min}</span>
+          <!-- Compteurs : affichés seulement si le service répond -->
+          <span class="hidden items-center gap-1.5" data-stat="views"><Icon name="eye" size={15} /> <span data-n></span></span>
+          <span class="hidden items-center gap-1.5" data-stat="reads"><Icon name="book" size={15} /> <span data-n></span></span>
+          <a href="#commentaires" class="hidden items-center gap-1.5 hover:text-secondary hover:underline" data-stat="comments"><Icon name="message" size={15} /> <span data-n></span></a>
         </p>
       </div>
     </header>
@@ -181,6 +223,9 @@ const articleLd = {
           )
         }
 
+        <!-- Repère de fin de lecture : atteint = « lecture complète » -->
+        <div data-read-end aria-hidden="true"></div>
+
         <!-- Partage -->
         <div class="mt-14 border-t border-sand pt-8">
           <p class="font-display font-semibold text-secondary">{T.share}</p>
@@ -195,6 +240,37 @@ const articleLd = {
             </li>
           </ul>
         </div>
+
+        <!-- Commentaires (publiés après validation dans ÉCHOS) -->
+        <section id="commentaires" class="mt-14 border-t border-sand pt-8" aria-labelledby="titre-commentaires" data-comments={statsKey}
+          data-l-view={T.view} data-l-views={T.views} data-l-read={T.read} data-l-reads={T.reads}
+          data-l-thanks={T.thanks} data-l-error={T.error} data-l-rate={T.rate} data-l-reply={T.replyFrom} data-l-sending={T.sending} data-l-send={T.send} data-lang={lang}>
+          <h2 id="titre-commentaires" class="font-display text-2xl font-bold">{T.comments} <span class="text-muted" data-comment-count></span></h2>
+          <p class="mt-2 text-muted">{T.commentsIntro}</p>
+          <ol class="mt-6 grid gap-4" data-comment-list></ol>
+          <p class="mt-4 hidden text-muted" data-no-comments>{T.noComments}</p>
+
+          <form class="card mt-8 grid gap-4" data-comment-form novalidate>
+            <div class="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label for="c-name" class="mb-1.5 block text-sm font-semibold">{T.name} <span class="text-secondary" aria-hidden="true">*</span></label>
+                <input id="c-name" name="name" type="text" required minlength="2" maxlength="60" autocomplete="name" class="w-full rounded-xl border border-sand bg-white px-4 py-3" />
+              </div>
+              <div>
+                <label for="c-email" class="mb-1.5 block text-sm font-semibold">{T.email}</label>
+                <input id="c-email" name="email" type="email" maxlength="150" autocomplete="email" class="w-full rounded-xl border border-sand bg-white px-4 py-3" />
+              </div>
+            </div>
+            <div>
+              <label for="c-message" class="mb-1.5 block text-sm font-semibold">{T.message} <span class="text-secondary" aria-hidden="true">*</span></label>
+              <textarea id="c-message" name="message" required minlength="3" maxlength="2000" rows="5" class="w-full rounded-xl border border-sand bg-white px-4 py-3"></textarea>
+            </div>
+            <p class="hidden" aria-hidden="true"><label>{T.honeypot} <input name="website" tabindex="-1" autocomplete="off" /></label></p>
+            <p class="text-sm text-muted">{T.privacy}</p>
+            <div><button type="submit" class="btn btn-primary">{T.send} <Icon name="send" size={18} /></button></div>
+            <p class="hidden rounded-xl p-4 font-medium" role="status" aria-live="polite" tabindex="-1" data-comment-status></p>
+          </form>
+        </section>
       </div>
     </div>
   </article>
@@ -227,6 +303,131 @@ const articleLd = {
 </BaseLayout>
 
 <script>
+  // --- Vues, lectures complètes et commentaires (module PHP /api, sur Hostinger)
+  const box = document.querySelector<HTMLElement>('[data-comments]');
+  if (box) {
+    const key = box.dataset.comments!;
+    const L = box.dataset;
+    const fmt = new Intl.NumberFormat(L.lang === 'en' ? 'en-GB' : 'fr-FR');
+    const plural = (n: number, one: string, many: string) => `${fmt.format(n)} ${n > 1 ? many : one}`;
+    const show = (name: string, text: string) => {
+      const el = document.querySelector<HTMLElement>(`[data-stat="${name}"]`);
+      if (!el) return;
+      el.querySelector('[data-n]')!.textContent = text;
+      el.classList.remove('hidden');
+      el.classList.add('inline-flex');
+    };
+    const post = (url: string, body: object) =>
+      fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+
+    // 1. Une vue (comptée une fois par jour et par personne côté serveur)
+    post('/api/stats.php', { slug: key, type: 'view' })
+      .catch(() => undefined)
+      .then(() => fetch(`/api/stats.php?slugs=${encodeURIComponent(key)}`))
+      .then((r) => (r && r.ok ? r.json() : null))
+      .then((d) => {
+        const s = d?.[key];
+        if (!s) return;
+        show('views', plural(s.views, L.lView!, L.lViews!));
+        show('reads', plural(s.reads, L.lRead!, L.lReads!));
+        show('comments', fmt.format(s.comments));
+      })
+      .catch(() => undefined);
+
+    // 2. Une lecture complète : la fin de l'article est atteinte après au moins 30 secondes sur la page
+    const end = document.querySelector('[data-read-end]');
+    const start = Date.now();
+    if (end && 'IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        if (entries.some((e) => e.isIntersecting) && Date.now() - start > 30000) {
+          io.disconnect();
+          post('/api/stats.php', { slug: key, type: 'read' }).catch(() => undefined);
+        }
+      });
+      io.observe(end);
+    }
+
+    // 3. Commentaires validés
+    const list = box.querySelector<HTMLOListElement>('[data-comment-list]')!;
+    const dateFmt = new Intl.DateTimeFormat(L.lang === 'en' ? 'en-GB' : 'fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+    fetch(`/api/comments.php?slug=${encodeURIComponent(key)}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (!d) return;
+        const items: { name: string; message: string; reply: string | null; created_at: string }[] = d.comments ?? [];
+        box.querySelector('[data-comment-count]')!.textContent = items.length ? `(${items.length})` : '';
+        box.querySelector('[data-no-comments]')!.classList.toggle('hidden', items.length > 0);
+        for (const c of items) {
+          // textContent uniquement : aucun HTML venant des visiteurs n'est interprété
+          const li = document.createElement('li');
+          li.className = 'card';
+          const head = document.createElement('p');
+          head.className = 'text-sm text-muted';
+          const who = document.createElement('strong');
+          who.className = 'font-semibold text-ink';
+          who.textContent = c.name;
+          head.append(who, ` · ${dateFmt.format(new Date(c.created_at))}`);
+          const body = document.createElement('p');
+          body.className = 'mt-2 whitespace-pre-line';
+          body.textContent = c.message;
+          li.append(head, body);
+          if (c.reply) {
+            const rep = document.createElement('div');
+            rep.className = 'mt-4 rounded-xl border-l-4 border-hibiscus bg-sand/60 p-4';
+            const t = document.createElement('p');
+            t.className = 'text-sm font-semibold text-secondary';
+            t.textContent = L.lReply!;
+            const rb = document.createElement('p');
+            rb.className = 'mt-1 whitespace-pre-line';
+            rb.textContent = c.reply;
+            rep.append(t, rb);
+            li.append(rep);
+          }
+          list.append(li);
+        }
+      })
+      .catch(() => undefined);
+
+    // 4. Envoi d'un commentaire
+    const form = box.querySelector<HTMLFormElement>('[data-comment-form]')!;
+    const status = form.querySelector<HTMLElement>('[data-comment-status]')!;
+    const button = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    const opened = Date.now();
+    const say = (msg: string, ok: boolean) => {
+      status.textContent = msg;
+      status.classList.remove('hidden', 'bg-primary-50', 'text-primary-dark', 'bg-secondary-50', 'text-secondary-dark');
+      status.classList.add(...(ok ? ['bg-primary-50', 'text-primary-dark'] : ['bg-secondary-50', 'text-secondary-dark']));
+      status.focus();
+    };
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+      const f = new FormData(form);
+      button.disabled = true;
+      try {
+        const r = await post('/api/comments.php', {
+          slug: key,
+          name: f.get('name'),
+          email: f.get('email'),
+          message: f.get('message'),
+          website: f.get('website'),
+          elapsed: Math.round((Date.now() - opened) / 1000),
+        });
+        if (r.status === 429) return say(L.lRate!, false);
+        if (!r.ok) throw new Error(String(r.status));
+        form.reset();
+        say(L.lThanks!, true);
+      } catch {
+        say(L.lError!, false);
+      } finally {
+        button.disabled = false;
+      }
+    });
+  }
+
   document.querySelectorAll<HTMLButtonElement>('[data-copy-link]').forEach((btn) => {
     btn.addEventListener('click', async () => {
       try {

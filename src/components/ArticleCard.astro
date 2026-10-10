@@ -1,7 +1,7 @@
 ---
 /** Carte d'un article dans la liste (et en « à lire aussi »). */
 import Icon from './Icon.astro';
-import { articleSlug, formatDate, readingTime, type Article } from '../data/articles';
+import { articleLang, articleSlug, formatDate, readingTime, type Article } from '../data/articles';
 import { articlePath, getLang } from '../i18n';
 import { url } from '../utils/url';
 
@@ -14,7 +14,8 @@ const lang = getLang(Astro.currentLocale);
 const { title, description, date, image, imageAlt, tags, draft } = article.data;
 const href = articlePath(articleSlug(article), lang);
 const minutes = readingTime(article);
-const T = { fr: { read: 'Lire l’article', min: 'min de lecture', draft: 'Brouillon' }, en: { read: 'Read the article', min: 'min read', draft: 'Draft' } }[lang];
+const statsKey = `${articleLang(article)}/${articleSlug(article)}`;
+const T = { fr: { read: 'Lire l’article', min: 'min de lecture', draft: 'Brouillon', view: 'vue', views: 'vues' }, en: { read: 'Read the article', min: 'min read', draft: 'Draft', view: 'view', views: 'views' } }[lang];
 ---
 
 <article class:list={['card card-hover group reveal flex h-full flex-col overflow-hidden !p-0', featured && 'md:grid md:grid-cols-2']}>
@@ -48,9 +49,32 @@ const T = { fr: { read: 'Lire l’article', min: 'min de lecture', draft: 'Broui
     <p class="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted">
       <time datetime={date.toISOString()}>{formatDate(date, lang)}</time>
       <span class="inline-flex items-center gap-1.5"><Icon name="clock" size={15} /> {minutes} {T.min}</span>
+      <span class="hidden items-center gap-1.5" data-views-for={statsKey} data-one={T.view} data-label={T.views}><Icon name="eye" size={15} /> <span data-n></span></span>
     </p>
     <span class="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-secondary" aria-hidden="true">
       {T.read} <Icon name="arrow-right" size={16} class="transition-transform group-hover:translate-x-1" />
     </span>
   </div>
 </article>
+
+<script>
+  // Nombre de vues sur les cartes et le catalogue (un seul appel pour toute la page)
+  const tags = [...document.querySelectorAll<HTMLElement>('[data-views-for]')];
+  const keys = [...new Set(tags.map((t) => t.dataset.viewsFor!))];
+  if (keys.length) {
+    fetch(`/api/stats.php?slugs=${keys.map(encodeURIComponent).join(',')}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (!d) return;
+        const fmt = new Intl.NumberFormat(document.documentElement.lang === 'en' ? 'en-GB' : 'fr-FR');
+        for (const t of tags) {
+          const s = d[t.dataset.viewsFor!];
+          if (!s) continue;
+          t.querySelector('[data-n]')!.textContent = `${fmt.format(s.views)} ${s.views > 1 ? t.dataset.label : t.dataset.one}`;
+          t.classList.remove('hidden');
+          t.classList.add('inline-flex');
+        }
+      })
+      .catch(() => undefined);
+  }
+</script>

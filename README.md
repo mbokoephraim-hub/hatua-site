@@ -130,6 +130,16 @@ sont générés automatiquement. Pour **prévisualiser les brouillons** : `SHOW_
 La page `/articles/` affiche l'article le plus récent « À la une », puis un **catalogue chronologique** (regroupé par mois,
 avec des filtres par année et par thème).
 
+#### Vues, lectures et commentaires
+Chaque article affiche son nombre de **vues** (une personne comptée une fois par jour), de **lectures complètes**
+(fin de l'article atteinte après au moins 30 secondes) et ses **commentaires**. Le module est en PHP dans `public/api/`
+(copié avec le site sur Hostinger) ; les données sont dans `domains/hatuafoundation.org/site-data/blog.sqlite`, **hors du dossier public**.
+- Les commentaires sont publiés **après validation** dans l'application ÉCHOS : *Administration → Commentaires du site*
+  (Publier, Refuser, Supprimer, Répondre au nom de HATUA). Un e-mail prévient hatuafound@gmail.com à chaque nouveau commentaire.
+- Anti-spam : champ piège, délai minimal de saisie, 3 envois par 10 minutes, 2 liens au maximum.
+- Vie privée : aucune adresse IP conservée (empreinte anonyme salée) ; l'e-mail facultatif n'est jamais publié.
+- En local (`npm run dev`), les compteurs et commentaires ne s'affichent pas : ils n'apparaissent qu'en ligne.
+
 #### Mise en page enrichie d'un article
 Champs facultatifs de l'en-tête : `kicker` (petite ligne au-dessus du titre), `authorRole`, `authorImage`
 (photo ronde à côté du nom) et `authorLink: "founder"` (ajoute en fin d'article l'encadré « À propos de l'autrice »

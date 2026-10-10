@@ -1,0 +1,5 @@
+# Fichiers internes du module articles : jamais servis directement
+<Files "_lib.php">
+  Require all denied
+</Files>
+Options -Indexes
