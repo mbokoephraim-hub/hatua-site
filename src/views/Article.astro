@@ -17,7 +17,9 @@ interface Props {
 const { article } = Astro.props;
 const lang = getLang(Astro.currentLocale);
 const { site } = getContent(lang);
-const { Content } = await render(article);
+const { Content, headings } = await render(article);
+// Sommaire : les intertitres principaux de l'article
+const toc = headings.filter((h) => h.depth === 2);
 // Typographie française : espace insécable fine avant « : ; ! ? » » et après « « » (uniquement dans le texte, pas dans les balises)
 const typo = (html: string) =>
   html.replace(/>([^<]+)</g, (_, text: string) => `>${text.replace(/ ([:;!?»])/g, '\u202F$1').replace(/« /g, '«\u202F')}<`);
@@ -105,6 +107,13 @@ const T = {
     shareAria: 'Partager le commentaire de',
     linkCopied: 'Lien copié !',
     replyThanks: 'Merci ! Votre réponse a bien été reçue. Elle apparaîtra après relecture par l’équipe.',
+    more: 'Voir plus',
+    less: 'Voir moins',
+    toc: 'Sommaire',
+    parts: 'parties',
+    progress: 'Progression de la lecture',
+    commentsLabel: 'commentaires',
+    commentLabel: 'commentaire',
     privacy: 'Votre nom et votre commentaire seront visibles par tous. N’indiquez pas d’informations personnelles sur un enfant.',
     honeypot: 'Ne pas remplir ce champ',
   },
@@ -156,6 +165,13 @@ const T = {
     shareAria: 'Share the comment by',
     linkCopied: 'Link copied!',
     replyThanks: 'Thank you! Your reply has been received. It will appear once our team has reviewed it.',
+    more: 'See more',
+    less: 'See less',
+    toc: 'Contents',
+    parts: 'sections',
+    progress: 'Reading progress',
+    commentsLabel: 'comments',
+    commentLabel: 'comment',
     privacy: 'Your name and comment will be visible to everyone. Do not share personal information about a child.',
     honeypot: 'Leave this field empty',
   },
@@ -186,9 +202,16 @@ const articleLd = {
   structuredData={articleLd}
   page={{ key: 'article', slugs }}
 >
+  <!-- Barre de progression de la lecture -->
+  <div class="pointer-events-none fixed inset-x-0 top-0 z-[60] h-1" aria-hidden="true">
+    <div class="h-full origin-left scale-x-0 bg-linear-to-r from-hibiscus via-secondary to-primary transition-transform duration-150" data-reading-progress></div>
+  </div>
+
   <article>
-    <header class="tone-ivoire">
-      <div class="container-site max-w-4xl pt-12 pb-10 sm:pt-16">
+    <header class="tone-ivoire relative overflow-hidden">
+      <span class="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-hibiscus/15 blur-3xl" aria-hidden="true"></span>
+      <span class="pointer-events-none absolute -bottom-32 -left-20 h-80 w-80 rounded-full bg-accent/40 blur-3xl" aria-hidden="true"></span>
+      <div class="relative container-site max-w-4xl pt-10 pb-10 sm:pt-16">
         <nav aria-label={T.breadcrumb} class="text-sm text-muted">
           <ol class="flex flex-wrap items-center gap-2">
             <li><a href={path('articles', lang)} class="inline-flex items-center gap-1.5 hover:text-secondary hover:underline"><Icon name="arrow-left" size={14} /> {T.articles}</a></li>
@@ -197,13 +220,13 @@ const articleLd = {
         {draft && <p class="mt-6 rounded-xl bg-secondary px-4 py-2 text-sm font-semibold text-white">{T.draft}</p>}
         {tags.length > 0 && (
           <ul class="mt-6 flex flex-wrap gap-2 text-xs font-semibold">
-            {tags.map((tag) => <li class="rounded-full bg-primary-50 px-3 py-1 text-primary">{tag}</li>)}
+            {tags.map((tag, i) => <li class:list={['rounded-full px-3 py-1', ['bg-primary-50 text-primary', 'bg-secondary-50 text-secondary', 'bg-accent/70 text-encre'][i % 3]]}>{tag}</li>)}
           </ul>
         )}
         {kicker && <p class="eyebrow mt-6">{kicker}</p>}
-        <h1 class="mt-3 text-4xl leading-tight font-bold sm:text-5xl">{title}</h1>
-        <p class="mt-5 text-xl leading-relaxed text-muted">{description}</p>
-        <p class="mt-7 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted">
+        <h1 class="mt-3 text-[2.15rem] leading-[1.1] font-bold tracking-tight text-balance sm:text-5xl lg:text-6xl">{title}</h1>
+        <p class="mt-5 max-w-2xl text-lg leading-relaxed text-pretty text-muted sm:text-xl">{description}</p>
+        <div class="mt-7 flex flex-wrap items-center gap-x-3 gap-y-3 text-sm text-muted">
           <span class="inline-flex items-center gap-3">
             {authorImage && <img src={url(authorImage)} alt="" width="48" height="48" class="h-12 w-12 rounded-full object-cover ring-2 ring-hibiscus/60" />}
             <span>
@@ -211,13 +234,15 @@ const articleLd = {
               {authorRole && <span class="block text-xs">{authorRole}</span>}
             </span>
           </span>
-          <time datetime={date.toISOString()}>{formatDate(date, lang)}</time>
-          <span class="inline-flex items-center gap-1.5"><Icon name="clock" size={15} /> {readingTime(article)} {T.min}</span>
-          <!-- Compteurs : affichés seulement si le service répond -->
-          <span class="hidden items-center gap-1.5" data-stat="views"><Icon name="eye" size={15} /> <span data-n></span></span>
-          <span class="hidden items-center gap-1.5" data-stat="reads"><Icon name="book" size={15} /> <span data-n></span></span>
-          <a href="#commentaires" class="hidden items-center gap-1.5 hover:text-secondary hover:underline" data-stat="comments"><Icon name="message" size={15} /> <span data-n></span></a>
-        </p>
+          <span class="flex flex-wrap items-center gap-2">
+            <time datetime={date.toISOString()} class="inline-flex items-center gap-1.5 rounded-full bg-white/80 px-3 py-1 ring-1 ring-sand"><Icon name="calendar" size={14} /> {formatDate(date, lang)}</time>
+            <span class="inline-flex items-center gap-1.5 rounded-full bg-primary-50 px-3 py-1 font-semibold text-primary"><Icon name="clock" size={14} /> {readingTime(article)} {T.min}</span>
+            <!-- Compteurs : affichés seulement si le service répond -->
+            <span class="hidden items-center gap-1.5 rounded-full bg-accent/60 px-3 py-1 font-semibold text-encre" data-stat="views"><Icon name="eye" size={14} /> <span data-n></span></span>
+            <span class="hidden items-center gap-1.5 rounded-full bg-white/80 px-3 py-1 ring-1 ring-sand" data-stat="reads"><Icon name="book" size={14} /> <span data-n></span></span>
+            <a href="#commentaires" class="hidden items-center gap-1.5 rounded-full bg-secondary-50 px-3 py-1 font-semibold text-secondary transition hover:bg-secondary hover:text-white" data-stat="comments"><Icon name="message" size={14} /> <span data-n></span></a>
+          </span>
+        </div>
       </div>
     </header>
 
@@ -225,7 +250,7 @@ const articleLd = {
       image && (
         <figure class="tone-ivoire">
           <div class="container-site max-w-5xl pb-4">
-            <img src={url(image)} alt={imageAlt ?? ''} width="1600" height="900" fetchpriority="high" class="aspect-[16/9] w-full rounded-3xl object-cover" />
+            <img src={url(image)} alt={imageAlt ?? ''} width="1600" height="900" fetchpriority="high" class="aspect-[16/9] w-full rounded-3xl object-cover shadow-xl ring-1 ring-sand" />
           </div>
         </figure>
       )
@@ -233,6 +258,27 @@ const articleLd = {
 
     <div class="tone-blanc">
       <div class="container-site max-w-3xl py-12 sm:py-16">
+        {
+          toc.length > 2 && (
+            <details class="toc group/toc mb-10 rounded-2xl bg-cream ring-1 ring-sand open:shadow-sm">
+              <summary class="flex cursor-pointer list-none items-center gap-3 px-5 py-4 font-display font-semibold text-secondary">
+                <span class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-secondary text-white"><Icon name="list" size={18} /></span>
+                <span class="flex-1">{T.toc} <span class="font-normal text-muted">· {toc.length} {T.parts}</span></span>
+                <Icon name="chevron-down" size={20} class="transition-transform group-open/toc:rotate-180" />
+              </summary>
+              <ol class="grid gap-1 px-5 pb-5">
+                {toc.map((h, i) => (
+                  <li>
+                    <a href={`#${h.slug}`} class="flex gap-3 rounded-xl px-3 py-2 transition hover:bg-white" data-toc-link={h.slug}>
+                      <span class="w-6 shrink-0 font-display font-bold text-hibiscus tabular-nums">{String(i + 1).padStart(2, '0')}</span>
+                      <span class="text-ink">{h.text}</span>
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </details>
+          )
+        }
         <div class="prose-article">
           {html ? <Fragment set:html={html} /> : <Content />}
         </div>
@@ -279,7 +325,8 @@ const articleLd = {
           data-l-thanks={T.thanks} data-l-error={T.error} data-l-rate={T.rate} data-l-reply={T.replyFrom} data-l-pending={T.pending} data-l-like={T.like} data-l-like-aria={T.likeAria} data-l-sending={T.sending} data-l-send={T.send} data-lang={lang}
           data-l-thumb={T.thumb} data-l-thumb-aria={T.thumbAria} data-l-reply-btn={T.reply} data-l-reply-to={T.replyTo} data-l-reply-aria={T.replyAria}
           data-l-replies={T.replies} data-l-one-reply={T.oneReply} data-l-share={T.shareComment} data-l-share-aria={T.shareAria} data-l-copied={T.linkCopied}
-          data-l-reply-thanks={T.replyThanks} data-url={pageUrl}>
+          data-l-reply-thanks={T.replyThanks} data-url={pageUrl} data-l-more={T.more} data-l-less={T.less}
+          data-l-comment={T.commentLabel} data-l-comments={T.commentsLabel}>
           <h2 id="titre-commentaires" class="font-display text-2xl font-bold">{T.comments} <span class="text-muted" data-comment-count></span></h2>
           <p class="mt-2 text-muted">{T.commentsIntro}</p>
           <ol class="mt-6 grid gap-5" data-comment-list></ol>
@@ -390,8 +437,8 @@ const articleLd = {
         const s = d?.[key];
         if (!s) return;
         show('views', plural(s.views, L.lView!, L.lViews!));
-        show('reads', plural(s.reads, L.lRead!, L.lReads!));
-        show('comments', fmt.format(s.comments));
+        if (s.reads > 0) show('reads', plural(s.reads, L.lRead!, L.lReads!));
+        show('comments', plural(s.comments, L.lComment!, L.lComments!));
       })
       .catch(() => undefined);
 
@@ -484,7 +531,7 @@ const articleLd = {
         const styles = kind === 'love'
           ? (on ? 'bg-hibiscus text-encre' : 'bg-secondary-50 text-secondary hover:bg-hibiscus hover:text-encre')
           : (on ? 'bg-primary text-white' : 'bg-primary-50 text-primary hover:bg-primary hover:text-white');
-        btn.className = `inline-flex min-h-9 items-center gap-1.5 rounded-full px-3 text-sm font-semibold transition active:scale-95 ${styles}`;
+        btn.className = `inline-flex min-h-9 items-center gap-1.5 rounded-full px-2.5 sm:px-3 text-sm font-semibold transition active:scale-95 ${styles}`;
         btn.setAttribute('aria-pressed', String(on));
         btn.setAttribute('aria-label', `${kind === 'love' ? L.lLikeAria : L.lThumbAria} (${count})`);
         btn.innerHTML = `${ICON[kind]}<span class="hidden sm:inline">${kind === 'love' ? L.lLike : L.lThumb}</span>${count ? `<span aria-hidden="true" class="tabular-nums">${count}</span>` : ''}`;
@@ -510,7 +557,7 @@ const articleLd = {
 
     // Partager un commentaire précis (lien direct vers lui)
     const shareButton = (c: C) => {
-      const btn = el('button', 'inline-flex min-h-9 items-center gap-1.5 rounded-full bg-sand px-3 text-sm font-semibold text-ink transition hover:bg-secondary hover:text-white active:scale-95');
+      const btn = el('button', 'inline-flex min-h-9 items-center gap-1.5 rounded-full bg-sand px-2.5 sm:px-3 text-sm font-semibold text-ink transition hover:bg-secondary hover:text-white active:scale-95');
       btn.type = 'button';
       btn.setAttribute('aria-label', `${L.lShareAria} ${c.name}`);
       btn.innerHTML = `${ICON.share}<span class="hidden sm:inline" data-label>${L.lShare}</span>`;
@@ -608,7 +655,7 @@ const articleLd = {
     const render = (c: C, isReply: boolean) => {
       const tone = colorOf(c.name);
       const li = el('li', isReply
-        ? `rounded-2xl bg-cream p-4 ${c.pending ? 'border-2 border-dashed border-hibiscus' : ''}`
+        ? `rounded-2xl bg-cream p-3 sm:p-4 ${c.pending ? 'border-2 border-dashed border-hibiscus' : ''}`
         : `rounded-2xl border-l-4 bg-white p-5 shadow-sm ring-1 ring-sand ${c.pending ? 'border-dashed !border-l-hibiscus' : tone.edge}`);
       if (c.id && !c.pending) li.id = `comment-${c.id}`;
       li.classList.add('scroll-mt-28', 'transition-shadow');
@@ -621,7 +668,9 @@ const articleLd = {
       line.append(el('strong', 'font-semibold text-ink', c.name), ` · ${dateFmt.format(new Date(c.created_at))}`);
       if (c.pending) line.append(el('span', 'mt-1 block w-fit rounded-full bg-accent px-3 py-0.5 text-xs font-semibold text-encre sm:ml-2 sm:mt-0 sm:inline-block', L.lPending!));
       meta.append(line);
-      const body = el('p', 'mt-1.5 whitespace-pre-line break-words');
+      // Long commentaire : 5 lignes, puis « Voir plus » (ajouté après l'affichage si le texte dépasse)
+      const body = el('p', 'mt-1.5 line-clamp-5 whitespace-pre-line break-words');
+      body.dataset.clamp = '';
       if (c.reply_to) {
         const tag = el('span', 'mr-1.5 rounded-full bg-secondary-50 px-2 py-0.5 text-sm font-semibold text-secondary', `@${c.reply_to}`);
         tag.setAttribute('title', `${L.lReplyTo} ${c.reply_to}`);
@@ -633,8 +682,8 @@ const articleLd = {
       li.append(head);
 
       if (!c.pending && c.id) {
-        const bar = el('div', 'mt-3 flex flex-wrap gap-2 sm:pl-13');
-        const replyBtn = el('button', 'inline-flex min-h-9 items-center gap-1.5 rounded-full bg-accent/60 px-3 text-sm font-semibold text-encre transition hover:bg-accent active:scale-95');
+        const bar = el('div', 'mt-3 flex flex-wrap gap-1.5 sm:gap-2 sm:pl-13');
+        const replyBtn = el('button', 'inline-flex min-h-9 items-center gap-1.5 rounded-full bg-accent/60 px-2.5 sm:px-3 text-sm font-semibold text-encre transition hover:bg-accent active:scale-95');
         replyBtn.type = 'button';
         replyBtn.setAttribute('aria-expanded', 'false');
         replyBtn.setAttribute('aria-label', `${L.lReplyAria} ${c.name}`);
@@ -645,10 +694,28 @@ const articleLd = {
       }
       if (c.reply) {
         const rep = el('div', 'mt-4 rounded-xl border-l-4 border-primary bg-primary-50 p-4');
-        rep.append(el('p', 'text-sm font-semibold text-primary', L.lReply!), el('p', 'mt-1 whitespace-pre-line', c.reply));
+        const rb = el('p', 'mt-1 line-clamp-5 whitespace-pre-line break-words', c.reply);
+        rb.dataset.clamp = '';
+        rep.append(el('p', 'text-sm font-semibold text-primary', L.lReply!), rb);
         li.append(rep);
       }
       return li;
+    };
+
+    const addSeeMore = (root: HTMLElement) => {
+      root.querySelectorAll<HTMLElement>('[data-clamp]').forEach((p) => {
+        if (p.scrollHeight <= p.clientHeight + 2 || p.nextElementSibling?.hasAttribute('data-see-more')) return;
+        const more = el('button', 'mt-1 inline-flex items-center gap-1 rounded-full text-sm font-semibold text-secondary underline-offset-2 hover:underline', L.lMore);
+        more.type = 'button';
+        more.dataset.seeMore = '';
+        more.setAttribute('aria-expanded', 'false');
+        more.addEventListener('click', () => {
+          const open = p.classList.toggle('line-clamp-5') === false;
+          more.textContent = open ? L.lLess! : L.lMore!;
+          more.setAttribute('aria-expanded', String(open));
+        });
+        p.after(more);
+      });
     };
 
     const showAll = (approved: C[]) => {
@@ -668,12 +735,13 @@ const articleLd = {
         const replies = repliesOf(c.id);
         if (replies.length) {
           li.append(el('p', 'mt-4 text-xs font-semibold tracking-wide text-secondary uppercase', `${replies.length} ${replies.length > 1 ? L.lReplies : L.lOneReply}`));
-          const ol = el('ol', 'mt-2 grid gap-3 border-l-2 border-dashed border-hibiscus/60 pl-3 sm:ml-5 sm:pl-5');
+          const ol = el('ol', 'mt-2 grid gap-3 border-l-2 border-dashed border-hibiscus/60 pl-2 sm:ml-5 sm:pl-5');
           replies.forEach((r) => ol.append(render(r, true)));
           li.append(ol);
         }
         list.append(li);
       }
+      addSeeMore(list);
     };
 
     // Lien direct vers un commentaire (#comment-12) : on le montre et on le fait ressortir
@@ -741,6 +809,27 @@ const articleLd = {
         button.disabled = false;
       }
     });
+  }
+
+  // Barre de progression de la lecture (jusqu'à la fin du texte de l'article)
+  const bar = document.querySelector<HTMLElement>('[data-reading-progress]');
+  const prose = document.querySelector<HTMLElement>('.prose-article');
+  if (bar && prose) {
+    let ticking = false;
+    const update = () => {
+      const r = prose.getBoundingClientRect();
+      const total = r.height - window.innerHeight * 0.6;
+      const done = Math.min(1, Math.max(0, -r.top / Math.max(total, 1)));
+      bar.style.transform = `scaleX(${done})`;
+      ticking = false;
+    };
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    }, { passive: true });
+    update();
   }
 
   document.querySelectorAll<HTMLButtonElement>('[data-copy-link]').forEach((btn) => {

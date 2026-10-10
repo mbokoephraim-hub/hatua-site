@@ -370,6 +370,24 @@
   color: var(--color-hibiscus);
 }
 .prose-article > :is(h2, section) { clear: both; }
+/* Intertitres : titre net et petit trait de couleur */
+.prose-article > h2 { letter-spacing: -0.015em; text-wrap: balance; scroll-margin-top: 6rem; }
+.prose-article > h2::after {
+  content: '';
+  display: block;
+  width: 3.5rem;
+  height: 4px;
+  margin-top: 0.45em;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--color-hibiscus), var(--color-accent));
+}
+.prose-article h3 { text-wrap: balance; scroll-margin-top: 6rem; }
+.toc summary::-webkit-details-marker { display: none; }
+@media (max-width: 639px) {
+  .prose-article { font-size: 1.0625rem; line-height: 1.75; }
+  .prose-article h2 { font-size: 1.5rem; }
+  .prose-article > p:first-child { font-size: 1.18rem; }
+}
 
 /* Illustrations */
 .prose-article .illu { margin-top: 2em; margin-bottom: 2em; }
