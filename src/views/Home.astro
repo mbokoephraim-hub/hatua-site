@@ -8,8 +8,10 @@ import ProjectCard from '../components/ProjectCard.astro';
 import EngageBanner from '../components/EngageBanner.astro';
 import SocialLinks from '../components/SocialLinks.astro';
 import Icon from '../components/Icon.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import { getArticles, articleSlug } from '../data/articles';
 import { getContent } from '../data';
-import { getLang, path, quote } from '../i18n';
+import { getLang, path, quote, articlePath } from '../i18n';
 import { useT } from '../i18n/ui';
 import { url } from '../utils/url';
 
@@ -17,6 +19,8 @@ const lang = getLang(Astro.currentLocale);
 const tr = useT(lang);
 const { site, fondatrice, poles, projects } = getContent(lang);
 const featured = projects[0];
+const latest = (await getArticles(lang)).filter((a) => !articleSlug(a).startsWith('_')).slice(0, 3);
+const news = latest[0] ? { title: latest[0].data.title, href: articlePath(articleSlug(latest[0]), lang), image: latest[0].data.image } : null;
 
 const T = {
   fr: {
@@ -58,7 +62,7 @@ const T = {
 }[lang];
 ---
 
-<BaseLayout page={{ key: 'home' }}>
+<BaseLayout page={{ key: 'home' }} news={news}>
   <!-- HERO -->
   <section class="tone-ivoire relative overflow-hidden">
     <div class="pointer-events-none absolute -top-40 -right-40 h-[32rem] w-[32rem] rounded-full bg-primary-50 blur-3xl" aria-hidden="true"></div>
@@ -76,12 +80,34 @@ const T = {
         <p class="mt-5 max-w-xl text-lg leading-relaxed text-muted">{site.shortMission}</p>
         <div class="mt-8 flex flex-wrap gap-3">
           <a href={path('poles', lang)} class="btn btn-green">{tr('cta.discover')} <Icon name="arrow-right" size={18} /></a>
-          <a href={path('engage', lang, 'don')} class="btn btn-outline">{tr('cta.support')}</a>
+          <a href={path('engageDonate', lang)} class="btn btn-outline">{tr('cta.support')}</a>
         </div>
       </div>
       <HeroSteps />
     </div>
   </section>
+  <!-- À LA UNE : les articles disponibles -->
+  {
+    latest.length > 0 && (
+      <section class="news-band" aria-labelledby="a-la-une">
+        <div class="container-site">
+          <div class="news-head reveal">
+            <span class="news-live"><i /> {lang === 'fr' ? 'À la une' : 'Featured'}</span>
+            <h2 id="a-la-une">{lang === 'fr' ? 'Nos derniers articles, disponibles à la lecture' : 'Our latest articles, ready to read'}</h2>
+            <a href={path('articles', lang)} class="news-all">{lang === 'fr' ? 'Tous les articles' : 'All articles'} <Icon name="arrow-right" size={16} /></a>
+          </div>
+          <div class:list={['news-grid mt-8', latest.length === 1 && 'is-single']}>
+            {latest.map((a, i) => (
+              <div class={`reveal reveal-delay-${i + 1}`}>
+                <ArticleCard article={a} featured={i === 0} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
 
   <!-- À LA DÉCOUVERTE DE LA FONDATRICE -->
   <section class="tone-blanc py-12 sm:py-16" aria-labelledby="fondatrice-apercu">

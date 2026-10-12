@@ -1,0 +1,45 @@
+---
+/**
+ * Ouverture du site : le logo s'anime (motion design) puis laisse place à la page.
+ * Une seule fois par visite ; jamais si l'appareil demande moins de mouvements ; un toucher permet de passer.
+ * Sans JavaScript, rien ne s'affiche (la classe « splash » est posée par un petit script dans <head>).
+ */
+import { getLang } from '../i18n';
+import { site } from '../data/site';
+import { url } from '../utils/url';
+
+const lang = getLang(Astro.currentLocale);
+const slogan = lang === 'fr' ? site.slogan : 'Step by step';
+const skip = lang === 'fr' ? 'Passer' : 'Skip';
+---
+
+<div class="splash-screen" data-splash aria-hidden="true">
+  <span class="sp-ring r1"></span><span class="sp-ring r2"></span>
+  <span class="sp-orb o1"></span><span class="sp-orb o2"></span><span class="sp-orb o3"></span>
+  <div class="sp-center">
+    <img class="sp-emblem" src={url('/icon-192.png')} alt="" width="120" height="120" />
+    <div class="sp-steps"><i></i><i></i><i></i></div>
+    <div class="sp-word"><img src={url('/logo-light.png')} alt="" width="538" height="128" /></div>
+    <p class="sp-slogan">{slogan.split(' ').map((w, i) => <span style={`--w:${i}`}>{w}</span>)}</p>
+  </div>
+  <button type="button" class="sp-skip" data-splash-skip>{skip}</button>
+</div>
+
+<script>
+  const root = document.documentElement;
+  const el = document.querySelector<HTMLElement>('[data-splash]');
+  const done = () => {
+    if (!root.classList.contains('splash')) return;
+    root.classList.add('splash-out');
+    try { sessionStorage.setItem('hatua-splash', '1'); } catch { /* rien */ }
+    setTimeout(() => {
+      root.classList.remove('splash', 'splash-out');
+      window.dispatchEvent(new Event('hatua:ready'));
+    }, 650);
+  };
+  if (root.classList.contains('splash') && el) {
+    setTimeout(done, 2900);
+    el.addEventListener('click', done);
+    document.addEventListener('keydown', (e) => e.key === 'Escape' && done());
+  }
+</script>

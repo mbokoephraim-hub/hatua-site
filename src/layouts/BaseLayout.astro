@@ -2,6 +2,8 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import Splash from '../components/Splash.astro';
+import Welcome from '../components/Welcome.astro';
 import { getContent, socialLinks } from '../data';
 import { getLang, hasPage, pagePath, type PageRef } from '../i18n';
 import { t } from '../i18n/ui';
@@ -22,6 +24,8 @@ interface Props {
   structuredData?: Record<string, unknown>;
   /** Page courante : sert au sélecteur de langue et aux balises hreflang */
   page?: PageRef;
+  /** Accueil : article mis en avant dans la bulle « à lire » */
+  news?: { title: string; href: string; image?: string } | null;
 }
 
 const lang = getLang(Astro.currentLocale);
@@ -38,6 +42,7 @@ const {
   noindex = false,
   structuredData,
   page = { key: 'none' } as PageRef,
+  news = null,
 } = Astro.props;
 
 // Versions linguistiques de la page (pour Google) : uniquement si la page existe dans les deux langues
@@ -124,7 +129,16 @@ const websiteLd =
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     {websiteLd && <script type="application/ld+json" set:html={JSON.stringify(websiteLd)} />}
     {structuredData && <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />}
-    <script is:inline>document.documentElement.classList.add('js');</script>
+    <script is:inline>
+      (function () {
+        var d = document.documentElement;
+        d.classList.add('js');
+        // Logo animé à l'ouverture : une fois par visite, jamais si l'appareil demande moins de mouvements
+        try {
+          if (!sessionStorage.getItem('hatua-splash') && !matchMedia('(prefers-reduced-motion: reduce)').matches) d.classList.add('splash');
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body class="flex min-h-screen flex-col">
     <a
@@ -133,11 +147,13 @@ const websiteLd =
     >
       {t('skip.link', lang)}
     </a>
+    <Splash />
     <Header page={page} />
     <main id="contenu" class="flex-1" tabindex="-1">
       <slot />
     </main>
     <Footer />
+    <Welcome pageKey={page.key} news={news} />
 
     <script>
       // Apparition douce des sections au défilement

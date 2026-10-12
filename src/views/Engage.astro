@@ -6,9 +6,14 @@ import Icon from '../components/Icon.astro';
 import EngageForm from '../components/EngageForm.astro';
 import VolunteerForm from '../components/VolunteerForm.astro';
 import { getContent } from '../data';
-import { getLang } from '../i18n';
+import { getLang, path } from '../i18n';
 import { url } from '../utils/url';
 
+interface Props {
+  /** Page dédiée (bénévolat, partenariat ou don) ; sans valeur : page de choix « S'engager » */
+  part?: 'benevolat' | 'partenariat' | 'don';
+}
+const { part } = Astro.props;
 const lang = getLang(Astro.currentLocale);
 const { engage, images, site, forms: engageForms } = getContent(lang);
 // Champ « type d'organisation » du formulaire de partenariat (prérempli depuis les cartes)
@@ -27,8 +32,22 @@ const T = {
     how: 'Comment ça se passe ?',
     apply: 'Proposer ma candidature',
     propose: 'Proposer un partenariat',
-    donEyebrow: '03 · Don',
+    donEyebrow: 'Don',
     donForm: 'Remplir le formulaire de don',
+    choose: 'Choisissez votre façon de vous engager',
+    open: 'Ouvrir',
+    allWays: 'Toutes les façons de s’engager',
+    others: 'Les autres façons de s’engager',
+    cards: {
+      don: { title: 'Faire un don', text: 'Soutenez nos projets et leur déploiement, par un don financier ou matériel.', hint: ['Ponctuel ou régulier', 'Mobile Money, virement…'] },
+      benevolat: { title: 'Devenir bénévole', text: 'Donnez de votre temps et de vos compétences aux côtés de l’équipe.', hint: ['Formation offerte', 'Programmes du samedi'] },
+      partenariat: { title: 'Devenir partenaire', text: 'Écoles, entreprises, institutions : construisons ensemble des actions durables.', hint: ['Accueillir ÉCHOS', 'Soutien, mécénat'] },
+    },
+    heads: {
+      don: { title: 'Faire un don', intro: 'Chaque contribution permet à un jeune de faire un pas de plus. Indiquez-nous comment vous souhaitez aider.' },
+      benevolat: { title: 'Devenir bénévole', intro: 'Rejoignez celles et ceux qui rendent chaque pas possible : cinq petites étapes pour candidater.' },
+      partenariat: { title: 'Devenir partenaire', intro: 'Écoles, entreprises, institutions : construisons ensemble des actions à fort impact.' },
+    },
   },
   en: {
     title: 'Get involved',
@@ -42,28 +61,70 @@ const T = {
     how: 'How does it work?',
     apply: 'Apply',
     propose: 'Propose a partnership',
-    donEyebrow: '03 · Donation',
+    donEyebrow: 'Donation',
     donForm: 'Fill in the donation form',
+    choose: 'Choose how you want to get involved',
+    open: 'Open',
+    allWays: 'All the ways to get involved',
+    others: 'Other ways to get involved',
+    cards: {
+      don: { title: 'Make a donation', text: 'Support our projects and their roll-out, with a financial or in-kind gift.', hint: ['One-off or regular', 'Mobile Money, transfer…'] },
+      benevolat: { title: 'Become a volunteer', text: 'Give your time and skills alongside the team.', hint: ['Training provided', 'Saturday programmes'] },
+      partenariat: { title: 'Become a partner', text: 'Schools, companies, institutions: let’s build lasting actions together.', hint: ['Host ÉCHOS', 'Support, sponsorship'] },
+    },
+    heads: {
+      don: { title: 'Make a donation', intro: 'Every contribution helps a young person take one more step. Tell us how you would like to help.' },
+      benevolat: { title: 'Become a volunteer', intro: 'Join those who make every step possible: five short steps to apply.' },
+      partenariat: { title: 'Become a partner', intro: 'Schools, companies, institutions: let’s build high-impact actions together.' },
+    },
   },
 }[lang];
 
 const { volunteer, partners, donate } = engage;
+const pageKeys = { benevolat: 'engageVolunteer', partenariat: 'engagePartner', don: 'engageDonate' } as const;
+const cards = (['don', 'benevolat', 'partenariat'] as const).map((k) => ({
+  key: k, ...T.cards[k], href: path(pageKeys[k], lang),
+  icon: { don: 'gift', benevolat: 'user-plus', partenariat: 'handshake' }[k],
+  tone: { don: 'grad-miel', benevolat: 'grad-baobab', partenariat: 'grad-terre' }[k],
+}));
+const head = part ? T.heads[part] : null;
 ---
 
-<BaseLayout title={T.title} description={T.description} page={{ key: 'engage' }}>
-  <PageHeader tone="terre" eyebrow={T.title} title={T.headerTitle} intro={engage.intro}>
-    <nav aria-label={T.ways} class="mt-8 flex flex-wrap gap-3">
-      <a href="#benevolat" class="btn btn-green">{T.volunteering}</a>
-      <a href="#partenariats" class="btn btn-outline">{T.partnerships}</a>
-      <a href="#don" class="btn btn-outline">{T.donate}</a>
-    </nav>
+<BaseLayout title={head ? head.title : T.title} description={head ? head.intro : T.description} page={{ key: part ? pageKeys[part] : 'engage' }}>
+  <PageHeader tone="terre" eyebrow={T.title} title={head ? head.title : T.headerTitle} intro={head ? head.intro : engage.intro}>
+    {part && <a href={path('engage', lang)} class="engage-back"><Icon name="arrow-left" size={16} /> {T.allWays}</a>}
   </PageHeader>
 
+  {
+    !part && (
+      <section class="section tone-ivoire" aria-labelledby="choix-titre">
+        <div class="container-site">
+          <h2 id="choix-titre" class="reveal text-center text-2xl font-bold sm:text-3xl">{T.choose}</h2>
+          <ul class="engage-choices mt-10">
+            {cards.map((c, i) => (
+              <li class={`reveal reveal-delay-${i + 1}`}>
+                <a href={c.href} class={`engage-choice ${c.tone}`}>
+                  <span class="ec-blob" aria-hidden="true" />
+                  <span class="ec-icon"><Icon name={c.icon} size={30} /></span>
+                  <span class="ec-title">{c.title}</span>
+                  <span class="ec-text">{c.text}</span>
+                  <span class="ec-hints">{c.hint.map((h) => <span>{h}</span>)}</span>
+                  <span class="ec-go">{T.open} <Icon name="arrow-right" size={18} /></span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
   <!-- Bénévolat -->
+  {part === 'benevolat' && (
   <section id="benevolat" class="section tone-ivoire scroll-mt-20" aria-labelledby="benevolat-titre">
     <div class="container-site grid gap-12 lg:grid-cols-2 lg:gap-16">
       <div>
-        <SectionTitle number="01" eyebrow={T.volunteering} title={volunteer.title} intro={volunteer.text} id="benevolat-titre" />
+        <SectionTitle eyebrow={T.volunteering} title={volunteer.title} intro={volunteer.text} id="benevolat-titre" />
         <h3 class="reveal mt-8 text-lg font-semibold">{T.welcome}</h3>
         <ul class="reveal mt-4 flex flex-wrap gap-2">
           {volunteer.profiles.map((p) => <li class="rounded-full bg-primary-50 px-4 py-2 text-sm font-medium text-primary-dark">{p}</li>)}
@@ -109,10 +170,13 @@ const { volunteer, partners, donate } = engage;
     </div>
   </section>
 
+  )}
+
   <!-- Partenariats -->
+  {part === 'partenariat' && (
   <section id="partenariats" class="section tone-baobab scroll-mt-20" aria-labelledby="partenariats-titre">
     <div class="container-site">
-      <SectionTitle number="02" eyebrow={T.partnerships} title={partners.title} intro={partners.text} id="partenariats-titre" />
+      <SectionTitle eyebrow={T.partnerships} title={partners.title} intro={partners.text} id="partenariats-titre" />
       <ul class="mt-10 grid gap-5 md:grid-cols-3">
         {
           partners.types.map((p, i) => (
@@ -140,7 +204,10 @@ const { volunteer, partners, donate } = engage;
     </div>
   </section>
 
+  )}
+
   <!-- Don -->
+  {part === 'don' && (
   <section id="don" class="section tone-ivoire scroll-mt-20" aria-labelledby="don-titre">
     <div class="container-site">
       <div class="tone-miel reveal relative overflow-hidden rounded-[2rem] px-6 py-12 sm:px-12 sm:py-16">
@@ -169,4 +236,26 @@ const { volunteer, partners, donate } = engage;
       </div>
     </div>
   </section>
+  )}
+
+  {
+    part && (
+      <section class="section tone-blanc" aria-labelledby="autres-titre">
+        <div class="container-site">
+          <h2 id="autres-titre" class="text-2xl font-bold">{T.others}</h2>
+          <ul class="engage-choices engage-others mt-6">
+            {cards.filter((c) => c.key !== part).map((c) => (
+              <li>
+                <a href={c.href} class={`engage-choice ${c.tone}`}>
+                  <span class="ec-icon"><Icon name={c.icon} size={24} /></span>
+                  <span class="ec-title">{c.title}</span>
+                  <span class="ec-go">{T.open} <Icon name="arrow-right" size={18} /></span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
 </BaseLayout>

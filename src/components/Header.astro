@@ -23,7 +23,7 @@ const isActive = (href: string, isHome: boolean) => {
   return isHome ? current === target : current === target || current.startsWith(`${target}/`);
 };
 const nav = mainNav.map((item) => ({ ...item, href: routePath(item.key, lang), isHome: item.key === 'home' }));
-const supportHref = routePath('engage', lang, 'don');
+const supportHref = routePath('engageDonate', lang);
 ---
 
 <header class="site-header" data-header>

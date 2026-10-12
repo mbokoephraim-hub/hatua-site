@@ -16,6 +16,9 @@ export const routes = {
   projects: { fr: '/projets', en: '/en/projects' },
   articles: { fr: '/articles', en: '/en/articles' },
   engage: { fr: '/s-engager', en: '/en/get-involved' },
+  engageVolunteer: { fr: '/s-engager/benevolat', en: '/en/get-involved/volunteer' },
+  engagePartner: { fr: '/s-engager/partenariat', en: '/en/get-involved/partner' },
+  engageDonate: { fr: '/s-engager/don', en: '/en/get-involved/donate' },
   contact: { fr: '/contact', en: '/en/contact' },
   founder: { fr: '/sublimekoyi', en: '/en/sublimekoyi' },
 } as const;

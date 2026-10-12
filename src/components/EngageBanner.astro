@@ -10,9 +10,9 @@ const T = {
     intro: 'Il existe plusieurs façons de rejoindre l’aventure. Choisissez celle qui vous ressemble.',
     more: 'En savoir plus',
     items: [
-      { icon: 'user-plus', title: 'Devenir bénévole', text: 'Donnez de votre temps et de vos compétences.', hash: 'benevolat' },
-      { icon: 'handshake', title: 'Devenir partenaire', text: 'Écoles, entreprises, institutions : agissons ensemble.', hash: 'partenariats' },
-      { icon: 'gift', title: 'Faire un don', text: 'Soutenez nos projets et leur déploiement.', hash: 'don' },
+      { icon: 'user-plus', title: 'Devenir bénévole', text: 'Donnez de votre temps et de vos compétences.', hash: 'engageVolunteer' },
+      { icon: 'handshake', title: 'Devenir partenaire', text: 'Écoles, entreprises, institutions : agissons ensemble.', hash: 'engagePartner' },
+      { icon: 'gift', title: 'Faire un don', text: 'Soutenez nos projets et leur déploiement.', hash: 'engageDonate' },
     ],
   },
   en: {
@@ -21,13 +21,13 @@ const T = {
     intro: 'There are several ways to join us. Choose the one that suits you.',
     more: 'Learn more',
     items: [
-      { icon: 'user-plus', title: 'Become a volunteer', text: 'Give your time and your skills.', hash: 'benevolat' },
-      { icon: 'handshake', title: 'Become a partner', text: 'Schools, companies, institutions: let’s act together.', hash: 'partenariats' },
-      { icon: 'gift', title: 'Make a donation', text: 'Support our projects and their roll-out.', hash: 'don' },
+      { icon: 'user-plus', title: 'Become a volunteer', text: 'Give your time and your skills.', hash: 'engageVolunteer' },
+      { icon: 'handshake', title: 'Become a partner', text: 'Schools, companies, institutions: let’s act together.', hash: 'engagePartner' },
+      { icon: 'gift', title: 'Make a donation', text: 'Support our projects and their roll-out.', hash: 'engageDonate' },
     ],
   },
 }[lang];
-const items = T.items.map((i) => ({ ...i, href: path('engage', lang, i.hash) }));
+const items = T.items.map((i) => ({ ...i, href: path(i.hash as 'engageVolunteer' | 'engagePartner' | 'engageDonate', lang) }));
 ---
 
 <section class="tone-baobab relative overflow-hidden" aria-labelledby="engagez-vous">

@@ -1,0 +1,72 @@
+---
+/**
+ * Petit mot de bienvenue de la page (ou, sur l'accueil, l'article à lire) : une bulle en dégradé qui arrive,
+ * « écrit » son message, puis se range toute seule. Une fois par visite et par page.
+ */
+import Icon from './Icon.astro';
+import { welcome } from '../data/welcome';
+import { getLang } from '../i18n';
+import { url } from '../utils/url';
+
+interface Props {
+  pageKey: string;
+  /** Sur l'accueil : l'article à mettre en avant */
+  news?: { title: string; href: string; image?: string } | null;
+}
+const { pageKey, news } = Astro.props;
+const lang = getLang(Astro.currentLocale);
+const msg = welcome[lang][pageKey];
+const T = { fr: { close: 'Fermer', newsKicker: 'Nouveau · à lire', read: 'Lire l’article', guide: 'HATUA' }, en: { close: 'Close', newsKicker: 'New · read now', read: 'Read the article', guide: 'HATUA' } }[lang];
+---
+
+{
+  (msg || news) && (
+    <aside class:list={['welcome', news && 'is-news']} data-welcome={`hatua-welcome:${pageKey}`} hidden aria-live="polite">
+      <span class="wl-avatar"><img src={url('/icon-192.png')} alt="" width="44" height="44" /><i /></span>
+      <div class="wl-body">
+        {news ? (
+          <>
+            <span class="wl-kicker"><Icon name="sparkles" size={14} /> {T.newsKicker}</span>
+            <strong class="wl-title">{news.title}</strong>
+            <a class="wl-read" href={news.href}>{T.read} <Icon name="arrow-right" size={16} /></a>
+          </>
+        ) : (
+          <>
+            <strong class="wl-title">{msg!.title}</strong>
+            <span class="wl-typing" aria-hidden="true"><i /><i /><i /></span>
+            <span class="wl-text">{msg!.text}</span>
+          </>
+        )}
+      </div>
+      {news?.image && <img class="wl-cover" src={url(news.image)} alt="" width="72" height="72" loading="lazy" />}
+      <button type="button" class="wl-close" data-welcome-close><Icon name="x" size={16} /><span class="sr-only">{T.close}</span></button>
+      <span class="wl-timer" aria-hidden="true" />
+    </aside>
+  )
+}
+
+<script>
+  const box = document.querySelector<HTMLElement>('[data-welcome]');
+  if (box) {
+    const key = box.dataset.welcome ?? 'hatua-welcome';
+    let seen = false;
+    try { seen = sessionStorage.getItem(key) === '1'; } catch { /* rien */ }
+    const hide = () => {
+      box.classList.add('is-leaving');
+      setTimeout(() => (box.hidden = true), 450);
+    };
+    const show = () => {
+      box.hidden = false;
+      try { sessionStorage.setItem(key, '1'); } catch { /* rien */ }
+      const stay = box.classList.contains('is-news') ? 11000 : 7500;
+      let timer = setTimeout(hide, stay);
+      box.addEventListener('mouseenter', () => { clearTimeout(timer); box.classList.add('is-paused'); });
+      box.addEventListener('mouseleave', () => { box.classList.remove('is-paused'); timer = setTimeout(hide, 3000); });
+      box.querySelector('[data-welcome-close]')?.addEventListener('click', hide);
+    };
+    if (!seen) {
+      if (document.documentElement.classList.contains('splash')) window.addEventListener('hatua:ready', () => setTimeout(show, 350), { once: true });
+      else setTimeout(show, 900);
+    }
+  }
+</script>
