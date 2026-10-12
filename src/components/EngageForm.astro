@@ -15,6 +15,8 @@ interface Props {
 const { form } = Astro.props;
 const { formspreeId } = site.form;
 const action = formspreeId ? `https://formspree.io/f/${formspreeId}` : undefined;
+// Copie de la demande (sans pièce jointe) reçue dans ÉCHOS : Secrétariat → Messages du site
+const echosApi = site.form.messagesApi;
 const uid = (i: number) => `${form.id}-${i}`;
 const lang = getLang(Astro.currentLocale);
 const tr = useT(lang);
@@ -33,7 +35,7 @@ const field =
 const star = '<span class="text-secondary" aria-hidden="true"> *</span>';
 ---
 
-<div id={`formulaire-${form.id}`} class="card scroll-mt-24 !p-0" data-engage-wrapper {...msgs}>
+<div id={`formulaire-${form.id}`} class="card scroll-mt-24 !p-0" data-engage-wrapper data-echos-api={echosApi} data-kind={form.id} {...msgs}>
   <div class="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
     <div>
       <h3 class="text-xl font-semibold sm:text-2xl">{form.title}</h3>
@@ -210,8 +212,11 @@ const star = '<span class="text-secondary" aria-hidden="true"> *</span>';
     status.focus();
   };
 
+  // Erreur réseau : traitée comme un refus (l'envoi dans ÉCHOS peut avoir réussi)
   const send = (form: HTMLFormElement, data: FormData) =>
-    fetch(form.action, { method: 'POST', headers: { Accept: 'application/json' }, body: data });
+    form.action
+      ? fetch(form.action, { method: 'POST', headers: { Accept: 'application/json' }, body: data }).catch(() => ({ ok: false }) as Response)
+      : Promise.resolve({ ok: false } as Response);
 
   document.querySelectorAll<HTMLFormElement>('form[data-engage-form]').forEach((form) => {
     const status = form.querySelector<HTMLElement>('[data-form-status]')!;
@@ -253,6 +258,19 @@ const star = '<span class="text-secondary" aria-hidden="true"> *</span>';
       form.querySelectorAll<HTMLInputElement>('input[type="file"]').forEach((i) => {
         if (!i.files?.length) data.delete(i.name);
       });
+      // Copie dans ÉCHOS (sans fichiers), envoyée en même temps que l'e-mail
+      const copy = new FormData();
+      data.forEach((v, k) => { if (typeof v === 'string' && v.trim() !== '' && !k.startsWith('_')) copy.append(k, v); });
+      const pick = (...keys: string[]) => keys.map((k) => copy.get(k)).find((v) => typeof v === 'string' && v.trim() !== '') as string | undefined;
+      copy.set('kind', ['partenariat', 'don'].includes(m.kind ?? '') ? (m.kind as string) : 'contact');
+      copy.set('nom', [pick('Personne de contact', 'Nom complet', 'Nom'), pick('Organisation')].filter(Boolean).join(' · ') || 'Sans nom');
+      const phone = pick('Téléphone', 'Téléphone / WhatsApp');
+      if (phone) copy.set('telephone', phone);
+      const text = pick('Proposition', 'Message', 'message');
+      if (text) copy.set('message', text);
+      const echos = m.echosApi
+        ? fetch(m.echosApi, { method: 'POST', headers: { Accept: 'application/json' }, body: copy }).then((r) => r.ok).catch(() => false)
+        : Promise.resolve(false);
       try {
         let res = await send(form, data);
         let fileNotice = '';
@@ -263,7 +281,8 @@ const star = '<span class="text-secondary" aria-hidden="true"> *</span>';
           res = await send(form, data);
           fileNotice = ` ${m.msgFileNotSent ?? ''}`;
         }
-        if (!res.ok) throw new Error(String(res.status));
+        const savedInEchos = await echos;
+        if (!res.ok && !savedInEchos) throw new Error(String(res.status));
         form.reset();
         show(status, (status.dataset.success ?? '') + fileNotice, true);
       } catch {

@@ -80,6 +80,8 @@ export const site = {
     formspreeId: import.meta.env.PUBLIC_FORMSPREE_ID || 'xgaoewap',
     // Candidatures bénévoles : envoyées directement dans l'application ÉCHOS (Ressources humaines → Candidatures)
     volunteerApi: import.meta.env.PUBLIC_VOLUNTEER_API || 'https://echos.hatuafoundation.org/api/benevoles',
+    // Messages (contact, rendez-vous, partenariat, don) : copie reçue dans ÉCHOS (Secrétariat → Messages du site)
+    messagesApi: import.meta.env.PUBLIC_MESSAGES_API || 'https://echos.hatuafoundation.org/api/messages',
   },
 
   copyrightYear: 2026,

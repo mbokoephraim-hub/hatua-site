@@ -56,7 +56,8 @@ export const ui = {
     'contactForm.send': 'Envoyer le message',
     'contactForm.mailSubject': 'Nouveau message depuis le site Hatua Foundation',
     'contactForm.success': 'Merci ! Votre message a bien été envoyé. Nous vous répondrons dès que possible.',
-    'contactForm.subjects': 'Demande d’information|Bénévolat|Partenariat|Soutien / don|Projet ÉCHOS|Presse / média|Autre',
+    'contactForm.subjects': 'Demande d’information|Demande de rendez-vous|Bénévolat|Partenariat|Soutien / don|Projet ÉCHOS|Presse / média|Autre',
+    'contactForm.phone': 'Téléphone / WhatsApp (facultatif)',
   },
   en: {
     'skip.link': 'Skip to main content',
@@ -109,7 +110,8 @@ export const ui = {
     'contactForm.send': 'Send message',
     'contactForm.mailSubject': '[EN] New message from the Hatua Foundation website',
     'contactForm.success': 'Thank you! Your message has been sent. We will get back to you as soon as possible.',
-    'contactForm.subjects': 'Information request|Volunteering|Partnership|Support / donation|ÉCHOS project|Press / media|Other',
+    'contactForm.subjects': 'Information request|Appointment request|Volunteering|Partnership|Support / donation|ÉCHOS project|Press / media|Other',
+    'contactForm.phone': 'Phone / WhatsApp (optional)',
   },
 } as const;
 

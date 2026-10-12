@@ -1,7 +1,8 @@
 ---
 /**
- * Formulaire de contact sans backend, envoyé via Formspree.
- * L'identifiant du formulaire se règle dans src/data/site.ts (form.formspreeId).
+ * Formulaire de contact : le message arrive dans l'application ÉCHOS (Secrétariat → Messages du site)
+ * et, en double, par e-mail via Formspree (src/data/site.ts : form.formspreeId, form.messagesApi).
+ * L'envoi réussit si l'un des deux a reçu le message.
  */
 import Icon from './Icon.astro';
 import { site } from '../data/site';
@@ -14,6 +15,7 @@ const tr = useT(lang);
 const { formspreeId } = site.form;
 const configured = Boolean(formspreeId);
 const action = configured ? `https://formspree.io/f/${formspreeId}` : undefined;
+const echosApi = site.form.messagesApi;
 
 const subjects = tr('contactForm.subjects').split('|');
 
@@ -26,6 +28,7 @@ const field =
   method="POST"
   action={action}
   data-contact-form
+  data-echos-api={echosApi}
   data-msg-success={tr('contactForm.success')}
   data-msg-error={tr('form.error', { email: site.contact.email })}
   class="card !p-6 sm:!p-8"
@@ -56,6 +59,11 @@ const field =
       <label for="cf-email" class="font-medium">{tr('contactForm.email')} <span class="text-secondary" aria-hidden="true">*</span></label>
       <input id="cf-email" name="email" type="email" autocomplete="email" required class={field} />
     </div>
+  </div>
+
+  <div class="mt-5">
+    <label for="cf-phone" class="font-medium">{tr('contactForm.phone')}</label>
+    <input id="cf-phone" name="telephone" type="tel" autocomplete="tel" placeholder="+243 …" class={field} />
   </div>
 
   <div class="mt-5">
@@ -103,13 +111,12 @@ const field =
     if (button) button.disabled = true;
     const data = new FormData(form);
 
+    // Envoi à ÉCHOS (application de l'équipe) et par e-mail (Formspree) : réussi si l'un des deux a reçu le message
+    const post = (url: string | undefined) =>
+      url ? fetch(url, { method: 'POST', headers: { Accept: 'application/json' }, body: data }).then((r) => r.ok).catch(() => false) : Promise.resolve(false);
     try {
-      const res = await fetch(form.action, {
-        method: 'POST',
-        headers: { Accept: 'application/json' },
-        body: data,
-      });
-      if (!res.ok) throw new Error(String(res.status));
+      const [echos, mail] = await Promise.all([post(form.dataset.echosApi), post(form.action)]);
+      if (!echos && !mail) throw new Error('envoi');
       form.reset();
       show(form.dataset.msgSuccess ?? '', true);
     } catch {
