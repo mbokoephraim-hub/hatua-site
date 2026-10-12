@@ -29,11 +29,11 @@ export const projects: Project[] = [
     ],
     timeline: [
       { date: 'November 2026', title: 'Launch', text: 'First edition of the project at Collège Don Bosco Lukungu, in Kinshasa.' },
-      { date: '2027', title: 'Gradual roll-out', text: 'Step-by-step extension to other partner schools.' },
-      { date: 'December 2027', title: 'Goal: 30 schools', text: 'Ambition: to roll out the project in 30 schools.' },
+      { date: 'The following years', title: 'Gradual roll-out', text: 'Step by step, ÉCHOS extends to other schools in Kinshasa, each one integrating the support programme according to our model and to its own context.' },
+      { date: 'Within 5 years', title: 'Goal: every school in Kinshasa', text: 'Mobilise all schools in Kinshasa to integrate this career guidance support programme, adapted to their reality.' },
     ],
     callIntro:
-      'To reach 30 schools by the end of 2027, ÉCHOS needs partners who share its conviction. Every contribution is one more step.',
+      'To mobilise all schools in Kinshasa within 5 years, ÉCHOS needs partners who share its conviction. Every contribution is one more step.',
     calls: [
       {
         icon: 'school',

@@ -60,18 +60,18 @@ export const projects: Project[] = [
         text: 'Première édition du projet au Collège Don Bosco Lukungu, à Kinshasa.',
       },
       {
-        date: '2027',
+        date: 'Les années suivantes',
         title: 'Déploiement progressif',
-        text: 'Extension, étape par étape, à d’autres établissements scolaires partenaires.',
+        text: 'Étape par étape, ÉCHOS s’étend à d’autres écoles de Kinshasa, chacune intégrant le programme d’accompagnement selon notre modèle et selon son propre contexte.',
       },
       {
-        date: 'Décembre 2027',
-        title: 'Objectif : 30 établissements',
-        text: 'Ambition : que le projet soit déployé dans 30 établissements scolaires.',
+        date: 'D’ici 5 ans',
+        title: 'Objectif : toutes les écoles de Kinshasa',
+        text: 'Mobiliser l’ensemble des écoles de Kinshasa pour qu’elles intègrent ce programme d’accompagnement à l’orientation, adapté à leur réalité.',
       },
     ],
     callIntro:
-      'Pour atteindre 30 établissements d’ici fin 2027, ÉCHOS a besoin de partenaires qui partagent sa conviction. Chaque soutien est un pas de plus.',
+      'Pour mobiliser, en 5 ans, l’ensemble des écoles de Kinshasa, ÉCHOS a besoin de partenaires qui partagent sa conviction. Chaque soutien est un pas de plus.',
     calls: [
       {
         icon: 'school',
