@@ -78,6 +78,8 @@ export const site = {
   // Peut être surchargé par la variable d'environnement PUBLIC_FORMSPREE_ID.
   form: {
     formspreeId: import.meta.env.PUBLIC_FORMSPREE_ID || 'xgaoewap',
+    // Candidatures bénévoles : envoyées directement dans l'application ÉCHOS (Ressources humaines → Candidatures)
+    volunteerApi: import.meta.env.PUBLIC_VOLUNTEER_API || 'https://echos.hatuafoundation.org/api/benevoles',
   },
 
   copyrightYear: 2026,

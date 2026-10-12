@@ -1,4 +1,8 @@
 ---
+/**
+ * En-tête : menu en « pilule » sur ordinateur (une icône et une couleur par rubrique),
+ * panneau plein écran aux couleurs HATUA sur téléphone.
+ */
 import Icon from './Icon.astro';
 import LangSwitch from './LangSwitch.astro';
 import { mainNav } from '../data/navigation';
@@ -22,29 +26,23 @@ const nav = mainNav.map((item) => ({ ...item, href: routePath(item.key, lang), i
 const supportHref = routePath('engage', lang, 'don');
 ---
 
-<header class="sticky top-0 z-50 border-b border-sand/80 bg-cream/90 backdrop-blur supports-[backdrop-filter]:bg-cream/80">
-  <div class="container-site flex h-[4.5rem] items-center justify-between gap-3 sm:gap-6">
-    <a href={routePath('home', lang)} class="shrink-0" aria-label={`${site.name}, ${tr('home.aria')}`}>
-      <img src={url('/logo.png')} alt="" width="538" height="128" class="h-9 w-auto min-[360px]:h-11 sm:h-12" />
+<header class="site-header" data-header>
+  <div class="container-site sh-bar">
+    <a href={routePath('home', lang)} class="sh-logo" aria-label={`${site.name}, ${tr('home.aria')}`}>
+      <img src={url('/logo.png')} alt="" width="538" height="128" class="sh-logo-dark" />
+      <img src={url('/logo-light.png')} alt="" width="538" height="128" class="sh-logo-light" />
     </a>
 
-    <nav aria-label={tr('nav.label')} class="hidden xl:block">
-      <ul class="flex items-center gap-1">
+    <nav aria-label={tr('nav.label')} class="sh-nav">
+      <ul>
         {
           nav.slice(1).map((item) => {
             const active = isActive(item.href, item.isHome);
             return (
               <li>
-                <a
-                  href={item.href}
-                  aria-current={active ? 'page' : undefined}
-                  class:list={[
-                    'relative rounded-full px-3 py-2 text-[0.95rem] font-medium whitespace-nowrap transition-colors hover:text-primary',
-                    active ? 'text-primary' : 'text-ink/80',
-                  ]}
-                >
+                <a href={item.href} aria-current={active ? 'page' : undefined} class={`nav-${item.color}`}>
+                  <span class="sh-ico"><Icon name={item.icon} size={16} /></span>
                   {tr(item.label)}
-                  {active && <span class="absolute inset-x-3.5 -bottom-0.5 h-0.5 rounded-full bg-secondary" />}
                 </a>
               </li>
             );
@@ -53,71 +51,65 @@ const supportHref = routePath('engage', lang, 'don');
       </ul>
     </nav>
 
-    <div class="flex items-center gap-2">
+    <div class="sh-right">
       <LangSwitch lang={lang} page={page} compact class="sm:hidden" />
       <LangSwitch lang={lang} page={page} class="hidden sm:block" />
-      <a href={supportHref} class="btn btn-primary hidden !px-5 !py-2.5 sm:inline-flex">{tr('cta.support')}</a>
-      <button
-        type="button"
-        class="inline-flex h-11 w-11 items-center justify-center rounded-full text-primary hover:bg-primary-50 xl:hidden"
-        aria-controls="menu-mobile"
-        aria-expanded="false"
-        data-menu-toggle
-      >
+      <a href={supportHref} class="sh-cta"><Icon name="heart" size={16} /> {tr('cta.support')}</a>
+      <button type="button" class="sh-burger" aria-controls="menu-mobile" aria-expanded="false" data-menu-toggle>
         <span class="sr-only" data-menu-label data-open={tr('nav.open')} data-close={tr('nav.close')}>{tr('nav.open')}</span>
-        <Icon name="menu" class="icon-open" />
-        <Icon name="x" class="icon-close hidden" />
+        <span class="sh-lines" aria-hidden="true"><i></i><i></i><i></i></span>
       </button>
     </div>
   </div>
 
-  <nav id="menu-mobile" aria-label={tr('nav.label')} class="hidden border-t border-sand bg-cream xl:hidden" data-menu>
-    <ul class="container-site flex flex-col py-3">
-      <li class="mb-2 flex items-center justify-between rounded-xl border border-sand bg-white px-3 py-2.5">
-        <span class="text-sm font-semibold text-ink">{tr('lang.label')}</span>
-        <LangSwitch lang={lang} page={page} />
-      </li>
-      {
-        nav.map((item) => {
-          const active = isActive(item.href, item.isHome);
-          return (
-            <li>
-              <a
-                href={item.href}
-                aria-current={active ? 'page' : undefined}
-                class:list={[
-                  'flex items-center justify-between rounded-xl px-3 py-3.5 font-display text-lg font-medium',
-                  active ? 'bg-primary-50 text-primary' : 'text-ink hover:bg-sand/60',
-                ]}
-              >
-                {tr(item.label)}
-                <Icon name="arrow-right" size={18} class="opacity-50" />
-              </a>
-            </li>
-          );
-        })
-      }
-      <li class="mt-3 px-3 pb-2">
-        <a href={supportHref} class="btn btn-primary w-full">{tr('cta.support')}</a>
-      </li>
-
-    </ul>
-  </nav>
+  <div id="menu-mobile" class="sh-sheet" data-menu hidden>
+    <div class="sh-sheet-blob b1" aria-hidden="true"></div>
+    <div class="sh-sheet-blob b2" aria-hidden="true"></div>
+    <nav aria-label={tr('nav.label')} class="sh-sheet-inner">
+      <ul class="sh-list">
+        {
+          nav.map((item, i) => {
+            const active = isActive(item.href, item.isHome);
+            return (
+              <li style={`--i:${i}`}>
+                <a href={item.href} aria-current={active ? 'page' : undefined} class={`nav-${item.color}`}>
+                  <span class="sh-tile"><Icon name={item.icon} size={22} /></span>
+                  <span class="grow">{tr(item.label)}</span>
+                  <Icon name="arrow-right" size={18} class="sh-arrow" />
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+      <div class="sh-sheet-foot" style={`--i:${nav.length}`}>
+        <div class="sh-lang"><span>{tr('lang.label')}</span><LangSwitch lang={lang} page={page} /></div>
+        <a href={supportHref} class="sh-cta sh-cta-big"><Icon name="heart" size={18} /> {tr('cta.support')}</a>
+        <a href={site.contact.whatsappHref} target="_blank" rel="noopener noreferrer" class="sh-wa"><Icon name="whatsapp" size={18} /> WhatsApp</a>
+      </div>
+    </nav>
+  </div>
 </header>
 
 <script>
+  const header = document.querySelector<HTMLElement>('[data-header]');
   const btn = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
   const menu = document.querySelector<HTMLElement>('[data-menu]');
   const label = document.querySelector<HTMLElement>('[data-menu-label]');
+  // L'en-tête s'affine quand on fait défiler la page
+  const onScroll = () => header?.classList.toggle('is-scrolled', window.scrollY > 12);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
   if (btn && menu) {
     const setOpen = (open: boolean) => {
       btn.setAttribute('aria-expanded', String(open));
-      menu.classList.toggle('hidden', !open);
-      btn.querySelector('.icon-open')?.classList.toggle('hidden', open);
-      btn.querySelector('.icon-close')?.classList.toggle('hidden', !open);
+      menu.hidden = !open;
+      document.documentElement.classList.toggle('menu-open', open);
       if (label) label.textContent = (open ? label.dataset.close : label.dataset.open) ?? '';
+      if (open) menu.querySelector<HTMLElement>('a')?.focus({ preventScroll: true });
     };
     btn.addEventListener('click', () => setOpen(btn.getAttribute('aria-expanded') !== 'true'));
+    menu.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('a')) setOpen(false); });
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && btn.getAttribute('aria-expanded') === 'true') {
         setOpen(false);

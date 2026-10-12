@@ -4,6 +4,7 @@ import PageHeader from '../components/PageHeader.astro';
 import SectionTitle from '../components/SectionTitle.astro';
 import Icon from '../components/Icon.astro';
 import EngageForm from '../components/EngageForm.astro';
+import VolunteerForm from '../components/VolunteerForm.astro';
 import { getContent } from '../data';
 import { getLang } from '../i18n';
 import { url } from '../utils/url';
@@ -104,7 +105,7 @@ const { volunteer, partners, donate } = engage;
       </div>
     </div>
     <div class="container-site reveal mt-14">
-      <EngageForm form={engageForms.benevolat} />
+      <VolunteerForm />
     </div>
   </section>
 

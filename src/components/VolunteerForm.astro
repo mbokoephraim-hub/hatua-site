@@ -1,0 +1,347 @@
+---
+/**
+ * Candidature bénévole, en cinq petites étapes (une à la fois), réponses à toucher.
+ * Envoi direct dans l'application ÉCHOS (Ressources humaines → Candidatures), avec l'engagement de 3 mois.
+ * Sans JavaScript, le formulaire s'envoie aussi (toutes les étapes s'affichent à la suite).
+ */
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+import { poles } from '../data/poles';
+import { projects } from '../data/projects';
+import { getLang } from '../i18n';
+
+const lang = getLang(Astro.currentLocale);
+const action = site.form.volunteerApi;
+
+const T = {
+  fr: {
+    title: 'Devenir bénévole',
+    intro: 'Cinq petites étapes, deux minutes. Touchez vos réponses : pas besoin d’écrire beaucoup.',
+    steps: ['Vous', 'Votre profil', 'Vos envies', 'Votre motivation', 'Votre engagement'],
+    s1: 'Faisons connaissance', s1sub: 'Pour que nous puissions vous recontacter.',
+    first: 'Prénom', last: 'Nom (et postnom)', phone: 'Téléphone / WhatsApp', email: 'E-mail', commune: 'Commune ou ville', communePh: 'Ex. Lemba, Gombe…',
+    s2: 'Votre profil', s2sub: 'Une réponse par question.',
+    profile: 'Vous êtes…', availability: 'Votre disponibilité', saturdays: 'Pouvez-vous venir aux programmes du samedi ?',
+    satOpts: { oui: 'Oui, la plupart des samedis', parfois: 'Certains samedis', non: 'Pas le samedi' },
+    s3: 'Ce que vous aimeriez faire', s3sub: 'Plusieurs choix possibles.',
+    interests: 'Les actions qui vous intéressent', skills: 'Ce que vous savez bien faire',
+    s4: 'Pourquoi nous rejoindre ?', motivation: 'Votre motivation', motivationPh: 'En quelques phrases : ce qui vous donne envie d’agir avec nous.',
+    experience: 'Vos compétences ou votre expérience (facultatif)',
+    s5: 'Votre engagement', s5sub: 'Être bénévole chez HATUA, c’est un vrai engagement : merci de le lire avant de cocher.',
+    commitTitle: 'Pendant 3 mois, je m’engage à :',
+    commit: [
+      ['sparkles', 'Suivre la formation des bénévoles de HATUA Foundation'],
+      ['calendar', 'Être disponible pour les programmes du samedi'],
+      ['camera', 'Accepter que la fondation prenne et utilise des photos de moi pendant les activités (site, réseaux sociaux, rapports)'],
+    ],
+    commitCheck: 'Je signe cet engagement de 3 mois.',
+    consent: 'J’accepte que Hatua Foundation utilise ces informations pour me recontacter.',
+    back: 'Retour', next: 'Suivant', send: 'Envoyer ma candidature', sending: 'Envoi…',
+    step: 'Étape', of: 'sur',
+    need: 'Merci de répondre pour continuer.',
+    okTitle: 'Merci, votre candidature est envoyée !',
+    okText: 'Elle est arrivée directement chez notre équipe. Nous vous appellerons très vite pour faire connaissance.',
+    error: `Désolé, l’envoi a échoué. Réessayez plus tard ou écrivez-nous à ${site.contact.email}.`,
+    profiles: ['Étudiant(e)', 'Enseignant(e) ou éducateur(trice)', 'Psychologue ou travailleur(se) social(e)', 'Professionnel(le)', 'Communication, photo ou graphisme', 'Autre'],
+    availabilities: ['Quelques heures par semaine', 'Quelques heures par mois', 'Ponctuellement (événements)', 'À définir ensemble'],
+    skillsList: { animation: 'Animer des groupes', orientation: 'Orientation scolaire', enseignement: 'Enseigner', psychologie: 'Écouter, accompagner', informatique: 'Informatique', communication: 'Communication, réseaux sociaux', photo: 'Photo et vidéo', logistique: 'Logistique', finances: 'Finances, comptabilité', juridique: 'Droit', sante: 'Santé', traduction: 'Langues, traduction' },
+  },
+  en: {
+    title: 'Become a volunteer',
+    intro: 'Five short steps, two minutes. Tap your answers: no need to write much.',
+    steps: ['You', 'Your profile', 'Your interests', 'Your motivation', 'Your commitment'],
+    s1: 'Let’s get to know each other', s1sub: 'So that we can get back to you.',
+    first: 'First name', last: 'Last name', phone: 'Phone / WhatsApp', email: 'Email', commune: 'Area or city', communePh: 'E.g. Lemba, Gombe…',
+    s2: 'Your profile', s2sub: 'One answer per question.',
+    profile: 'You are…', availability: 'Your availability', saturdays: 'Can you join the Saturday programmes?',
+    satOpts: { oui: 'Yes, most Saturdays', parfois: 'Some Saturdays', non: 'Not on Saturdays' },
+    s3: 'What you would like to do', s3sub: 'Several choices possible.',
+    interests: 'Activities you are interested in', skills: 'What you are good at',
+    s4: 'Why join us?', motivation: 'Your motivation', motivationPh: 'A few sentences: what makes you want to act with us.',
+    experience: 'Your skills or experience (optional)',
+    s5: 'Your commitment', s5sub: 'Volunteering at HATUA is a real commitment: please read before ticking.',
+    commitTitle: 'For 3 months, I commit to:',
+    commit: [
+      ['sparkles', 'Attend the HATUA Foundation volunteer training'],
+      ['calendar', 'Be available for the Saturday programmes'],
+      ['camera', 'Agree that the foundation may take and use photos of me during activities (website, social media, reports)'],
+    ],
+    commitCheck: 'I sign this 3-month commitment.',
+    consent: 'I agree that Hatua Foundation may use this information to contact me.',
+    back: 'Back', next: 'Next', send: 'Send my application', sending: 'Sending…',
+    step: 'Step', of: 'of',
+    need: 'Please answer to continue.',
+    okTitle: 'Thank you, your application has been sent!',
+    okText: 'It went straight to our team. We will call you very soon to get to know you.',
+    error: `Sorry, sending failed. Please try again later or write to ${site.contact.email}.`,
+    profiles: ['Student', 'Teacher or educator', 'Psychologist or social worker', 'Professional', 'Communication, photo or design', 'Other'],
+    availabilities: ['A few hours a week', 'A few hours a month', 'Occasionally (events)', 'To be agreed together'],
+    skillsList: { animation: 'Leading groups', orientation: 'School guidance', enseignement: 'Teaching', psychologie: 'Listening, support', informatique: 'IT', communication: 'Communication, social media', photo: 'Photo and video', logistique: 'Logistics', finances: 'Finance, accounting', juridique: 'Law', sante: 'Health', traduction: 'Languages, translation' },
+  },
+}[lang];
+
+const interestOptions = [...projects.map((p) => `Projet ${p.title}`), ...poles.map((p) => p.title)];
+const communes = ['Bandalungwa', 'Barumbu', 'Bumbu', 'Gombe', 'Kalamu', 'Kasa-Vubu', 'Kimbanseke', 'Kinshasa', 'Kintambo', 'Kisenso', 'Lemba', 'Limete', 'Lingwala', 'Makala', 'Maluku', 'Masina', 'Matete', 'Mont-Ngafula', 'Ndjili', 'Ngaba', 'Ngaliema', 'Ngiri-Ngiri', 'Nsele', 'Selembao'];
+const colors = ['hibiscus', 'miel', 'baobab', 'bleu', 'terre'];
+---
+
+<div id="formulaire-benevolat" class="vf scroll-mt-24" data-vf data-msg-error={T.error} data-msg-need={T.need} data-msg-sending={T.sending} data-step-word={T.step} data-step-of={T.of}>
+  <header class="vf-head">
+    <span class="vf-badge"><Icon name="user-plus" size={22} /></span>
+    <div>
+      <h3>{T.title}</h3>
+      <p>{T.intro}</p>
+    </div>
+  </header>
+
+  <form method="POST" action={action} class="vf-form" data-vf-form novalidate>
+    <input type="hidden" name="started_at" value="0" data-vf-started />
+    <p class="vf-trap" aria-hidden="true"><label>Site web <input name="website" tabindex="-1" autocomplete="off" /></label></p>
+
+    <div class="vf-progress" aria-hidden="true">
+      <span class="vf-count" data-vf-count></span>
+      <ol class="vf-dots">{T.steps.map((s, i) => <li class={`c-${colors[i]}`} data-vf-dot><span>{i + 1}</span><em>{s}</em></li>)}</ol>
+    </div>
+
+    <!-- 1. Vous -->
+    <section class="vf-screen c-hibiscus" data-vf-screen>
+      <div class="vf-sh"><span class="vf-ico"><Icon name="users" size={24} /></span><div><h4>{T.s1}</h4><p>{T.s1sub}</p></div></div>
+      <div class="vf-grid">
+        <label class="vf-field"><span>{T.first} *</span><input name="first_name" required maxlength="80" autocomplete="given-name" /></label>
+        <label class="vf-field"><span>{T.last} *</span><input name="last_name" required maxlength="80" autocomplete="family-name" /></label>
+        <label class="vf-field"><span>{T.phone} *</span><input name="phone" type="tel" required maxlength="40" autocomplete="tel" placeholder="+243 …" /></label>
+        <label class="vf-field"><span>{T.email} *</span><input name="email" type="email" required maxlength="150" autocomplete="email" /></label>
+        <label class="vf-field vf-wide"><span>{T.commune}</span><input name="commune" maxlength="80" list="vf-communes" placeholder={T.communePh} /></label>
+        <datalist id="vf-communes">{communes.map((c) => <option value={c} />)}</datalist>
+      </div>
+    </section>
+
+    <!-- 2. Profil -->
+    <section class="vf-screen c-miel" data-vf-screen>
+      <div class="vf-sh"><span class="vf-ico"><Icon name="briefcase" size={24} /></span><div><h4>{T.s2}</h4><p>{T.s2sub}</p></div></div>
+      <fieldset class="vf-q" data-vf-need><legend>{T.profile} *</legend>
+        <div class="vf-opts">{T.profiles.map((o) => <label class="vf-opt"><input type="radio" name="profile" value={o} required /><span>{o}</span></label>)}</div></fieldset>
+      <fieldset class="vf-q" data-vf-need><legend>{T.availability} *</legend>
+        <div class="vf-opts">{T.availabilities.map((o) => <label class="vf-opt"><input type="radio" name="availability" value={o} required /><span>{o}</span></label>)}</div></fieldset>
+      <fieldset class="vf-q" data-vf-need><legend>{T.saturdays} *</legend>
+        <div class="vf-opts">{Object.entries(T.satOpts).map(([k, o]) => <label class="vf-opt"><input type="radio" name="saturdays" value={k} required /><span>{o}</span></label>)}</div></fieldset>
+    </section>
+
+    <!-- 3. Envies -->
+    <section class="vf-screen c-baobab" data-vf-screen>
+      <div class="vf-sh"><span class="vf-ico"><Icon name="heart" size={24} /></span><div><h4>{T.s3}</h4><p>{T.s3sub}</p></div></div>
+      <fieldset class="vf-q"><legend>{T.interests}</legend>
+        <div class="vf-opts">{interestOptions.map((o) => <label class="vf-opt"><input type="checkbox" name="interests[]" value={o} /><span>{o}</span></label>)}</div></fieldset>
+      <fieldset class="vf-q"><legend>{T.skills}</legend>
+        <div class="vf-opts">{Object.entries(T.skillsList).map(([k, o]) => <label class="vf-opt"><input type="checkbox" name="skills[]" value={k} /><span>{o}</span></label>)}</div></fieldset>
+    </section>
+
+    <!-- 4. Motivation -->
+    <section class="vf-screen c-bleu" data-vf-screen>
+      <div class="vf-sh"><span class="vf-ico"><Icon name="message" size={24} /></span><div><h4>{T.s4}</h4></div></div>
+      <label class="vf-field vf-wide"><span>{T.motivation} *</span><textarea name="motivation" required maxlength="2000" rows="4" placeholder={T.motivationPh}></textarea></label>
+      <label class="vf-field vf-wide"><span>{T.experience}</span><textarea name="experience" maxlength="2000" rows="3"></textarea></label>
+    </section>
+
+    <!-- 5. Engagement -->
+    <section class="vf-screen c-terre" data-vf-screen data-vf-last>
+      <div class="vf-sh"><span class="vf-ico"><Icon name="handshake" size={24} /></span><div><h4>{T.s5}</h4><p>{T.s5sub}</p></div></div>
+      <div class="vf-commit">
+        <p class="vf-commit-title"><strong>{T.commitTitle}</strong></p>
+        <ul>{T.commit.map(([icon, text]) => <li><span class="vf-ci"><Icon name={icon} size={18} /></span><span>{text}</span></li>)}</ul>
+        <label class="vf-sign"><input type="checkbox" name="commitment" value="1" required /><span>{T.commitCheck} *</span></label>
+      </div>
+      <label class="vf-consent"><input type="checkbox" name="consent" value="1" required /><span>{T.consent} *</span></label>
+      <button type="submit" class="btn btn-primary vf-send" data-vf-send>{T.send} <Icon name="send" size={18} /></button>
+    </section>
+
+    <div class="vf-nav" data-vf-nav hidden>
+      <button type="button" class="btn btn-outline" data-vf-prev><Icon name="arrow-left" size={18} /> {T.back}</button>
+      <button type="button" class="btn btn-green" data-vf-next>{T.next} <Icon name="arrow-right" size={18} /></button>
+    </div>
+    <p class="vf-hint" role="alert" data-vf-hint hidden></p>
+  </form>
+
+  <div class="vf-done" data-vf-done hidden tabindex="-1">
+    <span class="vf-done-ico"><Icon name="check" size={40} /></span>
+    <h4>{T.okTitle}</h4>
+    <p>{T.okText}</p>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-vf]').forEach((root) => {
+    const form = root.querySelector<HTMLFormElement>('[data-vf-form]')!;
+    const screens = [...root.querySelectorAll<HTMLElement>('[data-vf-screen]')];
+    const dots = [...root.querySelectorAll<HTMLElement>('[data-vf-dot]')];
+    const nav = root.querySelector<HTMLElement>('[data-vf-nav]')!;
+    const prev = root.querySelector<HTMLButtonElement>('[data-vf-prev]')!;
+    const next = root.querySelector<HTMLButtonElement>('[data-vf-next]')!;
+    const hint = root.querySelector<HTMLElement>('[data-vf-hint]')!;
+    const count = root.querySelector<HTMLElement>('[data-vf-count]')!;
+    const done = root.querySelector<HTMLElement>('[data-vf-done]')!;
+    const send = root.querySelector<HTMLButtonElement>('[data-vf-send]')!;
+    root.querySelector<HTMLInputElement>('[data-vf-started]')!.value = String(Date.now());
+    root.classList.add('is-steps');
+    nav.hidden = false;
+    let current = 0;
+
+    const show = (i: number, back = false) => {
+      current = i;
+      screens.forEach((s, k) => {
+        s.classList.toggle('is-on', k === i);
+        s.classList.toggle('from-left', k === i && back);
+      });
+      dots.forEach((d, k) => {
+        d.classList.toggle('is-done', k < i);
+        d.classList.toggle('is-now', k === i);
+      });
+      count.textContent = `${root.dataset.stepWord ?? ''} ${i + 1} ${root.dataset.stepOf ?? ''} ${screens.length}`;
+      prev.hidden = i === 0;
+      next.hidden = i === screens.length - 1;
+      hint.hidden = true;
+      const top = root.getBoundingClientRect().top + window.scrollY - 90;
+      if (window.scrollY > top) window.scrollTo({ top, behavior: 'smooth' });
+    };
+    const valid = (s: HTMLElement) => {
+      for (const el of s.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>('input:not([type=radio]):not([type=checkbox]), textarea')) {
+        if (!el.checkValidity()) { el.reportValidity(); return false; }
+      }
+      for (const fs of s.querySelectorAll<HTMLElement>('[data-vf-need]')) {
+        if (!fs.querySelector('input:checked')) {
+          hint.textContent = root.dataset.msgNeed ?? '';
+          hint.hidden = false;
+          fs.classList.remove('shake'); void fs.offsetWidth; fs.classList.add('shake');
+          return false;
+        }
+      }
+      return true;
+    };
+    next.addEventListener('click', () => valid(screens[current]) && show(current + 1));
+    prev.addEventListener('click', () => show(current - 1, true));
+    form.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && (e.target as HTMLElement).tagName === 'INPUT' && current < screens.length - 1) { e.preventDefault(); next.click(); }
+    });
+    // Une seule réponse par question : quand tout l'écran est répondu, on passe tout seul à la suite
+    form.addEventListener('change', (e) => {
+      const t = e.target as HTMLInputElement;
+      const s = screens[current];
+      if (t.type !== 'radio' || !s.contains(t)) return;
+      const groups = [...s.querySelectorAll('[data-vf-need]')];
+      if (groups.length && groups.every((g) => g.querySelector('input:checked'))) setTimeout(() => screens[current] === s && next.click(), 450);
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!valid(screens[current])) return;
+      for (const box of form.querySelectorAll<HTMLInputElement>('input[type=checkbox][required]')) {
+        if (!box.checked) { box.reportValidity(); return; }
+      }
+      send.disabled = true;
+      const label = send.innerHTML;
+      send.textContent = root.dataset.msgSending ?? '…';
+      try {
+        const res = await fetch(form.action, { method: 'POST', headers: { Accept: 'application/json' }, body: new FormData(form) });
+        if (!res.ok) throw new Error(String(res.status));
+        form.hidden = true;
+        done.hidden = false;
+        done.focus();
+      } catch {
+        hint.textContent = root.dataset.msgError ?? '';
+        hint.hidden = false;
+      } finally {
+        send.disabled = false;
+        send.innerHTML = label;
+      }
+    });
+
+    // Retour d'un envoi sans JavaScript
+    if (new URLSearchParams(location.search).get('candidature') === 'merci') {
+      form.hidden = true;
+      done.hidden = false;
+    }
+    show(0);
+  });
+</script>
+
+<style>
+  .vf { --c: #5c1a16; border-radius: 2rem; background: #fff; box-shadow: 0 24px 60px -36px rgb(42 21 18 / .45); overflow: hidden; }
+  .c-hibiscus { --c: #c4523b; --c2: #e07a62; --cs: #fbe7e1; --ci: #8f3420; }
+  .c-miel { --c: #d99a3f; --c2: #f3d3a0; --cs: #fcf1de; --ci: #6b4508; }
+  .c-baobab { --c: #2e4b3c; --c2: #4f7a5f; --cs: #e2ede6; --ci: #223a2e; }
+  .c-bleu { --c: #3c6e91; --c2: #6b9bbd; --cs: #e4eef5; --ci: #24506e; }
+  .c-terre { --c: #5c1a16; --c2: #a0392c; --cs: #f6e3df; --ci: #5c1a16; }
+  .vf-head { position: relative; display: flex; gap: 1rem; align-items: center; padding: 1.75rem; color: #fff; background: linear-gradient(135deg, #5c1a16, #8a2e25 60%, #e07a62 140%); overflow: hidden; }
+  .vf-head::after { content: ''; position: absolute; right: -40px; top: -60px; width: 180px; height: 180px; border-radius: 50%; background: rgb(243 211 160 / .18); animation: vf-float 7s ease-in-out infinite; }
+  .vf-head h3 { margin: 0; color: #fff; font-size: 1.5rem; font-weight: 700; }
+  .vf-head p { margin: .25rem 0 0; color: #f6dcd3; }
+  .vf-badge { display: inline-flex; width: 3.25rem; height: 3.25rem; flex-shrink: 0; border-radius: 1.1rem; align-items: center; justify-content: center; background: rgb(255 255 255 / .18); }
+  .vf-form { padding: 1.5rem; }
+  @media (min-width: 640px) { .vf-form { padding: 2rem; } }
+  .vf-trap { position: absolute; left: -9999px; }
+  .vf-progress { display: none; margin-bottom: 1.25rem; }
+  .is-steps .vf-progress { display: block; }
+  .vf-count { display: block; margin-bottom: .6rem; font-size: .75rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: #8f3420; }
+  .vf-dots { display: grid; grid-template-columns: repeat(5, 1fr); gap: .4rem; list-style: none; margin: 0; padding: 0; }
+  .vf-dots li { display: grid; justify-items: center; gap: .3rem; font-size: .72rem; font-weight: 700; color: #9a8a84; text-align: center; }
+  .vf-dots li span { display: inline-flex; width: 2.1rem; height: 2.1rem; border-radius: 50%; align-items: center; justify-content: center; background: #f3ebe4; transition: all .3s; }
+  .vf-dots li em { font-style: normal; display: none; }
+  @media (min-width: 640px) { .vf-dots li em { display: block; } }
+  .vf-dots li.is-now span { background: var(--c); color: #fff; box-shadow: 0 0 0 5px var(--cs); transform: scale(1.1); }
+  .vf-dots li.is-now { color: var(--ci); }
+  .vf-dots li.is-done span { background: #2f8f5b; color: #fff; }
+  .vf-screen { margin-bottom: 1rem; }
+  .is-steps .vf-screen { display: none; }
+  .is-steps .vf-screen.is-on { display: block; animation: vf-in .45s cubic-bezier(.2, .8, .2, 1) both; }
+  .is-steps .vf-screen.is-on.from-left { animation-name: vf-back; }
+  .vf-sh { display: flex; gap: .85rem; align-items: center; margin-bottom: 1.25rem; }
+  .vf-sh h4 { margin: 0; font-size: 1.3rem; font-weight: 700; color: #2b2220; }
+  .vf-sh p { margin: .15rem 0 0; color: #6b5a55; font-size: .92rem; }
+  .vf-ico { display: inline-flex; width: 3rem; height: 3rem; flex-shrink: 0; border-radius: 1rem; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--c), var(--c2)); color: #fff; animation: vf-pop .5s .1s both; }
+  .vf-grid { display: grid; gap: 1rem; }
+  @media (min-width: 640px) { .vf-grid { grid-template-columns: 1fr 1fr; } .vf-wide { grid-column: 1 / -1; } }
+  .vf-field { display: grid; gap: .4rem; font-weight: 600; color: #2b2220; margin-bottom: .25rem; }
+  .vf-field input, .vf-field textarea { width: 100%; border: 2px solid #eadfd5; border-radius: .9rem; padding: .8rem 1rem; font: inherit; font-weight: 400; font-size: 16px; background: #fff; color: #2b2220; transition: border-color .2s, box-shadow .2s; }
+  .vf-field input:focus, .vf-field textarea:focus { outline: none; border-color: var(--c); box-shadow: 0 0 0 4px var(--cs); }
+  .vf-q { border: 0; margin: 0 0 1.25rem; padding: 0; }
+  .vf-q legend { font-weight: 700; color: #2b2220; margin-bottom: .6rem; padding: 0; }
+  .vf-opts { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .vf-opt { position: relative; cursor: pointer; }
+  .vf-opt input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .vf-opt span { display: inline-flex; align-items: center; gap: .5rem; min-height: 2.75rem; padding: .55rem .95rem .55rem .65rem; border-radius: .9rem; border: 2px solid #eadfd5; background: #fff; font-size: .93rem; transition: all .18s; }
+  .vf-opt span::before { content: ''; width: 1.2rem; height: 1.2rem; flex-shrink: 0; border-radius: .4rem; border: 2px solid #d9cbc0; background: #fff center / .8rem no-repeat; transition: inherit; }
+  .vf-opt input[type=radio] + span::before { border-radius: 50%; }
+  .vf-opt:hover span { border-color: var(--c); transform: translateY(-1px); }
+  .vf-opt input:checked + span { background: var(--c); border-color: var(--c); color: #fff; font-weight: 600; box-shadow: 0 8px 18px -10px var(--c); animation: vf-check .3s; }
+  .c-miel .vf-opt input:checked + span { color: #43120f; }
+  .vf-opt input:checked + span::before { border-color: transparent; background-color: rgb(255 255 255 / .92);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232e4b3c' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5 9-10'/%3E%3C/svg%3E"); }
+  .vf-opt input:focus-visible + span { outline: 3px solid var(--c); outline-offset: 2px; }
+  .vf-commit { padding: 1.25rem; border-radius: 1.25rem; background: linear-gradient(135deg, #f6e3df, #fcf1de); border: 2px solid #f0d6cc; }
+  .vf-commit-title { margin: 0 0 .75rem; color: #5c1a16; }
+  .vf-commit ul { list-style: none; margin: 0 0 1rem; padding: 0; display: grid; gap: .6rem; }
+  .vf-commit li { display: flex; gap: .7rem; align-items: flex-start; }
+  .vf-ci { display: inline-flex; width: 2rem; height: 2rem; flex-shrink: 0; border-radius: .7rem; align-items: center; justify-content: center; background: #5c1a16; color: #f3d3a0; }
+  .vf-sign, .vf-consent { display: flex; gap: .7rem; align-items: flex-start; cursor: pointer; font-weight: 600; }
+  .vf-sign { padding: .9rem 1rem; border-radius: 1rem; background: #fff; border: 2px dashed #5c1a16; }
+  .vf-sign input, .vf-consent input { width: 1.35rem; height: 1.35rem; flex-shrink: 0; accent-color: #2e4b3c; margin-top: .1rem; }
+  .vf-consent { margin: 1rem 0; font-weight: 400; font-size: .92rem; }
+  .vf-send { width: 100%; }
+  @media (min-width: 640px) { .vf-send { width: auto; } }
+  .vf-nav { display: flex; justify-content: space-between; gap: .75rem; margin-top: .5rem; }
+  .vf-nav [hidden] { display: none; }
+  .vf-nav [data-vf-next] { margin-left: auto; }
+  .vf-hint { margin: .75rem 0 0; padding: .75rem 1rem; border-radius: .9rem; background: #fbe5e1; color: #8a2a1c; font-weight: 600; }
+  .vf-done { padding: 3rem 1.5rem; text-align: center; animation: vf-in .5s both; }
+  .vf-done-ico { display: inline-flex; width: 5rem; height: 5rem; border-radius: 1.7rem; align-items: center; justify-content: center; background: linear-gradient(135deg, #2e4b3c, #4f7a5f); color: #fff; animation: vf-pop .6s both; }
+  .vf-done h4 { margin: 1rem 0 .5rem; font-size: 1.4rem; font-weight: 700; color: #2e4b3c; }
+  .vf-done p { max-width: 32rem; margin: 0 auto; color: #6b5a55; }
+  .shake { animation: vf-shake .4s; }
+  @keyframes vf-in { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: none; } }
+  @keyframes vf-back { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: none; } }
+  @keyframes vf-pop { 0% { opacity: 0; transform: scale(.6); } 70% { transform: scale(1.06); } 100% { opacity: 1; transform: none; } }
+  @keyframes vf-check { 45% { transform: scale(1.07); } }
+  @keyframes vf-float { 50% { transform: translate(8px, -10px); } }
+  @keyframes vf-shake { 20% { transform: translateX(-8px); } 40% { transform: translateX(7px); } 60% { transform: translateX(-5px); } 80% { transform: translateX(3px); } }
+  @media (prefers-reduced-motion: reduce) { .vf *, .vf::after { animation: none !important; transition: none !important; } }
+</style>
