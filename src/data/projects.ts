@@ -34,7 +34,7 @@ export const projects: Project[] = [
     tagline: 'Qui influence mes choix ?',
     pole: 'education',
     status: 'Lancement en novembre 2026',
-    location: 'Lycée Tobongisa, Kinshasa',
+    location: 'Collège Don Bosco Lukungu, Kinshasa',
     summary:
       'Premier projet du pôle Hatua Education, ÉCHOS invite les élèves à prendre conscience des voix qui façonnent leurs décisions, pour apprendre à choisir plus librement.',
     image: {
@@ -57,7 +57,7 @@ export const projects: Project[] = [
       {
         date: 'Novembre 2026',
         title: 'Lancement',
-        text: 'Première édition du projet au Lycée Tobongisa, à Kinshasa.',
+        text: 'Première édition du projet au Collège Don Bosco Lukungu, à Kinshasa.',
       },
       {
         date: '2027',

@@ -9,7 +9,7 @@ export const projects: Project[] = [
     ...echosFr,
     tagline: 'Who influences my choices?',
     status: 'Launching in November 2026',
-    location: 'Lycée Tobongisa, Kinshasa',
+    location: 'Collège Don Bosco Lukungu, Kinshasa',
     summary:
       'The first project of the Hatua Education area, ÉCHOS invites students to become aware of the voices that shape their decisions, so they can learn to choose more freely.',
     image: {
@@ -28,7 +28,7 @@ export const projects: Project[] = [
       'Open a space for dialogue between students, teachers and families.',
     ],
     timeline: [
-      { date: 'November 2026', title: 'Launch', text: 'First edition of the project at Lycée Tobongisa, in Kinshasa.' },
+      { date: 'November 2026', title: 'Launch', text: 'First edition of the project at Collège Don Bosco Lukungu, in Kinshasa.' },
       { date: '2027', title: 'Gradual roll-out', text: 'Step-by-step extension to other partner schools.' },
       { date: 'December 2027', title: 'Goal: 30 schools', text: 'Ambition: to roll out the project in 30 schools.' },
     ],
