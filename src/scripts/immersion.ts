@@ -81,8 +81,8 @@ function start() {
     img.classList.add('imm-img');
   });
 
-  // 4. Cartes : inclinaison 3D qui suit le pointeur
-  if (finePointer) {
+  // 4. Cartes : inclinaison 3D qui suit le pointeur (souris) ; au doigt, la carte s'enfonce vers l'endroit touché
+  {
     main.querySelectorAll<HTMLElement>('.card-hover, [data-tilt], .domino .card, .engage-choices a, .news-grid article, [data-tilt-big]').forEach((card) => {
       card.classList.add('imm-tilt');
       const max = card.hasAttribute('data-tilt-big') ? 8 : 6;
@@ -95,10 +95,25 @@ function start() {
         card.style.setProperty('--gx', `${((x + 0.5) * 100).toFixed(1)}%`);
         card.style.setProperty('--gy', `${((y + 0.5) * 100).toFixed(1)}%`);
       });
-      card.addEventListener('pointerleave', () => {
-        card.style.setProperty('--rx', '0deg');
-        card.style.setProperty('--ry', '0deg');
+      const release = () => {
+        card.style.removeProperty('--rx');
+        card.style.removeProperty('--ry');
+        card.classList.remove('is-pressed');
+      };
+      card.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'mouse') return;
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - 0.5;
+        const y = (e.clientY - r.top) / r.height - 0.5;
+        card.style.setProperty('--rx', `${(y * max * 1.6).toFixed(2)}deg`);
+        card.style.setProperty('--ry', `${(-x * max * 1.6).toFixed(2)}deg`);
+        card.style.setProperty('--gx', `${((x + 0.5) * 100).toFixed(1)}%`);
+        card.style.setProperty('--gy', `${((y + 0.5) * 100).toFixed(1)}%`);
+        card.classList.add('is-pressed');
       });
+      card.addEventListener('pointerleave', release);
+      card.addEventListener('pointerup', release);
+      card.addEventListener('pointercancel', release);
     });
   }
 
@@ -126,6 +141,26 @@ function start() {
         hero.style.setProperty('--cx', `${e.clientX - r.left}px`);
         hero.style.setProperty('--cy', `${e.clientY - r.top}px`);
       });
+    });
+  } else {
+    // Téléphone : on incline l'appareil, l'escalier, la lumière et les cartes suivent (gyroscope).
+    // Sans gyroscope disponible (ou s'il faut une autorisation, comme sur iPhone), tout se balance doucement tout seul.
+    root.classList.add('is-touch', 'auto-sway');
+    let base: number | null = null;
+    window.addEventListener('deviceorientation', (e) => {
+      if (e.gamma === null || e.beta === null) return;
+      if (base === null) base = e.beta;
+      root.classList.remove('auto-sway');
+      const mx = clamp(e.gamma / 50, -0.5, 0.5);
+      const my = clamp((e.beta - base) / 50, -0.5, 0.5);
+      heroes.forEach((hero) => {
+        hero.style.setProperty('--mx', mx.toFixed(3));
+        hero.style.setProperty('--my', my.toFixed(3));
+        hero.style.setProperty('--cx', `${((mx + 0.5) * hero.clientWidth).toFixed(0)}px`);
+        hero.style.setProperty('--cy', `${((my + 0.5) * hero.clientHeight).toFixed(0)}px`);
+      });
+      root.style.setProperty('--tilt-x', `${(-my * 10).toFixed(2)}deg`);
+      root.style.setProperty('--tilt-y', `${(mx * 10).toFixed(2)}deg`);
     });
   }
 

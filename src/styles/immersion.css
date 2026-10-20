@@ -5,6 +5,12 @@
  * ============================================================
  */
 
+/* Variables animables (balancement automatique sur téléphone) */
+@property --mx { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --my { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --cx { syntax: '<length-percentage>'; inherits: true; initial-value: 50%; }
+@property --cy { syntax: '<length-percentage>'; inherits: true; initial-value: 50%; }
+
 /* ---------- Escalier du hero, en relief ---------- */
 .stairs { position: relative; width: 100%; max-width: 32rem; margin-inline: auto; aspect-ratio: 5 / 4; perspective: 1100px; }
 .stairs-stage { position: absolute; inset: 0; transform-style: preserve-3d; transform-origin: 50% 85%; }
@@ -144,10 +150,20 @@
   .imm .imm-img.is-in { clip-path: inset(0 0 0 0); transform: none; }
 
   /* Cartes inclinées en 3D, avec un reflet qui suit le pointeur */
-  .imm .imm-tilt:not(.reveal), .imm .imm-tilt.reveal.is-visible { transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .35s ease-out, box-shadow .35s, opacity .7s ease; }
+  .imm .imm-tilt:not(.reveal), .imm .imm-tilt.reveal.is-visible { transform: perspective(900px) rotateX(var(--rx, var(--tilt-x, 0deg))) rotateY(var(--ry, var(--tilt-y, 0deg))) scale(var(--press, 1)); transition: transform .35s ease-out, box-shadow .35s, opacity .7s ease; }
   .imm .imm-tilt::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity .3s;
     background: radial-gradient(320px circle at var(--gx, 50%) var(--gy, 50%), rgb(255 255 255 / .35), transparent 60%); }
-  .imm .imm-tilt:hover::after { opacity: 1; }
+  .imm .imm-tilt:hover::after, .imm .imm-tilt.is-pressed::after { opacity: 1; }
+  .imm .imm-tilt.is-pressed { --press: .97; }
+
+  /* Téléphone : la lumière se promène dans les en-têtes ; sans gyroscope, l'escalier se balance tout seul */
+  .imm.is-touch .hero-immersive::after { opacity: .9; }
+  .imm.auto-sway .hero-immersive { animation: sway 9s ease-in-out infinite; }
+  @keyframes sway {
+    0%, 100% { --mx: -.35; --my: .1; --cx: 20%; --cy: 30%; }
+    50% { --mx: .35; --my: -.15; --cx: 80%; --cy: 65%; }
+  }
+  @media (max-width: 1023px) { .imm .steps-climb .step-item { margin-left: calc(var(--i) * 1.1rem); } }
   .imm .imm-tilt:hover { box-shadow: 0 30px 50px -28px rgb(42 21 18 / .45); }
 
   /* Les sept pôles : ils tombent en place comme des dominos */
@@ -194,4 +210,17 @@
   .imm .timeline-steps .step-item .step-dot { transition: transform .5s cubic-bezier(.2, .9, .3, 1.5), box-shadow .5s; }
   .imm .timeline-steps .step-item:not(.is-on) .step-dot { transform: scale(.75); filter: grayscale(.7); }
   .imm .timeline-steps .step-item.is-on .step-dot { box-shadow: 0 0 0 10px rgb(243 211 160 / .45); }
+}
+
+/* Petit écran : l'escalier reste entier pendant la montée */
+@media (max-width: 640px) {
+  .stairs { max-width: 88%; }
+  .stairs-row { gap: 0.45rem; }
+  .stair { padding: 0.55rem; }
+}
+@media (prefers-reduced-motion: no-preference) and (max-width: 640px) {
+  .imm .stairs-stage {
+    transform: rotateX(calc(12deg + var(--my) * -8deg + var(--sp) * 26deg)) rotateY(calc(-8deg + var(--mx) * 16deg))
+      translateY(calc(var(--sp) * 14%)) scale(calc(.94 + var(--sp) * .16));
+  }
 }
