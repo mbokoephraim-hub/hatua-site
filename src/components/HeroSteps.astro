@@ -1,33 +1,33 @@
 ---
-/** Visuel du hero : les quatre verbes de la mission, en marches qui montent. */
+/**
+ * Visuel du hero : les quatre verbes de la mission, en marches qui montent — en relief.
+ * Les marches respirent, un petit marcheur grimpe de marche en marche (étincelles en haut),
+ * l'escalier suit la souris et, au défilement, la « caméra » monte l'escalier (voir src/scripts/immersion.ts).
+ */
 import { getContent } from '../data';
 import { getLang } from '../i18n';
 const { site } = getContent(getLang(Astro.currentLocale));
-const heights = ['h-[38%]', 'h-[56%]', 'h-[74%]', 'h-[92%]'];
-const tones = [
-  'bg-primary-50 text-primary-dark',
-  'bg-accent-soft/70 text-primary-dark',
-  'bg-secondary text-white',
-  'bg-primary text-white',
-];
+const heights = [38, 56, 74, 92];
+const tones = ['st-baobab-soft', 'st-miel', 'st-terre', 'st-baobab'];
 ---
 
-<div class="relative mx-auto aspect-[5/4] w-full max-w-lg" aria-hidden="true">
-  <!-- ligne pointillée de progression -->
-  <svg class="absolute inset-0 h-full w-full" viewBox="0 0 400 320" preserveAspectRatio="none" fill="none">
-    <path d="M20 230 L120 175 L220 115 L320 55 L385 20" stroke="var(--color-accent)" stroke-width="3" stroke-dasharray="2 12" stroke-linecap="round" vector-effect="non-scaling-stroke" />
-  </svg>
-  <div class="absolute inset-x-0 bottom-0 flex h-full items-end gap-2.5 sm:gap-3">
-    {
-      site.steps.map((step, i) => (
-        <div
-          class={`hero-step flex flex-1 flex-col justify-between rounded-t-2xl p-3 sm:p-4 ${heights[i]} ${tones[i]}`}
-          style={`animation-delay:${0.15 + i * 0.15}s`}
-        >
-          <span class="font-display text-2xl font-bold opacity-80 sm:text-3xl">{String(i + 1).padStart(2, '0')}</span>
-          <span class="font-display text-[0.7rem] leading-tight font-semibold sm:text-sm">{step}</span>
-        </div>
-      ))
-    }
+<div class="stairs" data-stairs aria-hidden="true">
+  <div class="stairs-stage">
+    <span class="stairs-floor"></span>
+    <svg class="stairs-path" viewBox="0 0 400 320" preserveAspectRatio="none" fill="none">
+      <path d="M20 230 L120 175 L220 115 L320 55 L385 20" stroke="var(--color-accent)" stroke-width="3" stroke-dasharray="2 12" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+    </svg>
+    <div class="stairs-row">
+      {
+        site.steps.map((step, i) => (
+          <div class={`stair ${tones[i]}`} style={`--i:${i};--h:${heights[i]}%`}>
+            <span class="stair-num">{String(i + 1).padStart(2, '0')}</span>
+            <span class="stair-label">{step}</span>
+          </div>
+        ))
+      }
+    </div>
+    <span class="climber"><span class="climber-body"></span></span>
+    <span class="stairs-burst">{[0, 1, 2, 3, 4, 5, 6, 7].map((k) => <i style={`--k:${k}`}></i>)}</span>
   </div>
 </div>

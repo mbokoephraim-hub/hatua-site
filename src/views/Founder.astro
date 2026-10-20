@@ -98,8 +98,9 @@ const ruleColors = ['bg-hibiscus', 'bg-secondary', 'bg-primary', 'bg-accent', 'b
           </div>
         </div>
 
-        <figure class="relative mx-auto w-full max-w-sm sm:max-w-md lg:max-w-none">
-          <span class="absolute -right-3 -bottom-3 hidden h-full w-full border border-accent/60 sm:block" aria-hidden="true"></span>
+        <figure class="founder-hero relative mx-auto w-full max-w-sm sm:max-w-md lg:max-w-none" data-founder data-tilt-big>
+          <span class="fh-glow" aria-hidden="true"></span>
+          <span class="absolute -right-3 -bottom-3 hidden h-full w-full border border-accent/60 sm:block" data-parallax="-0.12" aria-hidden="true"></span>
           {
             hasPortrait ? (
               <img
@@ -108,8 +109,9 @@ const ruleColors = ['bg-hibiscus', 'bg-secondary', 'bg-primary', 'bg-accent', 'b
                 width={f.photos.hero.width}
                 height={f.photos.hero.height}
                 fetchpriority="high"
-                class="relative aspect-[4/5] w-full object-cover object-top"
+                class="fh-photo relative aspect-[4/5] w-full object-cover object-top"
               />
+              <span class="fo-shine" aria-hidden="true"></span>
             ) : (
               <div class="relative flex aspect-[4/5] w-full items-center justify-center border border-dashed border-accent p-6 text-center text-accent">
                 {T.photoMissing}
