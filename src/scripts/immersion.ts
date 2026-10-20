@@ -147,7 +147,7 @@ function start() {
     // Sans gyroscope disponible (ou s'il faut une autorisation, comme sur iPhone), tout se balance doucement tout seul.
     root.classList.add('is-touch', 'auto-sway');
     let base: number | null = null;
-    window.addEventListener('deviceorientation', (e) => {
+    const onOrient = (e: DeviceOrientationEvent) => {
       if (e.gamma === null || e.beta === null) return;
       if (base === null) base = e.beta;
       root.classList.remove('auto-sway');
@@ -161,7 +161,38 @@ function start() {
       });
       root.style.setProperty('--tilt-x', `${(-my * 10).toFixed(2)}deg`);
       root.style.setProperty('--tilt-y', `${(mx * 10).toFixed(2)}deg`);
-    });
+    };
+    window.addEventListener('deviceorientation', onOrient);
+
+    // iPhone / iPad : les mouvements demandent une autorisation, donnée d'un toucher sur « Activer les mouvements »
+    const DOE = window.DeviceOrientationEvent as unknown as { requestPermission?: () => Promise<'granted' | 'denied'> } | undefined;
+    if (DOE && typeof DOE.requestPermission === 'function') {
+      const ask = DOE.requestPermission.bind(DOE);
+      let choice: string | null = null;
+      try { choice = localStorage.getItem('hatua-motion'); } catch { /* rien */ }
+      const remember = (v: string) => { try { localStorage.setItem('hatua-motion', v); } catch { /* rien */ } };
+      if (choice === 'on') {
+        // Déjà accepté : l'autorisation est redemandée en silence au premier toucher
+        window.addEventListener('touchend', () => ask().catch(() => undefined), { once: true });
+      } else if (choice !== 'off' && heroes[0]) {
+        const en = root.lang.startsWith('en');
+        const box = document.createElement('div');
+        box.className = 'motion-ask';
+        box.innerHTML = `<button type="button" class="ma-go"><span class="ma-ic" aria-hidden="true">✦</span>${en ? 'Enable motion' : 'Activer les mouvements'}</button>`
+          + `<button type="button" class="ma-x" aria-label="${en ? 'No thanks' : 'Non merci'}">×</button>`;
+        (heroes[0].querySelector('[data-stairs]') ?? heroes[0]).appendChild(box);
+        box.querySelector('.ma-go')?.addEventListener('click', () => {
+          ask().then((state) => {
+            remember(state === 'granted' ? 'on' : 'off');
+            box.remove();
+          }).catch(() => box.remove());
+        });
+        box.querySelector('.ma-x')?.addEventListener('click', () => {
+          remember('off');
+          box.remove();
+        });
+      }
+    }
   }
 
   // 7. Étapes : elles s'allument une à une, la ligne se remplit

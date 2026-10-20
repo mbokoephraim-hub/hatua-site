@@ -224,3 +224,15 @@
       translateY(calc(var(--sp) * 14%)) scale(calc(.94 + var(--sp) * .16));
   }
 }
+
+/* iPhone : bouton « Activer les mouvements » (n'apparaît que là où une autorisation est demandée) */
+.motion-ask { position: absolute; left: 50%; top: -2.9rem; z-index: 6; display: flex; align-items: center; gap: 2px; transform: translateX(-50%); padding: 4px; border-radius: 999px;
+  background: rgb(255 255 255 / .92); box-shadow: 0 10px 24px -12px rgb(42 21 18 / .45); white-space: nowrap; animation: ma-in .6s 1.8s both; }
+.motion-ask button { border: 0; background: none; font: inherit; cursor: pointer; }
+.motion-ask .ma-go { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; font-family: var(--font-display); font-size: .85rem; font-weight: 700; color: #fff;
+  background: linear-gradient(135deg, #5c1a16, #e07a62); }
+.ma-ic { display: inline-block; animation: ma-spin 3s linear infinite; }
+.motion-ask .ma-x { width: 32px; height: 32px; border-radius: 50%; font-size: 1.2rem; line-height: 1; color: #6b5a55; }
+@keyframes ma-in { from { opacity: 0; transform: translate(-50%, 12px); } to { opacity: 1; transform: translateX(-50%); } }
+@keyframes ma-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .motion-ask { display: none; } }
