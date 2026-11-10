@@ -6,7 +6,7 @@ comme des actions réelles de la fondation.
 
 | Fichier provisoire | Où il apparaît | Photo à fournir |
 |---|---|---|
-| ✅ `echos-eleves.webp` (+ `echos-eleves-800.webp` pour mobile) | Accueil (bloc ÉCHOS), page Projets, page ÉCHOS | Fournie. À compléter plus tard par des photos réelles du projet au Collège Don Bosco Lukungu |
+| ✅ `echos-lycee.webp` (+ `echos-lycee-800.webp` pour mobile) | Accueil (bloc ÉCHOS), page Projets, page ÉCHOS | Fournie : photo du Lycée Tobongisa (même photo que la couverture de l’article). |
 | `fondatrice.webp` (+ `-640` et `-avatar`) | Page À propos, mot de la fondatrice | Fournie. **Provisoire** sur À propos (→ photo d'équipe) |
 | `fondatrice-engager.webp` (+ `-640`) | Page S'engager (Bénévolat) | Fournie. **Provisoire** (→ photo d'atelier) |
 | `sublime-koyi-saley.jpg` | Page /sublimekoyi (hero) | Fournie. Peut être remplacée par un fichier du même nom |

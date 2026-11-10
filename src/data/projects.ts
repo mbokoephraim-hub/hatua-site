@@ -33,21 +33,23 @@ export const projects: Project[] = [
     title: 'ÉCHOS',
     tagline: 'Qui influence mes choix ?',
     pole: 'education',
-    status: 'Lancement en novembre 2026',
-    location: 'Collège Don Bosco Lukungu, Kinshasa',
+    status: 'En cours · lancement le 12 décembre 2026',
+    location: 'Lycées de Kinshasa, à commencer par le Lycée Tobongisa',
     summary:
-      'Premier projet du pôle Hatua Education, ÉCHOS invite les élèves à prendre conscience des voix qui façonnent leurs décisions, pour apprendre à choisir plus librement.',
+      'Premier projet du pôle Hatua Education, ÉCHOS invite les élèves à prendre conscience des voix qui façonnent leurs décisions, pour apprendre à choisir plus librement. Au Lycée Tobongisa, il accompagne 262 filles de huitième année pendant 7 mois : 4 mois d’accompagnement, puis 3 mois de suivi.',
     image: {
-      src: '/images/echos-eleves.webp',
-      srcSmall: '/images/echos-eleves-800.webp',
-      alt: 'Quatre élèves en uniforme, sac au dos, marchant vers les bâtiments de leur école',
+      src: '/images/echos-lycee.webp',
+      srcSmall: '/images/echos-lycee-800.webp',
+      alt: 'Trois personnes en tee-shirt HATUA Foundation ou chemise noire et beige posent côte à côte, souriantes, dans une salle du Lycée Tobongisa',
     },
     context: [
       'Chaque jour, les jeunes font des choix : ce qu’ils étudient, avec qui ils passent leur temps, ce qu’ils croient, ce qu’ils veulent devenir.',
       'Ces choix ne naissent pas dans le vide. Famille, amis, école, réseaux sociaux, médias, musique, communauté : de nombreuses voix résonnent autour d’eux. Parfois de façon visible, souvent sans qu’on y prête attention.',
       'ÉCHOS propose aux élèves de s’arrêter un instant pour écouter ces voix. Qui influence mes choix ? Pourquoi ? Et qu’est-ce que je décide d’en faire ? Il ne s’agit pas de rejeter les influences, mais d’apprendre à les reconnaître pour décider en conscience.',
+      'Au Lycée Tobongisa, à Kinshasa (commune de Ngaliema), 262 filles de huitième année se préparent à choisir leur section : littéraire, commerciale, pédagogie, sociale ou esthétique. ÉCHOS les accompagne pendant 7 mois : 4 mois d’accompagnement, puis 3 mois de suivi.',
     ],
     objectives: [
+      'Accompagner les 262 filles de huitième année du Lycée Tobongisa dans le choix de leur section.',
       'Aider les élèves à identifier les influences qui pèsent sur leurs décisions.',
       'Développer leur esprit critique face aux messages qu’ils reçoivent, en ligne comme hors ligne.',
       'Renforcer leur confiance pour faire des choix réfléchis et assumés.',
@@ -55,14 +57,24 @@ export const projects: Project[] = [
     ],
     timeline: [
       {
-        date: 'Novembre 2026',
-        title: 'Lancement',
-        text: 'Première édition du projet au Collège Don Bosco Lukungu, à Kinshasa.',
+        date: '12 décembre 2026',
+        title: 'Lancement au Lycée Tobongisa',
+        text: 'Lancement officiel d’ÉCHOS avec les 262 filles de huitième année, sur le thème « Qui influence mes choix ? » : conférence interactive, séances d’accompagnement et restitution éducative.',
+      },
+      {
+        date: 'Les 4 premiers mois',
+        title: 'Accompagnement',
+        text: 'Rencontres éducatives pour favoriser le dialogue, la connaissance de soi et la réflexion autour du choix de la section.',
+      },
+      {
+        date: 'Les 3 mois suivants',
+        title: 'Suivi',
+        text: 'Un suivi des élèves après l’accompagnement, pour les soutenir dans leurs décisions d’orientation. Au total, 7 mois de présence auprès d’elles.',
       },
       {
         date: 'Les années suivantes',
         title: 'Déploiement progressif',
-        text: 'Étape par étape, ÉCHOS s’étend à d’autres écoles de Kinshasa, chacune intégrant le programme d’accompagnement selon notre modèle et selon son propre contexte.',
+        text: 'Étape par étape, ÉCHOS s’étend à d’autres lycées et écoles de Kinshasa, chacun intégrant le programme d’accompagnement selon notre modèle et selon son propre contexte.',
       },
       {
         date: 'D’ici 5 ans',
