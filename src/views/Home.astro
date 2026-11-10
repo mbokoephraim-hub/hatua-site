@@ -17,15 +17,13 @@ import { url } from '../utils/url';
 
 const lang = getLang(Astro.currentLocale);
 const tr = useT(lang);
-const { site, fondatrice, poles, projects } = getContent(lang);
+const { site, poles, projects } = getContent(lang);
 const featured = projects[0];
 const latest = (await getArticles(lang)).filter((a) => !articleSlug(a).startsWith('_')).slice(0, 3);
 const news = latest[0] ? { title: latest[0].data.title, href: articlePath(articleSlug(latest[0]), lang), image: latest[0].data.image } : null;
 
 const T = {
   fr: {
-    founderTitle: 'À la découverte de la fondatrice',
-    founderCta: `Découvrir ${fondatrice.name}`,
     convictionEyebrow: 'Notre conviction',
     convictionTitle: 'Étape après étape',
     meaning: `signifie ${quote(site.nameMeaning.meaning, lang)} en ${site.nameMeaning.language}. Un nom qui dit tout de notre façon d’agir.`,
@@ -42,8 +40,6 @@ const T = {
     contactIntro: 'Une question, une idée, une envie de collaborer ? Nous serons heureux d’échanger avec vous.',
   },
   en: {
-    founderTitle: 'Meet the founder',
-    founderCta: `Discover ${fondatrice.name}`,
     convictionEyebrow: 'Our belief',
     convictionTitle: 'Step by step',
     meaning: `means ${quote(site.nameMeaning.meaning, lang)} in ${site.nameMeaning.language}. A name that says everything about the way we work.`,
@@ -108,37 +104,6 @@ const T = {
     )
   }
 
-
-  <!-- À LA DÉCOUVERTE DE LA FONDATRICE -->
-  <section class="tone-blanc py-12 sm:py-16" aria-labelledby="fondatrice-apercu">
-    <div class="container-site reveal grid items-center gap-8 sm:grid-cols-[auto_1fr] sm:gap-12">
-      <div class="founder-orbit mx-auto" data-founder>
-        <span class="fo-ring" aria-hidden="true"></span>
-        <span class="fo-ring2" aria-hidden="true"></span>
-        <span class="fo-orbit o1" aria-hidden="true"><i></i></span>
-        <span class="fo-orbit o2" aria-hidden="true"><i></i></span>
-        <span class="fo-orbit o3" aria-hidden="true"><i></i></span>
-        <div class="fo-card">
-          <img
-            src={url(fondatrice.photos.portrait.src)}
-            alt={fondatrice.photos.portrait.alt}
-            width="176"
-            height="176"
-            loading="lazy"
-            class="fo-photo object-cover object-[center_18%]"
-          />
-          <span class="fo-shine" aria-hidden="true"></span>
-        </div>
-      </div>
-      <div class="text-center sm:text-left">
-        <h2 id="fondatrice-apercu" class="text-2xl font-bold sm:text-3xl">{T.founderTitle}</h2>
-        <p class="mt-3 max-w-2xl leading-relaxed text-muted">{fondatrice.teaser}</p>
-        <a href={path('founder', lang)} class="btn btn-primary mt-6">
-          {T.founderCta} <Icon name="arrow-right" size={18} />
-        </a>
-      </div>
-    </div>
-  </section>
 
   <!-- ÉTAPE APRÈS ÉTAPE -->
   <section class="section tone-terre" aria-labelledby="conviction">

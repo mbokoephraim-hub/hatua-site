@@ -76,7 +76,8 @@ function start() {
 
   // 3. Images : elles se dévoilent en remontant, avec un léger zoom
   main.querySelectorAll<HTMLImageElement>('img').forEach((img) => {
-    if (img.closest('[data-founder], .no-imm, header') || img.width < 140) return;
+    // Les photos d'articles ne sont jamais masquées : elles doivent toujours se voir, même connexion lente
+    if (img.closest('[data-founder], .no-imm, header, figure, article') || img.width < 140) return;
     if (img.getBoundingClientRect().top < vh()) return;
     img.classList.add('imm-img');
   });
