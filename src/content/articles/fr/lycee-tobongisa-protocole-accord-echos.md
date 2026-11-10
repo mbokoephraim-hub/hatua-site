@@ -7,6 +7,7 @@ author: "HATUA Foundation"
 image: "/images/articles/tobongisa/couverture-lycee.webp"
 imageAlt: "Trois personnes posent devant la façade peinte du Lycée Tobongisa, à Kinshasa, après la signature du protocole d’accord"
 tags: ["ÉCHOS", "Éducation"]
+translation: "lycee-tobongisa-echos-partnership-agreement"
 draft: false
 ---
 
