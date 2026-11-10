@@ -34,7 +34,7 @@ export const projects: Project[] = [
     tagline: 'Qui influence mes choix ?',
     pole: 'education',
     status: 'En cours · lancement le 12 décembre 2026',
-    location: 'Lycées de Kinshasa, à commencer par le Lycée Tobongisa',
+    location: 'Première cible : Lycée Tobongisa, Kinshasa',
     summary:
       'Premier projet du pôle Hatua Education, ÉCHOS invite les élèves à prendre conscience des voix qui façonnent leurs décisions, pour apprendre à choisir plus librement. Au Lycée Tobongisa, il accompagne 262 filles de huitième année pendant 7 mois : 4 mois d’accompagnement, puis 3 mois de suivi.',
     image: {

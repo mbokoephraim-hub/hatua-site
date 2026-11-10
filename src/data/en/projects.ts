@@ -9,7 +9,7 @@ export const projects: Project[] = [
     ...echosFr,
     tagline: 'Who influences my choices?',
     status: 'Under way · launching on 12 December 2026',
-    location: 'Schools in Kinshasa, starting with Lycée Tobongisa',
+    location: 'First target: Lycée Tobongisa, Kinshasa',
     summary:
       'The first project of the Hatua Education area, ÉCHOS invites students to become aware of the voices that shape their decisions, so they can learn to choose more freely. At Lycée Tobongisa, it supports 262 eighth-grade girls over 7 months: 4 months of support, then 3 months of follow-up.',
     image: {
