@@ -4,8 +4,8 @@ description: "A memorandum of understanding signed on 9 November 2026 paves the 
 kicker: "News · ÉCHOS Project"
 date: 2026-11-09
 author: "HATUA Foundation"
-image: "/images/articles/tobongisa/couverture-lycee.webp"
-imageAlt: "Three people pose in front of the painted façade of Lycée Tobongisa in Kinshasa after signing the memorandum of understanding"
+image: "/images/articles/tobongisa/couverture.webp"
+imageAlt: "Three people, two in HATUA Foundation green T-shirts and one in a black and beige shirt, pose side by side in a room at Lycée Tobongisa"
 tags: ["ÉCHOS", "Education"]
 translation: "lycee-tobongisa-protocole-accord-echos"
 draft: false

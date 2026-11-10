@@ -4,8 +4,8 @@ description: "Un protocole d’accord signé le 9 novembre 2026 ouvre la voie au
 kicker: "Actualité · Projet ÉCHOS"
 date: 2026-11-09
 author: "HATUA Foundation"
-image: "/images/articles/tobongisa/couverture-lycee.webp"
-imageAlt: "Trois personnes posent devant la façade peinte du Lycée Tobongisa, à Kinshasa, après la signature du protocole d’accord"
+image: "/images/articles/tobongisa/couverture.webp"
+imageAlt: "Trois personnes en tee-shirt HATUA Foundation ou chemise noire et beige posent côte à côte, souriantes, dans une salle du Lycée Tobongisa"
 tags: ["ÉCHOS", "Éducation"]
 translation: "lycee-tobongisa-echos-partnership-agreement"
 draft: false
