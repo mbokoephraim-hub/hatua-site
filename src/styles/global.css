@@ -781,6 +781,6 @@ html.splash-out .splash-screen { animation: sp-out .65s cubic-bezier(.7, 0, .3, 
 .news-all { display: inline-flex; align-items: center; gap: .35rem; font-weight: 700; color: #5c1a16; transition: gap .2s; }
 .news-all:hover { gap: .6rem; }
 .news-grid { display: grid; gap: 1.25rem; }
-@media (min-width: 900px) { .news-grid { grid-template-columns: 1.4fr 1fr 1fr; } .news-grid.is-single { grid-template-columns: 1fr; max-width: 56rem; } }
+@media (min-width: 900px) { .news-grid { grid-template-columns: 1.4fr 1fr 1fr; } .news-grid.is-single { grid-template-columns: 1fr; max-width: 56rem; } .news-grid.is-pair { grid-template-columns: 1fr 1fr; } }
 
 @media (prefers-reduced-motion: reduce) { html.splash .splash-screen { display: none; } .welcome, .welcome * { animation: none !important; } }

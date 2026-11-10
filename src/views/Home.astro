@@ -60,10 +60,10 @@ const T = {
 
 <BaseLayout page={{ key: 'home' }} news={news}>
   <!-- HERO -->
-  <section class="tone-ivoire hero-immersive relative overflow-hidden" data-hero>
-    <div class="pointer-events-none absolute -top-40 -right-40 h-[32rem] w-[32rem] rounded-full bg-primary-50 blur-3xl" data-parallax="-0.25" aria-hidden="true"></div>
+  <section class="tone-ivoire relative overflow-hidden">
+    <div class="pointer-events-none absolute -top-40 -right-40 h-[32rem] w-[32rem] rounded-full bg-primary-50 blur-3xl" aria-hidden="true"></div>
     <div class="container-site relative grid items-center gap-12 py-14 sm:py-20 lg:grid-cols-[1.1fr_1fr] lg:py-24">
-      <div class="hero-text">
+      <div>
         <p class="eyebrow">
           <span class="step-line" aria-hidden="true"><span></span><span></span><span></span></span>
           {site.location.city}, {site.location.countryShort}
@@ -92,10 +92,10 @@ const T = {
             <h2 id="a-la-une">{lang === 'fr' ? 'Nos derniers articles, disponibles à la lecture' : 'Our latest articles, ready to read'}</h2>
             <a href={path('articles', lang)} class="news-all">{lang === 'fr' ? 'Tous les articles' : 'All articles'} <Icon name="arrow-right" size={16} /></a>
           </div>
-          <div class:list={['news-grid mt-8', latest.length === 1 && 'is-single']}>
+          <div class:list={['news-grid mt-8', latest.length === 1 && 'is-single', latest.length === 2 && 'is-pair']}>
             {latest.map((a, i) => (
               <div class={`reveal reveal-delay-${i + 1}`}>
-                <ArticleCard article={a} featured={i === 0} />
+                <ArticleCard article={a} featured={i === 0 && latest.length !== 2} />
               </div>
             ))}
           </div>
@@ -118,11 +118,11 @@ const T = {
         </a>
       </SectionTitle>
 
-      <ol class="steps-climb space-y-5" data-steps>
+      <ol class="space-y-5">
         {
           site.vision.map((p, i) => (
-            <li class="step-item flex gap-5" style={`--i:${i}`} data-step>
-              <span class="step-dot flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-eyebrow/60 font-display text-sm font-bold text-eyebrow">
+            <li class={`reveal reveal-delay-${i + 1} flex gap-5`}>
+              <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-eyebrow/60 font-display text-sm font-bold text-eyebrow">
                 {String(i + 1).padStart(2, '0')}
               </span>
               <p class="pt-1.5 text-lg leading-relaxed text-ink">{p}</p>
@@ -134,16 +134,15 @@ const T = {
   </section>
 
   <!-- PÔLES -->
-  <section class="section tone-ivoire relative overflow-hidden" aria-labelledby="poles-titre">
-    <span class="big-num" data-parallax="0.35" aria-hidden="true">7</span>
-    <div class="container-site relative">
+  <section class="section tone-ivoire" aria-labelledby="poles-titre">
+    <div class="container-site">
       <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <SectionTitle number="02" eyebrow={T.polesEyebrow} title={T.polesTitle} intro={site.domainsSentence} id="poles-titre" />
         <a href={path('poles', lang)} class="btn btn-outline shrink-0 self-start md:self-auto">{T.allPoles}</a>
       </div>
-      <ul class="domino mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" data-domino>
-        {poles.map((pole, i) => <li style={`--i:${i}`}><PoleCard pole={pole} index={i} /></li>)}
-        <li class="reveal" style={`--i:${poles.length}`}>
+      <ul class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {poles.map((pole, i) => <li><PoleCard pole={pole} index={i} /></li>)}
+        <li class="reveal">
           <a href={path('engage', lang)} class="group flex h-full min-h-56 flex-col justify-between rounded-2xl bg-secondary p-6 text-white transition hover:-translate-y-1 hover:bg-secondary-dark">
             <span class="step-line" aria-hidden="true"><span class="!bg-white/50"></span><span class="!bg-white/75"></span><span class="!bg-white"></span></span>
             <span>
